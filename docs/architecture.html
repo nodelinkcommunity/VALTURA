@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VALTURA Labs · Fullstack Architecture & Feature Specification</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#050c12;--bg2:#091520;--bg3:#0d1e2e;
+  --teal:#00d4c8;--teal2:#00e58c;--blue:#4d94ff;--purple:#c084fc;--orange:#ffaa00;--red:#ff4757;
+  --text:#d8edf0;--muted:#6a8a96;--border:rgba(0,212,200,.15);
+  --grad:linear-gradient(135deg,#00d4c8,#4d94ff);
+  --grad2:linear-gradient(135deg,#4d94ff,#c084fc);
+  --grad3:linear-gradient(135deg,#00e58c,#00d4c8);
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.7;overflow-x:hidden}
+::selection{background:rgba(0,212,200,.25);color:#fff}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--teal);border-radius:3px}
+
+/* Header */
+.hero{text-align:center;padding:60px 20px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,212,200,.08) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,5vw,48px);font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.hero .sub{color:var(--muted);font-size:clamp(13px,2.5vw,16px);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.hero .ver{color:var(--teal);font-size:12px;opacity:.6}
+.hero .badge{display:inline-block;margin-top:16px;padding:6px 18px;background:rgba(0,212,200,.08);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--teal)}
+
+/* Nav */
+.nav{position:sticky;top:0;z-index:100;background:rgba(5,12,18,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nav::-webkit-scrollbar{height:0}
+.nav-inner{display:flex;gap:4px;max-width:1200px;margin:0 auto;padding:8px 0}
+.nav a{white-space:nowrap;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:500;color:var(--muted);text-decoration:none;transition:all .2s;cursor:pointer}
+.nav a:hover,.nav a.active{color:#fff;background:rgba(0,212,200,.1)}
+.nav a.active{color:var(--teal);border:1px solid rgba(0,212,200,.2)}
+
+/* Container */
+.container{max-width:1100px;margin:0 auto;padding:30px 20px 80px}
+.section{margin-bottom:50px;scroll-margin-top:70px}
+.section-hd{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.section-hd .num{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:var(--grad);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#050c12;flex-shrink:0}
+.section-hd h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(18px,3vw,24px);font-weight:600;color:#fff}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;transition:border-color .2s}
+.card:hover{border-color:rgba(0,212,200,.3)}
+.card h3{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--teal);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card p,.card li{font-size:13px;color:var(--text);line-height:1.8}
+.card ul{list-style:none;padding:0}
+.card li::before{content:'▸';color:var(--teal);margin-right:8px;font-size:11px}
+
+/* Diagram boxes */
+.diagram{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:28px 24px;margin:20px 0;overflow-x:auto}
+.diagram pre{font-family:'JetBrains Mono',monospace;font-size:clamp(10px,1.8vw,13px);line-height:1.9;color:var(--text);white-space:pre;overflow-x:auto}
+.diagram .hl-teal{color:var(--teal);font-weight:600}
+.diagram .hl-blue{color:var(--blue);font-weight:600}
+.diagram .hl-purple{color:var(--purple);font-weight:600}
+.diagram .hl-orange{color:var(--orange);font-weight:600}
+.diagram .hl-green{color:var(--teal2);font-weight:600}
+.diagram .hl-red{color:var(--red);font-weight:600}
+.diagram .hl-muted{color:var(--muted)}
+
+/* Flow diagram with CSS */
+.flow-grid{display:grid;gap:12px;margin:20px 0}
+.flow-row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+.flow-box{flex:1;min-width:140px;padding:16px;border-radius:12px;text-align:center;font-size:12px;font-weight:500;position:relative;transition:transform .2s}
+.flow-box:hover{transform:translateY(-2px)}
+.flow-box .icon{font-size:24px;margin-bottom:6px}
+.flow-box .label{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;margin-bottom:4px}
+.flow-box .desc{color:var(--muted);font-size:11px;line-height:1.5}
+.fb-teal{background:rgba(0,212,200,.08);border:1px solid rgba(0,212,200,.25);color:var(--teal)}
+.fb-blue{background:rgba(77,148,255,.08);border:1px solid rgba(77,148,255,.25);color:var(--blue)}
+.fb-purple{background:rgba(192,132,252,.08);border:1px solid rgba(192,132,252,.25);color:var(--purple)}
+.fb-orange{background:rgba(255,170,0,.08);border:1px solid rgba(255,170,0,.25);color:var(--orange)}
+.fb-green{background:rgba(0,229,140,.08);border:1px solid rgba(0,229,140,.25);color:var(--teal2)}
+.fb-red{background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.25);color:var(--red)}
+.fb-dark{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:var(--muted)}
+
+.arrow-down{text-align:center;font-size:20px;color:var(--teal);padding:4px 0;opacity:.6}
+.arrow-right{display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--teal);opacity:.6;min-width:30px}
+
+/* Table */
+.tbl-wrap{overflow-x:auto;margin:16px 0;border-radius:12px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:rgba(0,212,200,.06);color:var(--teal);font-family:'Space Grotesk',sans-serif;font-weight:600;text-align:left;padding:12px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--text)}
+tr:hover td{background:rgba(0,212,200,.02)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.tag-teal{background:rgba(0,212,200,.12);color:var(--teal)}
+.tag-blue{background:rgba(77,148,255,.12);color:var(--blue)}
+.tag-purple{background:rgba(192,132,252,.12);color:var(--purple)}
+.tag-orange{background:rgba(255,170,0,.12);color:var(--orange)}
+.tag-green{background:rgba(0,229,140,.12);color:var(--teal2)}
+.tag-red{background:rgba(255,71,87,.12);color:var(--red)}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px}
+.tabs button{white-space:nowrap;padding:8px 18px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);color:var(--muted);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;font-family:'Inter',sans-serif}
+.tabs button:hover{color:#fff;background:rgba(0,212,200,.06)}
+.tabs button.active{color:var(--teal);background:rgba(0,212,200,.1);border-color:rgba(0,212,200,.25)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* Grid */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4,.grid-5{grid-template-columns:1fr}}
+@media(min-width:769px) and (max-width:1024px){.grid-4,.grid-5{grid-template-columns:repeat(2,1fr)}}
+
+/* Contract box */
+.contract-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px}
+.contract-box h4{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.contract-box .fn{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;background:rgba(0,212,200,.06);border:1px solid var(--border);border-radius:6px;margin:3px 0;display:inline-block;color:var(--teal);cursor:default;transition:background .15s}
+.contract-box .fn:hover{background:rgba(0,212,200,.12)}
+.contract-box .fn.write{color:var(--orange);background:rgba(255,170,0,.06);border-color:rgba(255,170,0,.15)}
+.contract-box .fn.write:hover{background:rgba(255,170,0,.12)}
+.contract-box .fn.admin{color:var(--purple);background:rgba(192,132,252,.06);border-color:rgba(192,132,252,.15)}
+.contract-box .fn.admin:hover{background:rgba(192,132,252,.12)}
+.fn-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+
+/* Discussion note */
+.note{background:rgba(255,170,0,.06);border:1px solid rgba(255,170,0,.2);border-radius:12px;padding:16px 18px;margin:16px 0;font-size:12px;line-height:1.8}
+.note::before{content:'💡 Discussion Point';display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--orange);margin-bottom:6px;font-size:13px}
+.note-danger{background:rgba(255,71,87,.06);border-color:rgba(255,71,87,.2)}
+.note-danger::before{content:'⚠️ Important';color:var(--red)}
+.note-info{background:rgba(0,212,200,.06);border-color:rgba(0,212,200,.2)}
+.note-info::before{content:'ℹ️ Note';color:var(--teal)}
+.note-confirmed{background:rgba(0,229,140,.06);border-color:rgba(0,229,140,.2)}
+.note-confirmed::before{content:'✅ Confirmed';color:var(--teal2)}
+.note-api{background:rgba(77,148,255,.06);border-color:rgba(77,148,255,.2)}
+.note-api::before{content:'🔌 API Recommendation';color:var(--blue)}
+
+/* Approach card */
+.approach{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:14px;position:relative}
+.approach.recommended{border-color:rgba(0,229,140,.35);box-shadow:0 0 20px rgba(0,229,140,.05)}
+.approach.recommended::after{content:'★ Recommended';position:absolute;top:12px;right:14px;font-size:10px;font-weight:600;color:var(--teal2);background:rgba(0,229,140,.1);padding:3px 10px;border-radius:6px}
+.approach.confirmed{border-color:rgba(0,229,140,.5);box-shadow:0 0 20px rgba(0,229,140,.08)}
+.approach.confirmed::after{content:'✅ Confirmed';position:absolute;top:12px;right:14px;font-size:10px;font-weight:600;color:var(--teal2);background:rgba(0,229,140,.15);padding:3px 10px;border-radius:6px}
+.approach h4{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;margin-bottom:8px}
+.pros,.cons{font-size:12px;margin:6px 0}
+.pros li::before{content:'✓ ';color:var(--teal2);font-weight:700}
+.cons li::before{content:'✗ ';color:var(--red);font-weight:700}
+.pros li,.cons li{list-style:none;padding:2px 0}
+
+/* Footer */
+.footer{text-align:center;padding:40px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}
+.footer a{color:var(--teal);text-decoration:none}
+
+/* Responsive */
+@media(max-width:600px){
+  .hero{padding:40px 16px 30px}
+  .container{padding:20px 14px 60px}
+  .card,.contract-box{padding:16px}
+  .diagram{padding:16px 12px}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="sub">Fullstack Architecture & Feature Specification</div>
+  <h1>VALTURA Labs</h1>
+  <div class="ver">v4.0 · 2026 · Polygon DeFi Yield Protocol</div>
+  <div class="badge">📋 Comprehensive Spec — For Final Review</div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nav-inner">
+    <a href="#overview" class="active" onclick="navTo(this)">Overview</a>
+    <a href="#system-flow" onclick="navTo(this)">System Flow</a>
+    <a href="#user-dapp" onclick="navTo(this)">User DApp</a>
+    <a href="#admin-dashboard" onclick="navTo(this)">Admin</a>
+    <a href="#packages" onclick="navTo(this)">Packages</a>
+    <a href="#fees" onclick="navTo(this)">Fees</a>
+    <a href="#commissions" onclick="navTo(this)">Commissions</a>
+    <a href="#spotlight" onclick="navTo(this)">Spotlight</a>
+    <a href="#hotnews" onclick="navTo(this)">Hot News</a>
+    <a href="#contracts" onclick="navTo(this)">Contracts</a>
+    <a href="#backend" onclick="navTo(this)">Backend</a>
+    <a href="#data-model" onclick="navTo(this)">Database</a>
+    <a href="#approaches" onclick="navTo(this)">Approaches</a>
+    <a href="#decisions" onclick="navTo(this)">Decisions</a>
+    <a href="#build-order" onclick="navTo(this)">Build Order</a>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══ 1. OVERVIEW ═══ -->
+<div class="section" id="overview">
+  <div class="section-hd"><div class="num">1</div><h2>System Overview</h2></div>
+
+  <div class="card">
+    <h3>🏗️ Architecture Layers</h3>
+    <p>VALTURA Labs is a DeFi Yield Protocol on Polygon with a binary network commission system. The platform consists of 4 primary layers:</p>
+  </div>
+
+  <div class="flow-grid">
+    <div class="flow-row">
+      <div class="flow-box fb-teal">
+        <div class="icon">🌐</div>
+        <div class="label">User DApp</div>
+        <div class="desc">Mobile-first SPA · Wallet Connect · Deposit · Claim ROI · View Network · Spotlight · Infos</div>
+      </div>
+      <div class="flow-box fb-purple">
+        <div class="icon">⚙️</div>
+        <div class="label">Admin Dashboard</div>
+        <div class="desc">16-page admin panel · Manage Tiers · Fund Ops · Redeem Orders · Exclusive (VIP-360) · Community Rewards</div>
+      </div>
+    </div>
+    <div class="arrow-down">▼ ▼</div>
+    <div class="flow-row">
+      <div class="flow-box fb-blue" style="flex:2">
+        <div class="icon">🔌</div>
+        <div class="label">Backend API</div>
+        <div class="desc">NestJS + TypeScript · REST API · WebSocket Events · PostgreSQL · Off-chain Yield Engine · Job Queue</div>
+      </div>
+    </div>
+    <div class="arrow-down">▼</div>
+    <div class="flow-row">
+      <div class="flow-box fb-orange" style="flex:2">
+        <div class="icon">⛓️</div>
+        <div class="label">Smart Contracts (Polygon)</div>
+        <div class="desc">Solidity · Fund Custody · ROI Distribution · Commission Payout · Redemption · Access Control</div>
+      </div>
+    </div>
+    <div class="arrow-down">▼</div>
+    <div class="flow-row">
+      <div class="flow-box fb-dark" style="flex:2">
+        <div class="icon">💎</div>
+        <div class="label">Polygon Blockchain</div>
+        <div class="desc">USDT (PoS) · POL Gas Token · ~2s Block Time · Low Fees (~$0.01)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <h3>🔗 Network</h3>
+      <ul>
+        <li><strong>Chain:</strong> Polygon Mainnet (137)</li>
+        <li><strong>Token:</strong> USDT (PoS)</li>
+        <li><strong>Gas:</strong> POL (~$0.01/tx)</li>
+        <li><strong>Block time:</strong> ~2 seconds</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🎨 Branding</h3>
+      <ul>
+        <li><strong>Name:</strong> VALTURA</li>
+        <li><strong>Logo:</strong> Butterfly (transparent PNG)</li>
+        <li><strong>Theme:</strong> Dark (teal/green primary)</li>
+        <li><strong>Text:</strong> Pink-to-purple gradient</li>
+        <li><strong>Font:</strong> Montserrat (logo)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>📱 Platform</h3>
+      <ul>
+        <li><strong>User DApp:</strong> Mobile-first, responsive</li>
+        <li><strong>Admin:</strong> Desktop-first, full responsive</li>
+        <li><strong>Auth:</strong> Wallet-based (MetaMask, Trust, WalletConnect, Coinbase)</li>
+        <li><strong>Deploy:</strong> GitHub Pages (frontend)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 2. SYSTEM FLOW ═══ -->
+<div class="section" id="system-flow">
+  <div class="section-hd"><div class="num">2</div><h2>System Data Flow</h2></div>
+
+  <div class="diagram"><pre>
+<span class="hl-teal">┌─────────────────────────────────────────────────────────────────────┐</span>
+<span class="hl-teal">│</span>                        <span class="hl-teal">USER DApp (SPA)</span>                             <span class="hl-teal">│</span>
+<span class="hl-teal">│</span>  Connect Wallet → Register (username) → Deposit → View ROI → Claim → Redeem  <span class="hl-teal">│</span>
+<span class="hl-teal">│</span>  Spotlight (prices) → Hot News → Infos → Network Tree → Referral (?ref=username) <span class="hl-teal">│</span>
+<span class="hl-teal">└──────────────┬──────────────────────────────┬──────────────────────┘</span>
+               │ <span class="hl-muted">REST API / WebSocket</span>          │ <span class="hl-muted">wagmi/viem (on-chain tx)</span>
+               ▼                                ▼
+<span class="hl-blue">┌──────────────────────┐</span>          <span class="hl-orange">┌──────────────────────┐</span>
+<span class="hl-blue">│</span>   <span class="hl-blue">Backend API</span>         <span class="hl-blue">│</span>          <span class="hl-orange">│</span>  <span class="hl-orange">Smart Contracts</span>      <span class="hl-orange">│</span>
+<span class="hl-blue">│</span>  ┌────────────────┐  <span class="hl-blue">│</span>   <span class="hl-muted">listen</span>  <span class="hl-orange">│</span> ┌──────────────────┐ <span class="hl-orange">│</span>
+<span class="hl-blue">│</span>  │ Auth Service    │  <span class="hl-blue">│</span>◄─────── <span class="hl-orange">│</span> │ VaultContract    │ <span class="hl-orange">│</span>
+<span class="hl-blue">│</span>  │ Tree Service    │  <span class="hl-blue">│</span>  <span class="hl-muted">events</span>  <span class="hl-orange">│</span> │ ROIDistributor   │ <span class="hl-orange">│</span>
+<span class="hl-blue">│</span>  │ ROI Calculator  │  <span class="hl-blue">│</span>────────▶<span class="hl-orange">│</span> │ CommissionPayout │ <span class="hl-orange">│</span>
+<span class="hl-blue">│</span>  │ Yield Engine    │  <span class="hl-blue">│</span>  <span class="hl-muted">write</span>   <span class="hl-orange">│</span> │ RedemptionMgr    │ <span class="hl-orange">│</span>
+<span class="hl-blue">│</span>  │ Job Queue       │  <span class="hl-blue">│</span>          <span class="hl-orange">│</span> │ AccessControl    │ <span class="hl-orange">│</span>
+<span class="hl-blue">│</span>  │ Price Feed      │  <span class="hl-blue">│</span>          <span class="hl-orange">│</span> └──────────────────┘ <span class="hl-orange">│</span>
+<span class="hl-blue">│</span>  │ News Aggregator │  <span class="hl-blue">│</span>          <span class="hl-orange">│</span>          │           <span class="hl-orange">│</span>
+<span class="hl-blue">│</span>  └────────────────┘  <span class="hl-blue">│</span>          <span class="hl-orange">└──────────┼───────────┘</span>
+<span class="hl-blue">└──────────┼────────────┘</span>                     ▼
+           ▼                       <span class="hl-purple">┌──────────────────────┐</span>
+<span class="hl-green">┌──────────────────────┐</span>          <span class="hl-purple">│</span>  <span class="hl-purple">Polygon Network</span>     <span class="hl-purple">│</span>
+<span class="hl-green">│</span>  <span class="hl-green">PostgreSQL + Redis</span>  <span class="hl-green">│</span>          <span class="hl-purple">│</span>  USDT · POL           <span class="hl-purple">│</span>
+<span class="hl-green">│</span>  Users · Deposits    <span class="hl-green">│</span>          <span class="hl-purple">│</span>  Immutable Ledger     <span class="hl-purple">│</span>
+<span class="hl-green">│</span>  Tree · ROI Logs     <span class="hl-green">│</span>          <span class="hl-purple">│</span>  Contract State       <span class="hl-purple">│</span>
+<span class="hl-green">│</span>  Commission · Config <span class="hl-green">│</span>          <span class="hl-purple">└──────────────────────┘</span>
+<span class="hl-green">│</span>  Price Cache · News  <span class="hl-green">│</span>
+<span class="hl-green">└──────────────────────┘</span>
+
+<span class="hl-purple">┌─────────────────────────────────────────────────────────────────────┐</span>
+<span class="hl-purple">│</span>                      <span class="hl-purple">ADMIN Dashboard (SPA)</span>                          <span class="hl-purple">│</span>
+<span class="hl-purple">│</span>  16 Admin Pages · Fund Ops · Tiers · Redeem · VIP · Rewards · Tree <span class="hl-purple">│</span>
+<span class="hl-purple">└──────────────┬──────────────────────────────┬──────────────────────┘</span>
+               │ <span class="hl-muted">REST API (admin auth)</span>         │ <span class="hl-muted">wagmi/viem (admin tx)</span>
+               ▼                                ▼
+         <span class="hl-blue">Backend API</span>                   <span class="hl-orange">Smart Contracts</span>
+         <span class="hl-muted">(same server, admin routes)</span>    <span class="hl-muted">(onlyOwner / onlyAdmin)</span>
+
+<span class="hl-blue">┌─────────────────────────────────────────────────────────────────────┐</span>
+<span class="hl-blue">│</span>                    <span class="hl-blue">External APIs (Realtime)</span>                        <span class="hl-blue">│</span>
+<span class="hl-blue">│</span>  CoinGecko API → Crypto Prices   │  CryptoPanic → Crypto News     <span class="hl-blue">│</span>
+<span class="hl-blue">│</span>  50 calls/min (free tier)        │  RSS Feed → Auto-curated       <span class="hl-blue">│</span>
+<span class="hl-blue">└─────────────────────────────────────────────────────────────────────┘</span>
+</pre></div>
+</div>
+
+<!-- ═══ 3. USER DApp ═══ -->
+<div class="section" id="user-dapp">
+  <div class="section-hd"><div class="num">3</div><h2>User DApp — Pages & Features</h2></div>
+
+  <div class="card">
+    <h3>📱 Navigation Structure</h3>
+    <p>Mobile-first SPA with bottom navigation bar. Different nav sets for registered vs unregistered users.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🔓 Unregistered User Nav</h3>
+      <ul>
+        <li><strong>Home</strong> — Hero landing, connect wallet CTA</li>
+        <li><strong>Spotlight</strong> — Realtime crypto prices + news</li>
+        <li><strong>Infos</strong> — Documentary, notices, disclaimer</li>
+        <li><strong>Community</strong> — Social icons row, Documents/PDF, Media Gallery, Press &amp; Media, Rewards overview</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>✅ Registered User Nav</h3>
+      <ul>
+        <li><strong>Home</strong> — Dashboard + invest packages</li>
+        <li><strong>Finance</strong> — Packages / Commission / Rewards tabs</li>
+        <li><strong>Network</strong> — Binary tree visualization</li>
+        <li><strong>Community</strong> — Compact social icons row, Documents/PDF, Media Gallery, Press &amp; Media, Rewards program</li>
+        <li><strong>Infos</strong> — Documentary + notices</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🏠 Home — Dashboard (Registered)</h3>
+    <ul>
+      <li><strong>User Info Banner:</strong> <strong>Username</strong>, Sponsor (address or username), Wallet address, POL balance, USDT balance</li>
+      <li><strong>Key Metrics (3 cards):</strong> Total Deposit, Claimed Income, Unclaimed Income (+ Claim button)</li>
+      <li><strong>Earnings Live:</strong> Today / This Week / Accumulated — real-time updating</li>
+      <li><strong>Investment Packages:</strong> Embedded package selector with 6 packages, amount slider, ROI calculator</li>
+      <li><strong>Live Market Ticker:</strong> 10 crypto prices scrolling (BTC, ETH, POL, USDT, BNB, SOL, XRP, AVAX, ADA, DOT)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>💰 Finance Page — 3 Tabs</h3>
+    <ul>
+      <li><strong>Tab 1 — My Packages:</strong> Active packages, daily ROI per package, claimed/unclaimed, lock countdown, Claim & Redeem buttons</li>
+      <li><strong>Tab 2 — Commission:</strong> Earnings Cap 300% progress bar, 5 income sources (Daily Profit, Binary Bonus, Referral Commission, Binary Commission, Momentum Rewards) with amounts, Claim All button</li>
+      <li><strong>Tab 3 — Rewards:</strong> Momentum Rewards milestones (8 tiers), weak-leg progress bar, done/next/locked states</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>💎 Earnings Center</h3>
+    <p>Central hub for all user earnings. All earnings across the 5 income sources accumulate as <strong>unclaimed</strong> until the user explicitly claims them. The Finance page displays a comprehensive earnings summary and per-source breakdown with Earnings Cap tracking.</p>
+    <ul>
+      <li><strong>Summary Panel:</strong> Total Earnings / Earnings Cap / Claimed / Claimable — with a prominent <strong>Claim</strong> button</li>
+      <li><strong>Earnings Cap Progress Bar:</strong> Visual 300% cap indicator showing how much of the Earnings Cap has been consumed (claimed + unclaimed combined)</li>
+      <li><strong>Breakdown Table (5 rows):</strong> Each income source (Daily Profit, Binary Bonus, Referral Commission, Binary Commission, Momentum Rewards) displays its own <strong>Total Earned</strong> and <strong>Unclaimed</strong> amounts</li>
+      <li><strong>Claim Action:</strong> Clicking "Claim" moves all unclaimed earnings to the user's available balance (on-chain transfer minus claim fee)</li>
+      <li><strong>Post-Claim:</strong> After a successful claim, unclaimed resets to 0, claimed total increases, and a confirmation toast is shown</li>
+    </ul>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🌳 Network Page</h3>
+      <ul>
+        <li>Total Downlines count</li>
+        <li>Left Leg / Right Leg sales amounts</li>
+        <li>Direct VIP Packages / Team VIP Packages counts</li>
+        <li>VIP Sales Remaining (shows remaining VIP sales needed for next milestone)</li>
+        <li>Direct Referrals count</li>
+        <li>Weak-leg progress percentage</li>
+        <li>Binary Tree visualization (3 levels deep) — each node shows <strong>username</strong>, <strong>wallet</strong>, <strong>personal invest</strong>, <strong>L-VIP/R</strong> (left/right VIP count), <strong>L-ROI/R</strong> (left/right ROI)</li>
+        <li>Personal referral link: <code>?ref=username</code> (copy to clipboard)</li>
+        <li>View All Downlines button</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🌍 Community Page</h3>
+      <ul>
+        <li><strong>Social Icons Row:</strong> Compact row of social media icons (Telegram, Twitter/X, YouTube, Website, Polygonscan) — links open in new tab</li>
+        <li><strong>Documents / PDF:</strong> Downloadable documents section — whitepaper, pitch deck, terms &amp; conditions, privacy policy (PDF viewer or download)</li>
+        <li><strong>Media Gallery:</strong> Photo and video gallery showcasing events, team, and platform highlights — grid layout with lightbox</li>
+        <li><strong>Press &amp; Media:</strong> Press releases, media coverage, and featured articles — card layout with source, date, and external link</li>
+        <li><strong>Rewards Program:</strong> Momentum Rewards milestones overview, tier progress</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>📖 Infos Page</h3>
+      <ul>
+        <li><strong>Documentary tab:</strong> Overview, Architecture, Packages, Affiliate, Disclaimer, Privacy</li>
+        <li><strong>Notice tab:</strong> Admin-published announcements</li>
+        <li>Multi-card content layout</li>
+        <li>Color-coded sections (green, blue, purple)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔄 Modals (User DApp)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Modal</th><th>Purpose</th><th>Key Elements</th></tr>
+        <tr><td>Connect Wallet</td><td>Wallet selection + registration</td><td>MetaMask, Trust Wallet, WalletConnect, Coinbase Wallet. Registration form includes username input with availability check, referrer field (accepts username or wallet address)</td></tr>
+        <tr><td>Confirm Investment</td><td>Deposit flow</td><td>3-step progress: Approve USDT → Confirm → Done</td></tr>
+        <tr><td>Claim Income</td><td>Claim ROI</td><td>Total amount, Claim fee 2.5%, Net receive amount</td></tr>
+        <tr><td>Redeem Funds</td><td>Withdraw capital</td><td>Package name, Redeem fee 2.5%, Processing time MAX 12h</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔐 Wallet Connection Flow</h3>
+    <ul>
+      <li><strong>Step 1:</strong> Unconnected — shows hero page with "Connect Wallet" CTA</li>
+      <li><strong>Step 2:</strong> Connected (unregistered) — shows wallet balance (POL, USDT) + Registration form with <strong>username input</strong> (3-20 chars, alphanumeric + underscore, real-time availability check via <code>GET /check-username/:username</code>), referrer field (wallet address or username), + T&C checkbox</li>
+      <li><strong>Step 3:</strong> Registered — full dashboard access with all pages, wallet badge + <strong>username</strong> displayed in header</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>👤 Username System</h3>
+    <ul>
+      <li><strong>Required at registration:</strong> Every user must choose a unique username (3-20 characters, alphanumeric and underscores only)</li>
+      <li><strong>Availability check:</strong> Real-time check as user types — calls <code>GET /check-username/:username</code> with debounce, returns <code>{ available: true/false }</code></li>
+      <li><strong>Validation rules:</strong> <code>/^[a-zA-Z0-9_]{3,20}$/</code> — no spaces, no special characters, case-insensitive uniqueness</li>
+      <li><strong>Profile display:</strong> Username shown in User Info Banner (alongside wallet address), header badge, and Network page nodes</li>
+      <li><strong>Referral links:</strong> Users can share referral links using their username: <code>?ref=username</code> (resolved to wallet address on the backend)</li>
+      <li><strong>Immutable after registration:</strong> Username cannot be changed once set (bound to wallet address)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ 4. ADMIN DASHBOARD ═══ -->
+<div class="section" id="admin-dashboard">
+  <div class="section-hd"><div class="num">4</div><h2>Admin Dashboard — 16 Pages</h2></div>
+
+  <div class="card">
+    <h3>🔐 Admin Authentication</h3>
+    <ul>
+      <li>Wallet-based login (MetaMask, WalletConnect, Coinbase)</li>
+      <li>Whitelisted admin wallet addresses checked on AccessControl contract</li>
+      <li>Multi-step detection overlay: Connecting → Requesting signature → Verifying → Checking registry</li>
+      <li>Role-based: Contract Owner (super admin) vs Admin (standard)</li>
+    </ul>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>#</th><th>Page</th><th>Description</th><th>Key Features</th></tr>
+      <tr><td>1</td><td><span class="tag tag-teal">Overview</span></td><td>General Dashboard</td><td>4 fund cards (Treasury, Reward & Redeem, Growth Reserve, Leader Bonus), total allocations</td></tr>
+      <tr><td>2</td><td><span class="tag tag-teal">Lookup</span></td><td>Wallet / Username Lookup</td><td>Search by wallet address or <strong>username</strong> (<code>GET /admin/search?q=</code>), filter (All/Exclusive (VIP-360)/Active/Inactive), view deposits, earnings, commission, lock status</td></tr>
+      <tr><td>3</td><td><span class="tag tag-teal">Tree</span></td><td>System Tree</td><td>Full binary tree visualization (5 depth levels), expandable nodes, investment amounts per node</td></tr>
+      <tr><td>4</td><td><span class="tag tag-orange">Redeem</span></td><td>Redeem Funds Orders</td><td>Pending/Approved/Rejected orders table, Approve/Reject actions, days pending counter</td></tr>
+      <tr><td>5</td><td><span class="tag tag-orange">Expiry</span></td><td>Expiry Tracker</td><td>Filter by days ahead (7/14/30/60/90), lock period countdown, status badges, review action</td></tr>
+      <tr><td>6</td><td><span class="tag tag-blue">Funds</span></td><td>Fund Management</td><td>4 fund cards + Receive (QR + contract address) + Withdraw (2-step: input → confirm) modals</td></tr>
+      <tr><td>7</td><td><span class="tag tag-purple">Exclusive (VIP-360)</span></td><td>Exclusive (VIP-360) Leader Access</td><td>Issue leader packages, KPI tracking, lock/unlock toggle, issued packages table</td></tr>
+      <tr><td>8</td><td><span class="tag tag-orange">Fee</span></td><td>Withdrawal Fee</td><td>Slider 0-99%, large display (56px font), Save/Reset, last updated metadata</td></tr>
+      <tr><td>9</td><td><span class="tag tag-green">Profit</span></td><td>Deposit Tiers & Rates</td><td>Dual-handle tier slider ($0-$30K), 6 package rate cards × 3 tiers each, monthly projections</td></tr>
+      <tr><td>10</td><td><span class="tag tag-red">Lock</span></td><td>Account Claim Lock</td><td>Lock/unlock user claims, reason input, locked accounts table</td></tr>
+      <tr><td>11</td><td><span class="tag tag-blue">Announce</span></td><td>Announcements</td><td>New announcement form, display start/end datetime, popup toggle, preview, recent list</td></tr>
+      <tr><td>12</td><td><span class="tag tag-blue">Social</span></td><td>Social Links</td><td>Website, Telegram, Twitter/X, YouTube, Whitepaper, Polygonscan URLs</td></tr>
+      <tr><td>13</td><td><span class="tag tag-purple">Admins</span></td><td>Admin Management</td><td>Appoint/remove admins, role labels, owner protection, current admins table</td></tr>
+      <tr><td>14</td><td><span class="tag tag-red">Owner</span></td><td>Transfer Ownership</td><td>IRREVERSIBLE action, type confirmation required, understanding checkbox, 2-step verify</td></tr>
+      <tr><td>15</td><td><span class="tag tag-green">Rewards</span></td><td>Community Rewards</td><td>5 income source rate sliders (Earnings Cap/Binary Bonus/Referral Commission/Binary Commission/Momentum Rewards), 10-tier Momentum rewards table</td></tr>
+      <tr><td>16</td><td><span class="tag tag-teal">Infos</span></td><td>Infos Content Editor</td><td>5 content tabs (Disclaimer/Notice/Documentary/Comparison/Fee Structure), textarea editor, preview</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>💰 Fund Management — 4 Fund Types</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Fund</th><th>Purpose</th><th>Default %</th></tr>
+        <tr><td>🎯 Treasury Fund</td><td>Operational funds, running costs, team allocation</td><td>Admin configurable</td></tr>
+        <tr><td>💰 Reward & Redeem Fund</td><td>ROI payouts, commission payouts, capital redemptions</td><td>Admin configurable</td></tr>
+        <tr><td>📈 Growth Reserve</td><td>Investment backing, DeFi yield farming, liquidity</td><td>Admin configurable</td></tr>
+        <tr><td>🏆 Leader Bonus Fund</td><td>Exclusive (VIP-360) leader rewards, KPI bonuses</td><td>Admin configurable</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚙️ Fund Withdraw Flow (2-Step)</h3>
+    <ul>
+      <li><strong>Step 1:</strong> Enter destination wallet + amount + reason/note. Quick-fill buttons (25%, 50%, 75%, MAX). Wallet validation.</li>
+      <li><strong>Step 2:</strong> Review & confirm summary. Network fee estimate. Irreversible warning. "Yes, Withdraw" confirmation.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ 5. PACKAGES ═══ -->
+<div class="section" id="packages">
+  <div class="section-hd"><div class="num">5</div><h2>Investment Packages & Deposit Tiers</h2></div>
+
+  <div class="card">
+    <h3>📦 6 Investment Packages</h3>
+    <p>Each package has different lock periods, daily ROI rates (per tier), and commission eligibility. All packages have a minimum deposit of $10 (multiples of $10).</p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Package</th><th>Lock Period</th><th>Min Deposit</th><th>Tier 1 Rate</th><th>Tier 2 Rate</th><th>Tier 3 Rate</th><th>Commission</th></tr>
+      <tr>
+        <td><strong>Essential</strong></td><td><span class="tag tag-teal">No lock</span></td><td>$10</td>
+        <td>0.20%/day</td><td>0.25%/day</td><td>0.35%/day</td>
+        <td><span class="tag tag-red">No</span></td>
+      </tr>
+      <tr>
+        <td><strong>Classic</strong></td><td><span class="tag tag-blue">30 days</span></td><td>$10</td>
+        <td>0.25%/day</td><td>0.35%/day</td><td>0.45%/day</td>
+        <td><span class="tag tag-red">No</span></td>
+      </tr>
+      <tr>
+        <td><strong>Ultimate</strong></td><td><span class="tag tag-blue">90 days</span></td><td>$10</td>
+        <td>0.40%/day</td><td>0.50%/day</td><td>0.60%/day</td>
+        <td><span class="tag tag-red">No</span></td>
+      </tr>
+      <tr>
+        <td><strong>Signature</strong></td><td><span class="tag tag-purple">180 days</span></td><td>$10</td>
+        <td>0.60%/day</td><td>0.70%/day</td><td>0.80%/day</td>
+        <td><span class="tag tag-red">No</span></td>
+      </tr>
+      <tr>
+        <td><strong>Exclusive (VIP-360)</strong></td><td><span class="tag tag-orange">360 days</span></td><td>$10</td>
+        <td>0.80%/day</td><td>1.00%/day</td><td>1.20%/day</td>
+        <td><span class="tag tag-green">Yes</span></td>
+      </tr>
+      <tr>
+        <td><strong>Exclusive (VIP-360) Leader Access</strong></td><td><span class="tag tag-orange">360 days</span></td><td>$10 (admin grant)</td>
+        <td>0.80%/day</td><td>1.00%/day</td><td>1.20%/day</td>
+        <td><span class="tag tag-green">Yes</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>📊 Deposit Tiers (Admin Configurable)</h3>
+    <p>Deposit tiers determine which daily ROI rate applies. Admin can adjust boundaries via dual-handle slider ($0 — $30,000).</p>
+  </div>
+
+  <div class="grid-3">
+    <div class="flow-box fb-teal">
+      <div class="label">Tier 1</div>
+      <div class="desc" style="color:var(--text)">$0 — $3,000</div>
+      <div class="desc">Lowest rates</div>
+    </div>
+    <div class="flow-box fb-blue">
+      <div class="label">Tier 2</div>
+      <div class="desc" style="color:var(--text)">$3,000 — $5,000</div>
+      <div class="desc">Medium rates</div>
+    </div>
+    <div class="flow-box fb-purple">
+      <div class="label">Tier 3</div>
+      <div class="desc" style="color:var(--text)">$5,000+</div>
+      <div class="desc">Highest rates</div>
+    </div>
+  </div>
+
+  <div class="note note-confirmed">
+    <strong>Admin Tier Slider:</strong> Dual-handle range slider in admin panel. Range $0 — $30,000, step $100. Minimum gap between handles: $500. Default: $3,000 / $5,000. Changes reflect immediately on all package rate cards.
+  </div>
+
+  <div class="card">
+    <h3>📈 Monthly ROI Projections (Example: $1,000 deposit)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Package</th><th>Tier</th><th>Daily</th><th>Monthly (30d)</th><th>Annual</th></tr>
+        <tr><td>Essential</td><td>Tier 1</td><td>$2.00</td><td>$60.00</td><td>$730.00</td></tr>
+        <tr><td>Classic</td><td>Tier 2</td><td>$3.50</td><td>$105.00</td><td>$1,277.50</td></tr>
+        <tr><td>Ultimate</td><td>Tier 3</td><td>$6.00</td><td>$180.00</td><td>$2,190.00</td></tr>
+        <tr><td>Signature</td><td>Tier 3</td><td>$8.00</td><td>$240.00</td><td>$2,920.00</td></tr>
+        <tr><td>Exclusive (VIP-360)</td><td>Tier 3</td><td>$12.00</td><td>$360.00</td><td>$4,380.00</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 6. FEES ═══ -->
+<div class="section" id="fees">
+  <div class="section-hd"><div class="num">6</div><h2>Fee Structure</h2></div>
+
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Fee Type</th><th>Default Rate</th><th>Applied When</th><th>Admin Configurable</th><th>Range</th></tr>
+      <tr>
+        <td><strong>Claim Fee</strong></td>
+        <td><span class="tag tag-orange">2.5%</span></td>
+        <td>User claims accumulated ROI</td>
+        <td>Yes (basis points)</td>
+        <td>0 — 99%</td>
+      </tr>
+      <tr>
+        <td><strong>Redemption Fee</strong></td>
+        <td><span class="tag tag-orange">2.5%</span></td>
+        <td>User redeems funds</td>
+        <td>Yes (basis points)</td>
+        <td>0 — 99%</td>
+      </tr>
+      <tr>
+        <td><strong>Platform Withdrawal Fee</strong></td>
+        <td><span class="tag tag-red">5%</span></td>
+        <td>All member claim transactions platform-wide</td>
+        <td>Yes (admin slider)</td>
+        <td>0 — 99%</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="note note-info">
+    <strong>Fee Flow:</strong> User claims $100 ROI → Platform deducts 2.5% claim fee ($2.50) → User receives $97.50 USDT.<br>
+    Admin Withdrawal Fee (5%) is a separate platform-wide fee applied to all claim transactions. Admin can adjust via slider in admin panel — takes effect immediately.
+  </div>
+
+  <div class="card">
+    <h3>⏱️ Processing Times</h3>
+    <ul>
+      <li><strong>Claim ROI:</strong> Instant (on-chain transaction)</li>
+      <li><strong>Claim Commission:</strong> Instant (on-chain transaction)</li>
+      <li><strong>Redeem Funds:</strong> MAX 12 hours (requires admin approval)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══ 7. COMMISSIONS ═══ -->
+<div class="section" id="commissions">
+  <div class="section-hd"><div class="num">7</div><h2>Commission & Reward System</h2></div>
+
+  <div class="card">
+    <h3>🤝 Affiliate Eligibility</h3>
+    <p>Must hold an active <strong>Exclusive (VIP-360)</strong> package to be eligible for any commissions and rewards.</p>
+  </div>
+
+  <div class="card">
+    <h3>📦 Total Income Cap (Earnings Cap) — 300% of Exclusive (VIP-360) Investment</h3>
+    <p>The Earnings Cap of 300% is calculated on the Exclusive (VIP-360) investment amount, combining <strong>ALL</strong> of the following 5 income sources:</p>
+  </div>
+
+  <div class="grid-5">
+    <div class="flow-box fb-green">
+      <div class="icon">💰</div>
+      <div class="label">Daily Profit</div>
+      <div class="desc" style="color:var(--text);font-size:18px;font-weight:700">Tier-based</div>
+      <div class="desc">Daily ROI earnings</div>
+    </div>
+    <div class="flow-box fb-blue">
+      <div class="icon">⚖️</div>
+      <div class="label">Binary Bonus</div>
+      <div class="desc" style="color:var(--text);font-size:18px;font-weight:700">5%</div>
+      <div class="desc">Calculated on investment volume from Signature (180 Days) &amp; Exclusive (VIP-360) packages only</div>
+    </div>
+    <div class="flow-box fb-teal">
+      <div class="icon">👤</div>
+      <div class="label">Referral Commission</div>
+      <div class="desc" style="color:var(--text);font-size:18px;font-weight:700">10%</div>
+      <div class="desc">Calculated on daily profit of directly sponsored members</div>
+    </div>
+    <div class="flow-box fb-purple">
+      <div class="icon">🌐</div>
+      <div class="label">Binary Commission</div>
+      <div class="desc" style="color:var(--text);font-size:18px;font-weight:700">15%</div>
+      <div class="desc">Calculated on daily profit of the weaker leg</div>
+    </div>
+    <div class="flow-box fb-orange">
+      <div class="icon">🚀</div>
+      <div class="label">Momentum Rewards</div>
+      <div class="desc" style="color:var(--text);font-size:18px;font-weight:700">Variable</div>
+      <div class="desc">Milestone-based weak-leg bonuses</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔒 Earnings Cap Rule — 300% (All Income Sources)</h3>
+    <ul>
+      <li>Earnings Cap 300% includes total income from <strong>ALL</strong> 5 sources: Daily Profit + Binary Bonus + Referral Commission + Binary Commission + Momentum Rewards</li>
+      <li>Total income capped at <strong>300%</strong> of the Exclusive (VIP-360) investment amount</li>
+      <li>Example: $5,000 Exclusive (VIP-360) investment → Earnings Cap limit = $15,000 total income</li>
+      <li>When total income from sources (1)+(2)+(3)+(4)+(5) reaches 300% of the Exclusive (VIP-360) investment amount, the package will <strong>stop earning all types of income</strong>. Capital withdrawal is available after 360 days.</li>
+      <li>Admin can adjust multiplier (default 3x = 300%, range 1x — 10x)</li>
+      <li>Progress bar shown on Finance > Commission tab</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>📋 Explicit Claim Mechanism</h3>
+    <p>All 5 income sources require an <strong>explicit Claim action</strong> from the user before funds move to their available balance.</p>
+    <ul>
+      <li><strong>Accumulation:</strong> Daily Profit, Binary Bonus, Referral Commission, Binary Commission, and Momentum Rewards all accumulate as "unclaimed" earnings in the database</li>
+      <li><strong>Claim Action:</strong> Users must click the <strong>Claim</strong> button (Finance page) to transfer all pending unclaimed earnings to their wallet balance (on-chain USDT transfer minus claim fee)</li>
+      <li><strong>Unclaimed counts toward Earnings Cap:</strong> Unclaimed earnings still count toward the 300% Earnings Cap — the cap tracks total earned (claimed + unclaimed), not just claimed</li>
+      <li><strong>Claim Fee:</strong> The platform claim fee (default 2.5%) is deducted at the moment of claiming, not at the moment of earning</li>
+      <li><strong>Claim Lock:</strong> Admin can lock a user's claim ability via the Lock page — locked users cannot claim until unlocked</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>⚠️ Forfeiture Rule</h3>
+    <ul>
+      <li>If the system generates commissions while no active Exclusive (VIP-360) package is held, <strong>ALL pending commissions will be permanently lost</strong></li>
+      <li>Example: Binary matching may show as calculated in the system, but the bonus will NOT be credited if no active Exclusive (VIP-360) package is held</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>📊 Commission Rates Summary</h3>
+    <ul>
+      <li><strong>Binary Bonus:</strong> 5% on investment volume from Signature (180 Days) &amp; Exclusive (VIP-360)</li>
+      <li><strong>Referral Commission:</strong> 10% on daily profit of directly sponsored members</li>
+      <li><strong>Binary Commission:</strong> 15% on daily profit of the weaker leg</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🚀 Momentum Rewards — 10 Tiers</h3>
+    <p>One-time bonuses triggered when weak-leg volume reaches milestones. All amounts admin-configurable.</p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>Tier</th><th>Weak-Leg Volume</th><th>Bonus Reward</th><th>Status</th></tr>
+      <tr><td>1</td><td>$10,000</td><td><strong>$250</strong></td><td><span class="tag tag-teal">Entry</span></td></tr>
+      <tr><td>2</td><td>$25,000</td><td><strong>$500</strong></td><td><span class="tag tag-teal">Bronze</span></td></tr>
+      <tr><td>3</td><td>$50,000</td><td><strong>$1,000</strong></td><td><span class="tag tag-blue">Silver</span></td></tr>
+      <tr><td>4</td><td>$100,000</td><td><strong>$2,500</strong></td><td><span class="tag tag-blue">Gold</span></td></tr>
+      <tr><td>5</td><td>$250,000</td><td><strong>$5,000</strong></td><td><span class="tag tag-purple">Platinum</span></td></tr>
+      <tr><td>6</td><td>$500,000</td><td><strong>$10,000</strong></td><td><span class="tag tag-purple">Diamond</span></td></tr>
+      <tr><td>7</td><td>$1,000,000</td><td><strong>$25,000</strong></td><td><span class="tag tag-orange">Crown</span></td></tr>
+      <tr><td>8</td><td>$2,500,000</td><td><strong>$50,000</strong></td><td><span class="tag tag-orange">Royal</span></td></tr>
+      <tr><td>9</td><td>$5,000,000</td><td><strong>$100,000</strong></td><td><span class="tag tag-red">Legend</span></td></tr>
+      <tr><td>10</td><td>$10,000,000</td><td><strong>$250,000</strong></td><td><span class="tag tag-red">Titan</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ 8. SPOTLIGHT ═══ -->
+<div class="section" id="spotlight">
+  <div class="section-hd"><div class="num">8</div><h2>Spotlight — Realtime Market Data</h2></div>
+
+  <div class="card">
+    <h3>📊 Realtime Crypto Prices</h3>
+    <p>The Spotlight page displays live cryptocurrency prices for top 10 coins with animated scrolling ticker and detailed cards. Data must be <strong>REALTIME</strong> — auto-refreshing every 30–60 seconds.</p>
+    <ul>
+      <li><strong>Coins tracked:</strong> BTC, ETH, POL, USDT, BNB, SOL, XRP, AVAX, ADA, DOT</li>
+      <li><strong>Data shown:</strong> Rank, Symbol, Name, Price, Market Cap, 24h Change %</li>
+      <li><strong>UI:</strong> Scrolling ticker bar (top) + Color-coded price cards (grid)</li>
+      <li><strong>Directional indicators:</strong> Green up / Red down with arrow icons</li>
+    </ul>
+  </div>
+
+  <div class="note note-api">
+    <strong>Option A — CoinGecko API (Recommended)</strong><br>
+    • <strong>Free tier:</strong> 50 calls/min, no API key required for basic endpoints<br>
+    • <strong>Endpoint:</strong> <code>GET https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,matic-network,tether,binancecoin,solana,ripple,avalanche-2,cardano,polkadot&order=market_cap_desc&sparkline=false</code><br>
+    • <strong>Returns:</strong> current_price, market_cap, price_change_percentage_24h, image<br>
+    • <strong>Rate limit:</strong> 10-30 calls/min (demo) — sufficient for 30s refresh on frontend<br>
+    • <strong>Pros:</strong> No signup needed, comprehensive data, widely adopted (Metamask, Coinbase use it)<br>
+    • <strong>Cons:</strong> Rate limits can be hit during peak volatility
+  </div>
+
+  <div class="note note-api">
+    <strong>Option B — CoinMarketCap API</strong><br>
+    • <strong>Free tier:</strong> 10,000 calls/month, API key required<br>
+    • <strong>Endpoint:</strong> <code>GET https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=10</code><br>
+    • <strong>Header:</strong> <code>X-CMC_PRO_API_KEY: your-key</code><br>
+    • <strong>Pros:</strong> Institutional-grade data, consistent<br>
+    • <strong>Cons:</strong> Requires signup, limited free calls, 11 endpoints only on free tier
+  </div>
+
+  <div class="note note-api">
+    <strong>Option C — CryptoCompare API</strong><br>
+    • <strong>Free tier:</strong> 100,000 calls/month, API key required<br>
+    • <strong>Endpoint:</strong> <code>GET https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,MATIC&tsyms=USD</code><br>
+    • <strong>Pros:</strong> High free limits, includes social data, mining data<br>
+    • <strong>Cons:</strong> Less standardized response format
+  </div>
+
+  <div class="approach confirmed">
+    <h4 style="color:var(--teal2)">Recommended: CoinGecko (primary) + Backend Cache</h4>
+    <p style="font-size:12px;color:var(--text);margin-bottom:8px">Backend fetches CoinGecko every 30s → caches in Redis → Frontend polls backend every 30s. This avoids exposing API keys and handles rate limits gracefully.</p>
+    <div class="grid-2">
+      <ul class="pros">
+        <li>No API key needed for CoinGecko free tier</li>
+        <li>Backend cache prevents rate limit issues</li>
+        <li>Single source of truth for all connected clients</li>
+        <li>Can fallback to CryptoCompare if CoinGecko is down</li>
+      </ul>
+      <ul class="cons">
+        <li>30s delay vs true real-time (acceptable for price display)</li>
+        <li>Requires backend cron job</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="diagram"><pre>
+<span class="hl-teal">Frontend (Spotlight)</span>          <span class="hl-blue">Backend</span>              <span class="hl-orange">External API</span>
+       │                          │                      │
+       │  GET /api/prices         │                      │
+       │─────────────────────────▶│                      │
+       │                          │  (cache hit?)        │
+       │                          │──┐                   │
+       │                          │  │ YES → return      │
+       │◄─────────────────────────│◄─┘ cached data      │
+       │                          │                      │
+       │                          │  <span class="hl-green">CRON every 30s</span>      │
+       │                          │─────────────────────▶│
+       │                          │  GET /v3/coins/      │
+       │                          │  markets             │
+       │                          │◄─────────────────────│
+       │                          │  Cache in Redis      │
+       │                          │  (TTL: 60s)          │
+  </pre></div>
+</div>
+
+<!-- ═══ 9. HOT NEWS ═══ -->
+<div class="section" id="hotnews">
+  <div class="section-hd"><div class="num">9</div><h2>Hot News — Auto-Update System</h2></div>
+
+  <div class="card">
+    <h3>📰 Crypto News Feed</h3>
+    <p>The Spotlight page includes a Hot News section that <strong>automatically updates</strong> with curated crypto news. News items display with tags (HOT, POLYGON, DEFI, etc.), title, time ago, and color-coded categories.</p>
+    <ul>
+      <li><strong>Auto-refresh:</strong> Every 5 minutes (or on page load)</li>
+      <li><strong>News count:</strong> Display latest 10–15 items</li>
+      <li><strong>Categories:</strong> Polygon, DeFi, Bitcoin, Ethereum, Regulation, Market</li>
+      <li><strong>Tags:</strong> HOT (trending), BREAKING, NEW</li>
+    </ul>
+  </div>
+
+  <div class="note note-api">
+    <strong>Option A — CryptoPanic API (Recommended)</strong><br>
+    • <strong>Free tier:</strong> Unlimited reads, API key required (free signup)<br>
+    • <strong>Endpoint:</strong> <code>GET https://cryptopanic.com/api/v1/posts/?auth_token=KEY&currencies=BTC,ETH,MATIC&filter=hot&public=true</code><br>
+    • <strong>Returns:</strong> title, url, source, published_at, currencies, kind (news/media/video)<br>
+    • <strong>Filters:</strong> hot, rising, bullish, bearish, important, lol<br>
+    • <strong>Pros:</strong> Curated news, community voting, sentiment scores, free unlimited reads<br>
+    • <strong>Cons:</strong> Requires API key signup
+  </div>
+
+  <div class="note note-api">
+    <strong>Option B — CoinGecko News (via /status_updates)</strong><br>
+    • <strong>Free tier:</strong> Same as price API (50 calls/min)<br>
+    • <strong>Endpoint:</strong> <code>GET https://api.coingecko.com/api/v3/status_updates</code><br>
+    • <strong>Pros:</strong> Same API as prices — no extra signup<br>
+    • <strong>Cons:</strong> Limited to project status updates, not general crypto news
+  </div>
+
+  <div class="note note-api">
+    <strong>Option C — RSS Feed Aggregation</strong><br>
+    • <strong>Sources:</strong> CoinDesk RSS, CoinTelegraph RSS, The Block RSS, Decrypt RSS<br>
+    • <strong>Backend:</strong> Parse RSS with <code>rss-parser</code> npm package<br>
+    • <strong>RSS URLs:</strong><br>
+    &nbsp;&nbsp;• <code>https://www.coindesk.com/arc/outboundfeeds/rss/</code><br>
+    &nbsp;&nbsp;• <code>https://cointelegraph.com/rss</code><br>
+    &nbsp;&nbsp;• <code>https://www.theblock.co/rss.xml</code><br>
+    &nbsp;&nbsp;• <code>https://decrypt.co/feed</code><br>
+    • <strong>Pros:</strong> Free, no API key, multiple sources, full article snippets<br>
+    • <strong>Cons:</strong> Need to build parser, no sentiment data, rate varies per source
+  </div>
+
+  <div class="approach confirmed">
+    <h4 style="color:var(--teal2)">Recommended: CryptoPanic (primary) + RSS Fallback</h4>
+    <p style="font-size:12px;color:var(--text);margin-bottom:8px">Backend fetches CryptoPanic every 5 min → stores latest 20 items in Redis. If CryptoPanic unavailable, falls back to RSS aggregation from CoinDesk + CoinTelegraph.</p>
+    <div class="grid-2">
+      <ul class="pros">
+        <li>CryptoPanic: curated, community-voted, sentiment</li>
+        <li>RSS fallback: multiple free sources, no API key</li>
+        <li>Backend caches — frontend never hits external APIs directly</li>
+        <li>Category tagging and filtering supported</li>
+      </ul>
+      <ul class="cons">
+        <li>CryptoPanic requires free API key signup</li>
+        <li>RSS fallback: less structured, needs parsing logic</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="diagram"><pre>
+<span class="hl-teal">Frontend (Hot News)</span>         <span class="hl-blue">Backend</span>                  <span class="hl-orange">External</span>
+       │                         │                         │
+       │  GET /api/news          │                         │
+       │────────────────────────▶│                         │
+       │                         │  <span class="hl-green">CRON every 5 min</span>       │
+       │◄────────────────────────│                         │
+       │  [{title, url, tag,     │  1. CryptoPanic API     │
+       │    source, time_ago}]   │─────────────────────────▶│
+       │                         │◄─────────────────────────│
+       │                         │                         │
+       │                         │  2. RSS Fallback        │
+       │                         │  (if CryptoPanic down)  │
+       │                         │─────────────────────────▶│
+       │                         │  Parse CoinDesk +       │
+       │                         │  CoinTelegraph RSS      │
+       │                         │◄─────────────────────────│
+       │                         │                         │
+       │                         │  Store in Redis         │
+       │                         │  (TTL: 10 min)          │
+  </pre></div>
+</div>
+
+<!-- ═══ 10. CONTRACTS ═══ -->
+<div class="section" id="contracts">
+  <div class="section-hd"><div class="num">10</div><h2>Smart Contracts Architecture</h2></div>
+
+  <div class="card">
+    <h3>⛓️ Contract Overview — 5 Core Contracts</h3>
+    <p>All contracts deploy on <strong>Polygon PoS</strong> using USDT (PoS) as primary token.<br>
+    Pattern: <strong>Upgradeable Proxy (UUPS)</strong> for logic upgrades without losing state.</p>
+  </div>
+
+  <div class="tabs" id="contract-tabs">
+    <button class="active" onclick="switchTab('contract-tabs','ct-vault',this)">Vault</button>
+    <button onclick="switchTab('contract-tabs','ct-roi',this)">ROI Distributor</button>
+    <button onclick="switchTab('contract-tabs','ct-commission',this)">Commission</button>
+    <button onclick="switchTab('contract-tabs','ct-redeem',this)">Redemption</button>
+    <button onclick="switchTab('contract-tabs','ct-access',this)">Access Control</button>
+  </div>
+
+  <div id="ct-vault" class="tab-panel active">
+    <div class="contract-box">
+      <h4 style="color:var(--orange)">📦 ValturVault.sol</h4>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Core vault: receives deposits, manages packages, tracks positions, lock periods.</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Function</th><th>Type</th><th>Description</th></tr>
+          <tr><td><code>deposit(pkgId, amount, referrer)</code></td><td><span class="tag tag-orange">write</span></td><td>User deposits USDT, selects package, records referrer</td></tr>
+          <tr><td><code>getPosition(user, posId)</code></td><td><span class="tag tag-teal">read</span></td><td>Get position info (amount, package, startTime, locked)</td></tr>
+          <tr><td><code>getUserPositions(user)</code></td><td><span class="tag tag-teal">read</span></td><td>List all positions for a user</td></tr>
+          <tr><td><code>requestRedemption(posId)</code></td><td><span class="tag tag-orange">write</span></td><td>User requests capital withdrawal (if lock expired)</td></tr>
+          <tr><td><code>setTierBoundaries(lo, hi)</code></td><td><span class="tag tag-purple">admin</span></td><td>Update Tier 1/2/3 boundaries</td></tr>
+          <tr><td><code>setPackageRates(pkgId, rates[])</code></td><td><span class="tag tag-purple">admin</span></td><td>Update ROI % per tier for a package</td></tr>
+          <tr><td><code>totalValueLocked()</code></td><td><span class="tag tag-teal">read</span></td><td>Total TVL in vault</td></tr>
+        </table>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:10px"><strong>Events:</strong> Deposited(user, amount, pkgId, referrer) · RedemptionRequested(user, posId) · TierUpdated(lo, hi)</p>
+      <div class="note note-info" style="margin-top:14px">
+        <strong>Username Storage:</strong> Usernames are stored <strong>off-chain</strong> in PostgreSQL only (not on-chain). The smart contract identifies users solely by wallet address. The backend maintains the binding between username and wallet address. This avoids unnecessary gas costs and allows flexible username validation rules without contract upgrades.
+      </div>
+    </div>
+  </div>
+
+  <div id="ct-roi" class="tab-panel">
+    <div class="contract-box">
+      <h4 style="color:var(--teal2)">📈 ROIDistributor.sol</h4>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Calculate and distribute daily ROI based on tier & package rates. Backend triggers daily.</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Function</th><th>Type</th><th>Description</th></tr>
+          <tr><td><code>distributeROI(users[], amounts[])</code></td><td><span class="tag tag-purple">admin</span></td><td>Batch distribute daily ROI (backend cron call)</td></tr>
+          <tr><td><code>claimROI()</code></td><td><span class="tag tag-orange">write</span></td><td>User claims accumulated ROI → USDT transfer</td></tr>
+          <tr><td><code>pendingROI(user)</code></td><td><span class="tag tag-teal">read</span></td><td>Unclaimed ROI for user</td></tr>
+          <tr><td><code>totalDistributed()</code></td><td><span class="tag tag-teal">read</span></td><td>Total ROI distributed</td></tr>
+          <tr><td><code>setClaimFee(bps)</code></td><td><span class="tag tag-purple">admin</span></td><td>Set claim fee (basis points, default 250 = 2.5%)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="ct-commission" class="tab-panel">
+    <div class="contract-box">
+      <h4 style="color:var(--blue)">🤝 CommissionPayout.sol</h4>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Manages 5 income sources: Daily Profit, Binary Bonus (5% on investment volume from Signature &amp; Exclusive), Referral Commission (10% on daily profit of direct sponsors), Binary Commission (15% on daily profit of weaker leg), Momentum Rewards. Earnings Cap 300% applies to all income.</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Function</th><th>Type</th><th>Description</th></tr>
+          <tr><td><code>distributeCommissions(users[], types[], amounts[])</code></td><td><span class="tag tag-purple">admin</span></td><td>Batch distribute commissions (backend calculates)</td></tr>
+          <tr><td><code>claimCommission()</code></td><td><span class="tag tag-orange">write</span></td><td>User claims all pending commissions</td></tr>
+          <tr><td><code>claimAllEarnings()</code></td><td><span class="tag tag-orange">write</span></td><td>User claims all unclaimed earnings across all 5 income sources — deducts claim fee, transfers net USDT, emits EarningsClaimed event</td></tr>
+          <tr><td><code>getUnclaimedEarnings(user)</code></td><td><span class="tag tag-teal">read</span></td><td>Returns unclaimed amounts per income type and total unclaimed</td></tr>
+          <tr><td><code>pendingCommission(user)</code></td><td><span class="tag tag-teal">read</span></td><td>Pending commission details (Daily Profit, Binary Bonus, Referral Commission, Binary Commission, Momentum Rewards)</td></tr>
+          <tr><td><code>getEarningsCapStatus(user)</code></td><td><span class="tag tag-teal">read</span></td><td>Earnings Cap 300% status (used/remaining)</td></tr>
+          <tr><td><code>setEarningsCapMultiplier(x)</code></td><td><span class="tag tag-purple">admin</span></td><td>Change Earnings Cap multiplier (default 3x)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="ct-redeem" class="tab-panel">
+    <div class="contract-box">
+      <h4 style="color:var(--red)">💸 RedemptionManager.sol</h4>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Capital redemption: user request → admin approve/reject → USDT transfer (minus fee).</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Function</th><th>Type</th><th>Description</th></tr>
+          <tr><td><code>approveRedemption(orderId)</code></td><td><span class="tag tag-purple">admin</span></td><td>Approve + transfer USDT to user (minus fee)</td></tr>
+          <tr><td><code>rejectRedemption(orderId, reason)</code></td><td><span class="tag tag-purple">admin</span></td><td>Reject redemption request</td></tr>
+          <tr><td><code>getRedemptionOrder(orderId)</code></td><td><span class="tag tag-teal">read</span></td><td>Order details (user, amount, status, timestamp)</td></tr>
+          <tr><td><code>getPendingOrders()</code></td><td><span class="tag tag-teal">read</span></td><td>List pending orders (admin view)</td></tr>
+          <tr><td><code>setRedemptionFee(bps)</code></td><td><span class="tag tag-purple">admin</span></td><td>Set redemption fee (default 500 = 5%)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="ct-access" class="tab-panel">
+    <div class="contract-box">
+      <h4 style="color:var(--purple)">🔐 ValturAccessControl.sol</h4>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Role-based access: Owner, Admin, Operator. Manages permissions + lock/unlock user claims.</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Function</th><th>Type</th><th>Description</th></tr>
+          <tr><td><code>grantAdmin(address)</code></td><td><span class="tag tag-purple">owner</span></td><td>Add new admin</td></tr>
+          <tr><td><code>revokeAdmin(address)</code></td><td><span class="tag tag-purple">owner</span></td><td>Remove admin</td></tr>
+          <tr><td><code>transferOwnership(newOwner)</code></td><td><span class="tag tag-purple">owner</span></td><td>Transfer ownership (IRREVERSIBLE)</td></tr>
+          <tr><td><code>lockClaims(user)</code></td><td><span class="tag tag-purple">admin</span></td><td>Lock user's claim ability</td></tr>
+          <tr><td><code>unlockClaims(user)</code></td><td><span class="tag tag-purple">admin</span></td><td>Unlock claim</td></tr>
+          <tr><td><code>grantVIPLeader(user)</code></td><td><span class="tag tag-purple">admin</span></td><td>Grant Exclusive (VIP-360) Leader Access</td></tr>
+          <tr><td><code>isAdmin(address)</code></td><td><span class="tag tag-teal">read</span></td><td>Check admin role</td></tr>
+        </table>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:10px"><strong>Roles:</strong> OWNER (super admin, 1 address) → ADMIN (multi-sig possible) → OPERATOR (backend service account)</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 11. BACKEND ═══ -->
+<div class="section" id="backend">
+  <div class="section-hd"><div class="num">11</div><h2>Backend API Architecture</h2></div>
+
+  <div class="diagram"><pre>
+<span class="hl-blue">NestJS Backend</span>
+<span class="hl-muted">├──</span> <span class="hl-teal">Auth Module</span>
+<span class="hl-muted">│   ├──</span> SIWE (Sign-In with Ethereum) — wallet signature verification
+<span class="hl-muted">│   ├──</span> JWT tokens (access + refresh)
+<span class="hl-muted">│   └──</span> Role guard: User / Admin / Owner
+<span class="hl-muted">│</span>
+<span class="hl-muted">├──</span> <span class="hl-teal">User Module</span>
+<span class="hl-muted">│   ├──</span> POST  /auth/nonce          — get SIWE nonce
+<span class="hl-muted">│   ├──</span> POST  /auth/verify          — verify signature → JWT
+<span class="hl-muted">│   ├──</span> POST  /register             — register with username + referrer <span class="hl-muted">(username required, 3-20 chars, alphanumeric + underscore)</span>
+<span class="hl-muted">│   ├──</span> GET   /check-username/:username — check availability <span class="hl-muted">→ { available: true/false }</span>
+<span class="hl-muted">│   ├──</span> GET   /user/profile         — wallet info, <span class="hl-teal">username</span>, balances, tier
+<span class="hl-muted">│   ├──</span> GET   /user/positions        — active deposits
+<span class="hl-muted">│   ├──</span> GET   /user/earnings         — earnings breakdown: per income type (total, claimed, unclaimed) + Earnings Cap status
+<span class="hl-muted">│   ├──</span> POST  /user/claim            — claim all pending unclaimed earnings (triggers on-chain transfer minus fee)
+<span class="hl-muted">│   ├──</span> GET   /user/commissions      — 5 income sources (Daily Profit, Binary Bonus, Referral Commission, Binary Commission, Momentum Rewards) + Earnings Cap status
+<span class="hl-muted">│   └──</span> GET   /user/network          — binary tree (downline)
+<span class="hl-muted">│</span>
+<span class="hl-muted">├──</span> <span class="hl-purple">Admin Module</span>
+<span class="hl-muted">│   ├──</span> GET   /admin/dashboard       — overview stats (TVL, users, volume)
+<span class="hl-muted">│   ├──</span> GET   /admin/lookup/:addr    — query any wallet
+<span class="hl-muted">│   ├──</span> GET   /admin/search?q=       — search by <span class="hl-teal">username</span> or wallet address
+<span class="hl-muted">│   ├──</span> GET   /admin/user/:id/earnings — admin view of user earnings breakdown (total, claimed, unclaimed per income type)
+<span class="hl-muted">│   ├──</span> GET   /admin/tree             — full system tree
+<span class="hl-muted">│   ├──</span> GET   /admin/redemptions      — pending/all orders
+<span class="hl-muted">│   ├──</span> POST  /admin/redeem/:id       — approve/reject
+<span class="hl-muted">│   ├──</span> PUT   /admin/tiers            — update tier boundaries + rates
+<span class="hl-muted">│   ├──</span> PUT   /admin/fee              — update withdrawal fee
+<span class="hl-muted">│   ├──</span> POST  /admin/lock/:addr       — lock/unlock user claims
+<span class="hl-muted">│   ├──</span> POST  /admin/vip-leader/:addr — grant/revoke Exclusive (VIP-360)
+<span class="hl-muted">│   ├──</span> PUT   /admin/funds             — update fund allocation %
+<span class="hl-muted">│   ├──</span> POST  /admin/announce          — create announcement
+<span class="hl-muted">│   ├──</span> PUT   /admin/social-links      — update social media URLs
+<span class="hl-muted">│   ├──</span> POST  /admin/admins            — manage admin wallets
+<span class="hl-muted">│   ├──</span> PUT   /admin/rewards           — update commission rates (Binary Bonus, Referral Commission, Binary Commission) + momentum tiers
+<span class="hl-muted">│   └──</span> PUT   /admin/infos/:section    — update documentary/notice content
+<span class="hl-muted">│</span>
+<span class="hl-muted">├──</span> <span class="hl-orange">Blockchain Module</span>
+<span class="hl-muted">│   ├──</span> Event Listener  — subscribe contract events (Deposited, Claimed, etc.)
+<span class="hl-muted">│   ├──</span> TX Executor     — send admin txs to contracts (via OPERATOR key)
+<span class="hl-muted">│   └──</span> Block Scanner   — sync missed events on startup
+<span class="hl-muted">│</span>
+<span class="hl-muted">├──</span> <span class="hl-green">ROI Engine</span> <span class="hl-muted">(Cron Job — daily)</span>
+<span class="hl-muted">│   ├──</span> Calculate daily ROI for all active positions
+<span class="hl-muted">│   ├──</span> Apply tier-based rates from config
+<span class="hl-muted">│   ├──</span> Batch call distributeROI() on contract
+<span class="hl-muted">│   └──</span> Log distribution to PostgreSQL
+<span class="hl-muted">│</span>
+<span class="hl-muted">├──</span> <span class="hl-green">Commission Engine</span> <span class="hl-muted">(Cron Job — on deposit event)</span>
+<span class="hl-muted">│   ├──</span> Walk binary tree upline
+<span class="hl-muted">│   ├──</span> Calculate Binary Bonus (5% on Signature &amp; Exclusive volume) / Referral Commission (10% on daily profit of direct sponsors) / Binary Commission (15% on daily profit of weaker leg) / Momentum Rewards
+<span class="hl-muted">│   ├──</span> Check Earnings Cap (300% of Exclusive VIP-360 investment) per user
+<span class="hl-muted">│   └──</span> Batch call distributeCommissions() on contract
+<span class="hl-muted">│</span>
+<span class="hl-muted">├──</span> <span class="hl-blue">Price Feed Module</span> <span class="hl-muted">(Cron — every 30s)</span>
+<span class="hl-muted">│   ├──</span> Fetch CoinGecko /coins/markets (10 coins)
+<span class="hl-muted">│   ├──</span> Cache in Redis (TTL: 60s)
+<span class="hl-muted">│   └──</span> GET /api/prices — serve cached data to frontend
+<span class="hl-muted">│</span>
+<span class="hl-muted">├──</span> <span class="hl-blue">News Aggregator</span> <span class="hl-muted">(Cron — every 5 min)</span>
+<span class="hl-muted">│   ├──</span> Fetch CryptoPanic API (hot/rising crypto news)
+<span class="hl-muted">│   ├──</span> Fallback: Parse RSS (CoinDesk, CoinTelegraph)
+<span class="hl-muted">│   ├──</span> Cache in Redis (TTL: 10 min, 20 items)
+<span class="hl-muted">│   └──</span> GET /api/news — serve curated news to frontend
+<span class="hl-muted">│</span>
+<span class="hl-muted">└──</span> <span class="hl-teal">WebSocket Gateway</span>
+<span class="hl-muted">    ├──</span> Real-time position updates
+<span class="hl-muted">    ├──</span> ROI distribution notifications
+<span class="hl-muted">    ├──</span> Price ticker push (every 30s)
+<span class="hl-muted">    └──</span> Admin: new redemption alerts
+</pre></div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🗄️ Tech Stack — Backend</h3>
+      <ul>
+        <li><strong>NestJS</strong> + TypeScript — modular, DI, decorators</li>
+        <li><strong>PostgreSQL</strong> + Prisma ORM — type-safe queries</li>
+        <li><strong>ethers.js v6</strong> — contract interaction</li>
+        <li><strong>BullMQ</strong> + Redis — job queue (ROI cron, commission calc)</li>
+        <li><strong>Passport</strong> + SIWE — wallet auth</li>
+        <li><strong>Socket.io</strong> — real-time events</li>
+        <li><strong>rss-parser</strong> — news RSS fallback</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🛡️ Security Layers</h3>
+      <ul>
+        <li><strong>SIWE</strong> — Sign-In with Ethereum (no passwords)</li>
+        <li><strong>JWT</strong> — short-lived access + refresh tokens</li>
+        <li><strong>Role Guards</strong> — User / Admin / Owner middleware</li>
+        <li><strong>Rate Limiting</strong> — per-wallet throttle</li>
+        <li><strong>CORS</strong> — whitelist frontend domains only</li>
+        <li><strong>Helmet</strong> — security headers</li>
+        <li><strong>HSM/KMS</strong> — OPERATOR key management</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 12. DATABASE ═══ -->
+<div class="section" id="data-model">
+  <div class="section-hd"><div class="num">12</div><h2>Database Schema (PostgreSQL)</h2></div>
+
+  <div class="diagram"><pre>
+<span class="hl-teal">users</span>
+├── id              UUID PK
+├── wallet_address  VARCHAR(42) UNIQUE <span class="hl-muted">-- 0x...</span>
+├── username        VARCHAR(20) UNIQUE NOT NULL <span class="hl-muted">-- alphanumeric + underscore, 3-20 chars</span>
+├── referrer_id     UUID FK → users.id
+├── registered_at   TIMESTAMP
+├── is_locked       BOOLEAN <span class="hl-muted">-- claim lock</span>
+├── is_vip_leader   BOOLEAN
+├── role            ENUM(user, admin, owner)
+└── INDEX(username) <span class="hl-muted">-- fast lookup by username</span>
+<span class="hl-muted">-- Constraint: username ~ '^[a-zA-Z0-9_]{3,20}$'</span>
+
+<span class="hl-orange">positions</span>
+├── id              UUID PK
+├── user_id         UUID FK → users.id
+├── package_id      ENUM(essential, classic, ultimate, signature, exclusive_vip360, exclusive_vip360_leader)
+├── amount          DECIMAL(18,6) <span class="hl-muted">-- USDT</span>
+├── tier            ENUM(t1, t2, t3)
+├── daily_rate_bps  INT <span class="hl-muted">-- basis points (e.g., 80 = 0.80%)</span>
+├── started_at      TIMESTAMP
+├── lock_until      TIMESTAMP <span class="hl-muted">-- NULL for Essential</span>
+├── status          ENUM(active, redeemed, cancelled)
+└── tx_hash         VARCHAR(66) <span class="hl-muted">-- deposit tx</span>
+
+<span class="hl-green">roi_distributions</span>
+├── id              UUID PK
+├── user_id         UUID FK → users.id
+├── position_id     UUID FK → positions.id
+├── amount          DECIMAL(18,6)
+├── distributed_at  DATE
+└── batch_tx_hash   VARCHAR(66) <span class="hl-muted">-- on-chain batch tx</span>
+
+<span class="hl-blue">commissions</span>
+├── id              UUID PK
+├── user_id         UUID FK → users.id
+├── type            ENUM(daily_profit, binary_bonus, referral_commission, binary_commission, momentum_rewards)
+├── amount          DECIMAL(18,6)
+├── source_user_id  UUID FK → users.id <span class="hl-muted">-- who triggered it</span>
+├── created_at      TIMESTAMP
+└── claimed         BOOLEAN
+
+<span class="hl-red">redemption_orders</span>
+├── id              UUID PK
+├── user_id         UUID FK → users.id
+├── position_id     UUID FK → positions.id
+├── amount          DECIMAL(18,6)
+├── fee_bps         INT
+├── net_amount      DECIMAL(18,6) <span class="hl-muted">-- amount - fee</span>
+├── status          ENUM(pending, approved, rejected)
+├── admin_id        UUID FK → users.id <span class="hl-muted">-- who processed</span>
+├── requested_at    TIMESTAMP
+├── processed_at    TIMESTAMP
+└── tx_hash         VARCHAR(66)
+
+<span class="hl-purple">binary_tree</span>
+├── id              UUID PK
+├── user_id         UUID FK → users.id UNIQUE
+├── parent_id       UUID FK → binary_tree.id
+├── position        ENUM(left, right)
+├── left_volume     DECIMAL(18,6)
+├── right_volume    DECIMAL(18,6)
+├── left_vip_count  INT <span class="hl-muted">-- VIP packages in left leg</span>
+├── right_vip_count INT <span class="hl-muted">-- VIP packages in right leg</span>
+├── left_roi        DECIMAL(18,6) <span class="hl-muted">-- total ROI in left leg</span>
+├── right_roi       DECIMAL(18,6) <span class="hl-muted">-- total ROI in right leg</span>
+├── vip_sales_remaining INT <span class="hl-muted">-- remaining VIP sales to next milestone</span>
+└── depth           INT
+
+<span class="hl-orange">platform_config</span> <span class="hl-muted">(single row, admin-controlled)</span>
+├── tier_lo         INT <span class="hl-muted">-- default 3000</span>
+├── tier_hi         INT <span class="hl-muted">-- default 5000</span>
+├── claim_fee_bps   INT <span class="hl-muted">-- default 250</span>
+├── redeem_fee_bps  INT <span class="hl-muted">-- default 500</span>
+├── withdraw_fee    INT <span class="hl-muted">-- default 5%</span>
+├── earnings_cap_multi INT <span class="hl-muted">-- default 3 (300% of Exclusive VIP-360 investment)</span>
+├── fund_treasury   INT <span class="hl-muted">-- % allocation</span>
+├── fund_reward     INT
+├── fund_growth     INT
+├── fund_leader     INT
+├── package_rates   JSONB <span class="hl-muted">-- {essential:{t1:20,t2:25,t3:35}, classic:{...}, ...}</span>
+├── momentum_tiers  JSONB <span class="hl-muted">-- [{vol:10000,bonus:250}, ...]</span>
+├── comm_referral       INT <span class="hl-muted">-- default 10% (on daily profit of direct sponsors)</span>
+├── comm_binary_bonus   INT <span class="hl-muted">-- default 5% (on investment volume from Signature &amp; Exclusive)</span>
+├── comm_binary         INT <span class="hl-muted">-- default 15% (on daily profit of weaker leg)</span>
+└── social_links    JSONB <span class="hl-muted">-- {telegram:"...", twitter:"...", ...}</span>
+
+<span class="hl-blue">announcements</span>
+├── id              UUID PK
+├── title           VARCHAR(255)
+├── content         TEXT
+├── is_popup        BOOLEAN
+├── popup_duration  INT <span class="hl-muted">-- seconds</span>
+├── display_start   TIMESTAMP
+├── display_end     TIMESTAMP
+├── created_by      UUID FK → users.id
+└── created_at      TIMESTAMP
+
+<span class="hl-teal">infos_content</span>
+├── id              UUID PK
+├── section         ENUM(disclaimer, notice, documentary, comparison, fee_structure)
+├── content         TEXT
+├── updated_by      UUID FK → users.id
+└── updated_at      TIMESTAMP
+
+<span class="hl-orange">earnings</span> <span class="hl-muted">-- aggregated earnings per user per package per income type</span>
+├── id              UUID PK
+├── user_id         UUID FK → users.id
+├── position_id     UUID FK → positions.id <span class="hl-muted">-- Exclusive (VIP-360) package</span>
+├── income_type     ENUM(daily_profit, binary_bonus, referral_commission, binary_commission, momentum_rewards)
+├── total_earned    DECIMAL(18,6) <span class="hl-muted">-- lifetime total for this type</span>
+├── total_claimed   DECIMAL(18,6) <span class="hl-muted">-- amount already claimed</span>
+├── unclaimed       DECIMAL(18,6) <span class="hl-muted">-- total_earned - total_claimed</span>
+├── updated_at      TIMESTAMP
+└── UNIQUE(user_id, position_id, income_type)
+
+<span class="hl-purple">claim_transactions</span> <span class="hl-muted">-- logs each claim action</span>
+├── id              UUID PK
+├── user_id         UUID FK → users.id
+├── position_id     UUID FK → positions.id
+├── gross_amount    DECIMAL(18,6) <span class="hl-muted">-- total unclaimed at time of claim</span>
+├── fee_bps         INT <span class="hl-muted">-- claim fee applied (basis points)</span>
+├── fee_amount      DECIMAL(18,6)
+├── net_amount      DECIMAL(18,6) <span class="hl-muted">-- gross - fee → sent to user</span>
+├── breakdown       JSONB <span class="hl-muted">-- {daily_profit:X, binary_bonus:Y, ...}</span>
+├── tx_hash         VARCHAR(66) <span class="hl-muted">-- on-chain tx hash</span>
+├── status          ENUM(pending, confirmed, failed)
+├── claimed_at      TIMESTAMP
+└── confirmed_at    TIMESTAMP
+
+<span class="hl-green">price_cache</span> <span class="hl-muted">(Redis — not PostgreSQL)</span>
+├── key: "prices"   JSON <span class="hl-muted">-- [{symbol:"BTC",price:97000,...}]</span>
+└── TTL: 60s
+
+<span class="hl-green">news_cache</span> <span class="hl-muted">(Redis — not PostgreSQL)</span>
+├── key: "news"     JSON <span class="hl-muted">-- [{title:"...",url:"...",tag:"HOT",...}]</span>
+└── TTL: 600s
+</pre></div>
+</div>
+
+<!-- ═══ 13. APPROACHES ═══ -->
+<div class="section" id="approaches">
+  <div class="section-hd"><div class="num">13</div><h2>Architecture Approaches</h2></div>
+
+  <div class="approach confirmed">
+    <h4 style="color:var(--teal2)">Approach A — Hybrid (Off-chain Calc + On-chain Settlement) ✅ CONFIRMED</h4>
+    <p style="font-size:12px;color:var(--text);margin-bottom:8px">Backend calculates ROI & commission off-chain → batch distribute on contract → user claims on-chain.</p>
+    <div class="grid-2">
+      <ul class="pros">
+        <li>Low gas: 1 batch tx for hundreds of users</li>
+        <li>Flexible: easy rate/tier adjustments</li>
+        <li>Fast: no on-chain iteration</li>
+        <li>Admin control: pause, adjust anytime</li>
+      </ul>
+      <ul class="cons">
+        <li>Requires trust in backend (not fully decentralized)</li>
+        <li>Backend downtime = pause distributions</li>
+        <li>Needs backup strategy for failures</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="approach">
+    <h4 style="color:var(--blue)">Approach B — Fully On-chain (Not selected)</h4>
+    <p style="font-size:12px;color:var(--text);margin-bottom:8px">All calculation on smart contract. User self-claim, contract calculates ROI from timestamp.</p>
+    <div class="grid-2">
+      <ul class="pros">
+        <li>Fully decentralized, trustless</li>
+        <li>No backend for core logic</li>
+        <li>Transparent and verifiable</li>
+      </ul>
+      <ul class="cons">
+        <li>Very high gas (per-claim calculation)</li>
+        <li>Complex contract = audit risk</li>
+        <li>Hard to change rates (contract upgrade needed)</li>
+        <li>Binary tree traversal on-chain = expensive</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="approach">
+    <h4 style="color:var(--purple)">Approach C — Fully Off-chain + Merkle Proof (Not selected)</h4>
+    <p style="font-size:12px;color:var(--text);margin-bottom:8px">Backend computes everything, publishes Merkle root on-chain. User claims with Merkle proof.</p>
+    <div class="grid-2">
+      <ul class="pros">
+        <li>Extremely low gas (just verify proof)</li>
+        <li>Highly scalable</li>
+        <li>1 tx to set root for all users</li>
+      </ul>
+      <ul class="cons">
+        <li>Complex for users (fetch proof)</li>
+        <li>Backend critical: if down = can't claim</li>
+        <li>Merkle tree management complexity</li>
+        <li>Hard to debug disputes</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ 14. DECISIONS ═══ -->
+<div class="section" id="decisions">
+  <div class="section-hd"><div class="num">14</div><h2>Confirmed Technical Decisions</h2></div>
+
+  <div class="tbl-wrap">
+    <table>
+      <tr><th>#</th><th>Decision</th><th>Options Evaluated</th><th>Confirmed Choice</th><th>Rationale</th></tr>
+      <tr>
+        <td>1</td><td>Architecture pattern</td>
+        <td>A: Hybrid · B: On-chain · C: Merkle</td>
+        <td><span class="tag tag-green">A — Hybrid</span></td>
+        <td>Best balance of flexibility, gas cost, and control</td>
+      </tr>
+      <tr>
+        <td>2</td><td>Contract upgrade pattern</td>
+        <td>UUPS Proxy · Diamond (EIP-2535) · Immutable</td>
+        <td><span class="tag tag-green">UUPS Proxy</span></td>
+        <td>Simple per-contract upgrades, well-audited pattern</td>
+      </tr>
+      <tr>
+        <td>3</td><td>Backend framework</td>
+        <td>NestJS · Express · Fastify</td>
+        <td><span class="tag tag-green">NestJS</span></td>
+        <td>Modular architecture, DI, decorators, TypeScript-first</td>
+      </tr>
+      <tr>
+        <td>4</td><td>Database</td>
+        <td>PostgreSQL · MongoDB · MySQL</td>
+        <td><span class="tag tag-green">PostgreSQL</span></td>
+        <td>ACID, JSONB support, Prisma ORM, relational data model</td>
+      </tr>
+      <tr>
+        <td>5</td><td>Backend ↔ Contract</td>
+        <td>ethers.js v6 · viem · web3.js</td>
+        <td><span class="tag tag-green">ethers.js v6</span></td>
+        <td>Mature, well-documented, TypeScript support</td>
+      </tr>
+      <tr>
+        <td>6</td><td>Dev network</td>
+        <td>Polygon Amoy · Hardhat local · Both</td>
+        <td><span class="tag tag-green">Both</span></td>
+        <td>Hardhat for unit tests, Amoy for integration tests</td>
+      </tr>
+      <tr>
+        <td>7</td><td>Monorepo</td>
+        <td>Turborepo · Nx · pnpm workspaces</td>
+        <td><span class="tag tag-green">pnpm workspaces</span></td>
+        <td>Simple, no extra tooling, fast installs</td>
+      </tr>
+      <tr>
+        <td>8</td><td>Frontend ↔ Contract</td>
+        <td>wagmi/viem · ethers.js · web3-react</td>
+        <td><span class="tag tag-green">wagmi + viem</span></td>
+        <td>Modern React hooks, auto wallet management</td>
+      </tr>
+      <tr>
+        <td>9</td><td>Price data API</td>
+        <td>CoinGecko · CoinMarketCap · CryptoCompare</td>
+        <td><span class="tag tag-green">CoinGecko + cache</span></td>
+        <td>Free tier, no key needed, 50 calls/min, Redis cache</td>
+      </tr>
+      <tr>
+        <td>10</td><td>News data API</td>
+        <td>CryptoPanic · RSS · CoinGecko status</td>
+        <td><span class="tag tag-green">CryptoPanic + RSS</span></td>
+        <td>Curated news, sentiment, RSS fallback for reliability</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="note note-danger">
+    <strong>Security Critical:</strong><br>
+    • OPERATOR private key must be protected (HSM or KMS)<br>
+    • Smart contracts must pass <strong>audit</strong> before mainnet deploy<br>
+    • Rate limiting + monitoring for all admin actions<br>
+    • Multi-sig for operations above threshold amount
+  </div>
+</div>
+
+<!-- ═══ 15. BUILD ORDER ═══ -->
+<div class="section" id="build-order">
+  <div class="section-hd"><div class="num">15</div><h2>Build Order & Monorepo Structure</h2></div>
+
+  <div class="diagram"><pre>
+<span class="hl-teal">valtura-labs/</span>
+├── <span class="hl-blue">packages/</span>
+│   ├── <span class="hl-teal">web/</span>              <span class="hl-muted">← User DApp (React + Vite + TS)</span>
+│   │   ├── src/
+│   │   ├── package.json
+│   │   └── vite.config.ts
+│   │
+│   ├── <span class="hl-purple">admin/</span>            <span class="hl-muted">← Admin Dashboard (React + Vite + TS)</span>
+│   │   ├── src/
+│   │   ├── package.json
+│   │   └── vite.config.ts
+│   │
+│   ├── <span class="hl-blue">api/</span>              <span class="hl-muted">← Backend API (NestJS + TS)</span>
+│   │   ├── src/
+│   │   │   ├── auth/
+│   │   │   ├── user/
+│   │   │   ├── admin/
+│   │   │   ├── blockchain/
+│   │   │   ├── roi-engine/
+│   │   │   ├── commission/
+│   │   │   ├── price-feed/      <span class="hl-muted">← CoinGecko integration</span>
+│   │   │   └── news-aggregator/  <span class="hl-muted">← CryptoPanic + RSS</span>
+│   │   ├── prisma/
+│   │   │   └── schema.prisma
+│   │   └── package.json
+│   │
+│   ├── <span class="hl-orange">contracts/</span>        <span class="hl-muted">← Smart Contracts (Solidity + Hardhat)</span>
+│   │   ├── contracts/
+│   │   │   ├── ValturVault.sol
+│   │   │   ├── ROIDistributor.sol
+│   │   │   ├── CommissionPayout.sol
+│   │   │   ├── RedemptionManager.sol
+│   │   │   └── ValturAccessControl.sol
+│   │   ├── test/
+│   │   ├── scripts/
+│   │   │   ├── deploy.ts
+│   │   │   └── verify.ts
+│   │   ├── hardhat.config.ts
+│   │   └── package.json
+│   │
+│   └── <span class="hl-green">shared/</span>           <span class="hl-muted">← Shared types, ABIs, constants</span>
+│       ├── types/
+│       ├── abis/
+│       ├── constants.ts
+│       └── package.json
+│
+├── <span class="hl-muted">docker-compose.yml</span>    <span class="hl-muted">← PostgreSQL + Redis + API</span>
+├── <span class="hl-muted">pnpm-workspace.yaml</span>
+├── <span class="hl-muted">package.json</span>
+└── <span class="hl-muted">turbo.json</span>            <span class="hl-muted">← optional build orchestration</span>
+</pre></div>
+
+  <div class="card">
+    <h3>🚀 7-Phase Build Order</h3>
+    <ul>
+      <li><strong>Phase 1:</strong> Smart Contracts — ValturVault + AccessControl → deploy Amoy testnet</li>
+      <li><strong>Phase 2:</strong> Backend API — Auth + Blockchain module + basic endpoints</li>
+      <li><strong>Phase 3:</strong> ROIDistributor + CommissionPayout contracts → Backend ROI/Commission engines</li>
+      <li><strong>Phase 4:</strong> RedemptionManager contract → Admin redemption flow</li>
+      <li><strong>Phase 5:</strong> User DApp (React) — connect to real API + contracts + Spotlight (CoinGecko) + News (CryptoPanic)</li>
+      <li><strong>Phase 6:</strong> Admin Dashboard (React) — 16 pages, connect to API</li>
+      <li><strong>Phase 7:</strong> Testing + Security Audit + Deploy Polygon Mainnet</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <p><strong>VALTURA Labs</strong> · Fullstack Architecture & Feature Specification · v4.0 · 2026</p>
+  <p style="margin-top:6px"><a href="admin.html">Admin Dashboard</a> · <a href="index.html">User DApp</a> · <a href="https://github.com/nodelinkcommunity/INTERTERA">GitHub Repo</a></p>
+</div>
+
+<!-- JS -->
+<script>
+function navTo(el) {
+  document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function switchTab(tabGroupId, panelId, btn) {
+  var tabBar = btn.parentElement;
+  tabBar.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  var next = tabBar.nextElementSibling;
+  while (next && next.classList.contains('tab-panel')) {
+    next.classList.remove('active');
+    next = next.nextElementSibling;
+  }
+  document.getElementById(panelId).classList.add('active');
+}
+
+var sections = document.querySelectorAll('.section');
+var navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', function() {
+  var scrollY = window.scrollY + 100;
+  sections.forEach(function(sec) {
+    if (sec.offsetTop <= scrollY && sec.offsetTop + sec.offsetHeight > scrollY) {
+      var id = sec.id;
+      navLinks.forEach(function(a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -3547,13 +3547,13 @@ function fromUSDT(n){return parseFloat(ethers.formatUnits(n,6));}
 function txLink(hash){return CONFIG.EXPLORER+'/tx/'+hash;}
 
 const ADDR='0x742d35Cc6634C0532925a3b8D4C9Ed7C8e2fc42b';
-const PKGS={essential:{name:'Essential',lock:'No lock',lockDays:90,min:10,com:false,pkgType:1,
+const PKGS={essential:{name:'Essential',lock:'No lock',lockDays:0,min:10,com:false,pkgType:0,
     tiers:[{lbl:'Tier 1',pct:.20},{lbl:'Tier 2',pct:.25},{lbl:'Tier 3',pct:.35}]},
-  classic30:{name:'Classic',lock:'30 days',lockDays:180,min:10,com:false,pkgType:2,
+  classic30:{name:'Classic',lock:'30 days',lockDays:30,min:10,com:false,pkgType:2,
     tiers:[{lbl:'Tier 1',pct:.25},{lbl:'Tier 2',pct:.35},{lbl:'Tier 3',pct:.45}]},
-  ultimate90:{name:'Ultimate',lock:'90 days',lockDays:270,min:10,com:false,pkgType:3,
+  ultimate90:{name:'Ultimate',lock:'90 days',lockDays:90,min:10,com:false,pkgType:3,
     tiers:[{lbl:'Tier 1',pct:.40},{lbl:'Tier 2',pct:.50},{lbl:'Tier 3',pct:.60}]},
-  signature180:{name:'Signature',lock:'180 days',lockDays:360,min:10,com:false,pkgType:4,
+  signature180:{name:'Signature',lock:'180 days',lockDays:180,min:10,com:false,pkgType:4,
     tiers:[{lbl:'Tier 1',pct:.60},{lbl:'Tier 2',pct:.70},{lbl:'Tier 3',pct:.80}]},
   exclusive360:{name:'Exclusive · VIP',lock:'360 days',lockDays:360,min:10,com:true,pkgType:5,
     tiers:[{lbl:'Tier 1',pct:.80},{lbl:'Tier 2',pct:1.00},{lbl:'Tier 3',pct:1.20}]}};

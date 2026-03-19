@@ -3540,7 +3540,7 @@ function fromUSDT(n){return parseFloat(ethers.formatUnits(n,6));}
 function txLink(hash){return CONFIG.EXPLORER+'/tx/'+hash;}
 
 const ADDR='0x742d35Cc6634C0532925a3b8D4C9Ed7C8e2fc42b';
-const PKGS={essential:{name:'Essential',pct:.35,lock:'No lock',lockDays:0,min:10,com:false,tier:0,pkgType:0},classic30:{name:'Classic',pct:.45,lock:'30 days',lockDays:30,min:10,com:false,tier:1,pkgType:1},ultimate90:{name:'Ultimate',pct:.60,lock:'90 days',lockDays:90,min:10,com:false,tier:2,pkgType:2},signature180:{name:'Signature',pct:.80,lock:'180 days',lockDays:180,min:10,com:false,tier:3,pkgType:3},exclusive360:{name:'Exclusive · VIP',pct:1.2,lock:'360 days',lockDays:360,min:10,com:true,tier:4,pkgType:4}};
+const PKGS={essential:{name:'Essential',pct:.35,lock:'No lock',lockDays:1,min:10,com:false,tier:1,pkgType:1},classic30:{name:'Classic',pct:.45,lock:'30 days',lockDays:30,min:10,com:false,tier:1,pkgType:2},ultimate90:{name:'Ultimate',pct:.60,lock:'90 days',lockDays:90,min:10,com:false,tier:1,pkgType:3},signature180:{name:'Signature',pct:.80,lock:'180 days',lockDays:180,min:10,com:false,tier:1,pkgType:4},exclusive360:{name:'Exclusive · VIP',pct:1.2,lock:'360 days',lockDays:360,min:10,com:true,tier:1,pkgType:5}};
 let S={conn:false,reg:false,pkg:'essential',is:0,username:'',provider:null,signer:null,jwt:null,wallet:null};
 
 (()=>{const c=document.getElementById('pts');for(let i=0;i<20;i++){const p=document.createElement('div');p.className='pt';const s=Math.random()*3+1;p.style.cssText=`width:${s}px;height:${s}px;background:${Math.random()>.5?'rgba(62,221,181,.5)':'rgba(130,71,229,.5)'};left:${Math.random()*100}%;animation-duration:${Math.random()*14+8}s;animation-delay:${Math.random()*14}s;`;c.appendChild(p);}})();

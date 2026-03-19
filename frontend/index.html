@@ -3540,7 +3540,18 @@ function fromUSDT(n){return parseFloat(ethers.formatUnits(n,6));}
 function txLink(hash){return CONFIG.EXPLORER+'/tx/'+hash;}
 
 const ADDR='0x742d35Cc6634C0532925a3b8D4C9Ed7C8e2fc42b';
-const PKGS={essential:{name:'Essential',pct:.35,lock:'No lock',lockDays:1,min:10,com:false,tier:1,pkgType:1},classic30:{name:'Classic',pct:.45,lock:'30 days',lockDays:30,min:10,com:false,tier:1,pkgType:2},ultimate90:{name:'Ultimate',pct:.60,lock:'90 days',lockDays:90,min:10,com:false,tier:1,pkgType:3},signature180:{name:'Signature',pct:.80,lock:'180 days',lockDays:180,min:10,com:false,tier:1,pkgType:4},exclusive360:{name:'Exclusive · VIP',pct:1.2,lock:'360 days',lockDays:360,min:10,com:true,tier:1,pkgType:5}};
+const PKGS={essential:{name:'Essential',lock:'No lock',lockDays:90,min:10,com:false,pkgType:1,
+    tiers:[{lbl:'Tier 1',pct:.20},{lbl:'Tier 2',pct:.25},{lbl:'Tier 3',pct:.35}]},
+  classic30:{name:'Classic',lock:'30 days',lockDays:180,min:10,com:false,pkgType:2,
+    tiers:[{lbl:'Tier 1',pct:.25},{lbl:'Tier 2',pct:.35},{lbl:'Tier 3',pct:.45}]},
+  ultimate90:{name:'Ultimate',lock:'90 days',lockDays:270,min:10,com:false,pkgType:3,
+    tiers:[{lbl:'Tier 1',pct:.40},{lbl:'Tier 2',pct:.50},{lbl:'Tier 3',pct:.60}]},
+  signature180:{name:'Signature',lock:'180 days',lockDays:360,min:10,com:false,pkgType:4,
+    tiers:[{lbl:'Tier 1',pct:.60},{lbl:'Tier 2',pct:.70},{lbl:'Tier 3',pct:.80}]},
+  exclusive360:{name:'Exclusive · VIP',lock:'360 days',lockDays:360,min:10,com:true,pkgType:5,
+    tiers:[{lbl:'Tier 1',pct:.80},{lbl:'Tier 2',pct:1.00},{lbl:'Tier 3',pct:1.20}]}};
+function getTier(amt){if(amt<=3000)return 1;if(amt<=5000)return 2;return 3;}
+function getPct(pkg,amt){return PKGS[pkg].tiers[getTier(amt)-1].pct;}
 let S={conn:false,reg:false,pkg:'essential',is:0,username:'',provider:null,signer:null,jwt:null,wallet:null};
 
 (()=>{const c=document.getElementById('pts');for(let i=0;i<20;i++){const p=document.createElement('div');p.className='pt';const s=Math.random()*3+1;p.style.cssText=`width:${s}px;height:${s}px;background:${Math.random()>.5?'rgba(62,221,181,.5)':'rgba(130,71,229,.5)'};left:${Math.random()*100}%;animation-duration:${Math.random()*14+8}s;animation-delay:${Math.random()*14}s;`;c.appendChild(p);}})();
@@ -3708,9 +3719,10 @@ function selPkg(btn,pkg){
   const p=PKGS[pkg];
   const _s=(id,v,prop='textContent')=>{const e=document.getElementById(id);if(e)e[prop]=v;};
   const _sc=(id,v)=>{const e=document.getElementById(id);if(e)e.style.color=v;};
-  _s('pkg-ttl',p.name+' — '+p.pct+'%/day');
+  const cur0=invParseAmt(document.getElementById('inv-amt'))||100;const pct0=getPct(pkg,cur0);
+  _s('pkg-ttl',p.name+' — '+pct0+'%/day');
   _s('pkg-dsc',p.com?p.lock+' · Capital withdrawal after 360 days · Min $'+p.min+' · Commission eligible · 300% Earnings Cap on all income':p.lock+(p.lock==='No lock'?' · Withdraw anytime':'')+' · Min $'+p.min+' · Not commission eligible');
-  _s('b-roi',p.pct+'%');
+  _s('b-roi',pct0+'%');
   _s('b-lock',p.lock);_sc('b-lock',p.com?'var(--warn)':'var(--green)');
   _s('b-com',p.com?'Yes (VIP-360)':'No');_sc('b-com',p.com?'var(--green)':'var(--warn)');
   const cur=invParseAmt(document.getElementById('inv-amt'));if(cur<p.min)document.getElementById('inv-amt').value=invFmtNum(p.min);
@@ -3721,7 +3733,8 @@ function updP(){
   const amtEl=document.getElementById('inv-amt');if(!amtEl)return;
   const amt=invParseAmt(amtEl)||100;const p=PKGS[S.pkg];
   const sl=document.getElementById('inv-sl');if(sl)sl.value=amt;
-  const d=amt*p.pct/100;
+  const pct=getPct(S.pkg,amt);
+  const d=amt*pct/100;
   const g=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
   g('p-d',fmtD(d));
   g('p-w',fmtD(d*7));
@@ -3733,9 +3746,10 @@ function showInvM(){
   const amt=invParseAmt(document.getElementById('inv-amt'))||100;const p=PKGS[S.pkg];
   const _si=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
   const _sic=(id,v)=>{const e=document.getElementById(id);if(e)e.style.color=v;};
-  _si('ci-pkg',p.name+' ('+p.pct+'%/day)');
+  const pctM=getPct(S.pkg,amt);
+  _si('ci-pkg',p.name+' ('+pctM+'%/day @ '+fmtD(amt)+')');
   _si('ci-amt',fmtD(amt));
-  _si('ci-d',fmtD(amt*p.pct/100)+'/day');
+  _si('ci-d',fmtD(amt*pctM/100)+'/day');
   _si('ci-lk',p.lock);
   _si('ci-com',p.com?'Yes — Earnings Cap '+fmtD(amt*3)+' (all income)':'No');
   _sic('ci-com',p.com?'var(--green)':'var(--warn)');
@@ -3749,6 +3763,7 @@ async function doIS(){
   try{
     const amt=invParseAmt(document.getElementById('inv-amt'))||100;
     const p=PKGS[S.pkg];
+    const tier=getTier(amt);
     const amountWei=toUSDT(amt);
 
     if(S.is===0){
@@ -3769,7 +3784,7 @@ async function doIS(){
       let txHash='';
       if(!MOCK_MODE&&S.signer){
         const vault=new ethers.Contract(CONFIG.CONTRACTS.VAULT,CONFIG.ABI.VAULT,S.signer);
-        const tx=await vault.deposit(amountWei,p.lockDays,p.tier,p.pkgType);
+        const tx=await vault.deposit(amountWei,p.lockDays,tier,p.pkgType);
         toast('Depositing... waiting for Polygon confirmation','ok');
         const receipt=await tx.wait();
         txHash=receipt.hash;
@@ -3781,7 +3796,7 @@ async function doIS(){
 
       /* Step 3: POST to backend */
       if(txHash){
-        await apiCall('POST','/api/invest/deposit',{wallet:S.wallet,amount:amt,package:S.pkg,lockDays:p.lockDays,tier:p.tier,packageType:p.pkgType,txHash:txHash});
+        await apiCall('POST','/api/invest/deposit',{wallet:S.wallet,amount:amt,package:S.pkg,lockDays:p.lockDays,tier:tier,packageType:p.pkgType,txHash:txHash});
       }
       const _s3=document.getElementById('stp3');if(_s3)_s3.className='stp done';
       cM('m-inv');toast('Investment successful! ROI is now running','ok');

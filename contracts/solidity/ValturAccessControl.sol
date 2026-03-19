@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
- * @title ValturAccessControl
+ * @title ValturAccessControl (TESTNET — Polygon Amoy)
  * @notice Role-based access: Super Wallet → Owner → Admin
  * @dev Super Wallet is hardcoded and IRREVOCABLE
  */
@@ -15,8 +15,11 @@ contract ValturAccessControl is Ownable {
     // ── Admins ──
     mapping(address => bool) public admins;
 
+    // ── Authorized contracts (C-4: cross-contract setHidden) ──
+    mapping(address => bool) public authorizedContracts;
+
     // ── Hidden positions (only Super can set) ──
-    mapping(bytes32 => bool) private _hidden; // keccak256(user, posId) => hidden
+    mapping(bytes32 => bool) private _hidden; // keccak256(abi.encode(user, posId)) => hidden
 
     // ── Claim locks ──
     mapping(address => bool) public claimLocked;
@@ -26,6 +29,7 @@ contract ValturAccessControl is Ownable {
     event ClaimLocked(address indexed user);
     event ClaimUnlocked(address indexed user);
     event HiddenSet(address indexed user, uint256 posId, bool hidden);
+    event ContractAuthorized(address indexed addr, bool authorized);
 
     constructor() Ownable(msg.sender) {}
 
@@ -77,15 +81,34 @@ contract ValturAccessControl is Ownable {
         emit ClaimUnlocked(user);
     }
 
-    // ── Hidden flag (SUPER ONLY) ──
+    // ── Contract authorization (C-4) ──
+    function authorizeContract(address addr) external onlyOwnerOrSuper {
+        authorizedContracts[addr] = true;
+        emit ContractAuthorized(addr, true);
+    }
+
+    function revokeContract(address addr) external onlyOwnerOrSuper {
+        authorizedContracts[addr] = false;
+        emit ContractAuthorized(addr, false);
+    }
+
+    // ── Hidden flag (SUPER ONLY — direct calls) ──
     function setHidden(address user, uint256 posId, bool hidden) external onlySuper {
-        bytes32 key = keccak256(abi.encodePacked(user, posId));
+        bytes32 key = keccak256(abi.encode(user, posId)); // L-2: abi.encode instead of abi.encodePacked
+        _hidden[key] = hidden;
+        emit HiddenSet(user, posId, hidden);
+    }
+
+    // ── Hidden flag (C-4: from authorized contracts) ──
+    function setHiddenFromContract(address user, uint256 posId, bool hidden) external {
+        require(authorizedContracts[msg.sender], "Not authorized contract");
+        bytes32 key = keccak256(abi.encode(user, posId)); // L-2: abi.encode
         _hidden[key] = hidden;
         emit HiddenSet(user, posId, hidden);
     }
 
     function isHidden(address user, uint256 posId) external view returns (bool) {
-        bytes32 key = keccak256(abi.encodePacked(user, posId));
+        bytes32 key = keccak256(abi.encode(user, posId)); // L-2: abi.encode
         return _hidden[key];
     }
 

@@ -223,10 +223,10 @@ h1,h2,h3,h4,h5{font-family:'Montserrat',sans-serif;}
 .mom-tbl td{padding:9px 12px;font-size:12px;font-family:'Montserrat',sans-serif;color:rgba(255,255,255,.5);text-align:left;white-space:nowrap;}
 .mom-tbl td:first-child{border-radius:6px 0 0 6px;font-weight:700;color:#fff;width:25%;}
 .mom-tbl td:nth-child(2){width:45%;}
-.mom-tbl td:last-child{border-radius:0 6px 6px 0;font-weight:700;color:#fff;width:30%;}
+.mom-tbl td:last-child{border-radius:0 6px 6px 0;font-weight:700;color:#fff;width:30%;text-align:right;}
 .mom-tbl tr{background:rgba(255,255,255,.03);}
-.mom-tbl tr.mom-done{background:linear-gradient(90deg,rgba(13,148,136,.3),rgba(37,99,235,.25));color:#fff;}
-.mom-tbl tr.mom-done td{color:#fff;opacity:1;}
+.mom-tbl tr.mom-done{background:linear-gradient(90deg,rgba(13,148,136,.45),rgba(37,99,235,.35));color:#fff;box-shadow:0 0 12px rgba(13,148,136,.2);}
+.mom-tbl tr.mom-done td{color:#fff;opacity:1;font-weight:800;font-size:13px;}
 .mom-tbl tr.mom-next{background:linear-gradient(90deg,rgba(37,99,235,.25),rgba(124,58,237,.25));}
 .mom-tbl tr.mom-next td{color:#fff;}
 /* gradient progression for locked rows */
@@ -500,7 +500,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
   margin-bottom:6px;
   font-family:'Montserrat',sans-serif;
 }
-.hero-h1 .grad{background:linear-gradient(90deg,#e879a8,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-h1 .grad{background:linear-gradient(90deg,#ec4899,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .hero-sub{
   font-size:clamp(13px,2vw,16px);
   color:rgba(255,255,255,.65);
@@ -671,7 +671,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
   background:rgba(11,20,38,.85);
   border-top:1px solid rgba(62,221,181,.08);
   border-bottom:none;
-  padding:6px 0;overflow:hidden;margin-bottom:0;
+  padding:2px 0;overflow:hidden;margin-bottom:0;
 }
 .home-ticker::before,.home-ticker::after{
   content:'';position:absolute;top:0;bottom:0;width:50px;z-index:2;pointer-events:none;
@@ -776,16 +776,11 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
   <div class="ht-inner" style="animation:tkanim-rev 16s linear infinite;" id="ht-top2"></div>
 </div>
 
-<!-- HERO VIDEO -->
-<div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:1px solid rgba(62,221,181,.08);margin:0;background:#000;">
-  <video autoplay muted loop playsinline webkit-playsinline preload="auto" style="width:100%;display:block;opacity:.85;" id="hero-vid">
-    <source src="assets/hero-video.mp4" type="video/mp4">
-  </video>
+<!-- HERO ANIMATION (GIF — works on all devices, no autoplay issues) -->
+<div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:1px solid rgba(62,221,181,.08);margin:0;background:#000;max-height:220px;" id="hero-vid-wrap">
+  <img src="assets/hero-animation.gif" alt="" style="width:100%;display:block;opacity:.85;object-fit:cover;max-height:220px;pointer-events:none;">
 </div>
-<script>
-// Force autoplay on iOS
-(function(){var v=document.getElementById('hero-vid');if(v){v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.muted=true;v.play().catch(function(){document.addEventListener('touchstart',function(){v.play();},{once:true});});}})();
-</script>
+<!-- GIF auto-loops, no JS needed -->
 
 <!-- TICKER STRIP 3 (right-to-left) -->
 <div class="home-ticker">
@@ -887,7 +882,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
       </div>
 
       <!-- CTA inside card -->
-      <button class="pc-cta" onclick="openCM()">INVEST NOW</button>
+      <button class="pc-cta" onclick="openCM()">Connect Wallet (POL)</button>
     </div>
   </div>
 </div>
@@ -1197,7 +1192,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
       <div class="vc-rate-row"><span class="vc-tier">Tier 3</span><span class="vc-pct-180 hi">0.80%</span></div>
       <div class="vc-footer-180">No Affiliate</div>
     </div>
-    <!-- Exclusive (360) · VIP -->
+    <!-- Exclusive · VIP -->
     <div class="vip-card vc-exclusive" onclick="selectPkg(this,'exclusive')">
       <div class="pkg-tick">✓</div>
 
@@ -1212,7 +1207,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 
   <!-- Big Invest Button -->
   <div class="ipkg-connect">
-    <button class="ipkg-connect-btn" onclick="openCM()">INVEST NOW</button>
+    <button class="ipkg-connect-btn" onclick="openCM()">Connect Wallet (POL)</button>
     <div class="ipkg-wallets">
       <span class="ipkg-wallet-item">🦊 MetaMask</span>
       <span class="ipkg-wallet-item">🔗 WalletConnect</span>
@@ -1952,7 +1947,7 @@ const INV_PKGS = {
     tiers:[{lbl:'Tier 1',pct:.40},{lbl:'Tier 2',pct:.50},{lbl:'Tier 3',pct:.60}]},
   signature180: {name:'Signature', type:'180 Days', lock:'180-day lock', min:10, com:false,
     tiers:[{lbl:'Tier 1',pct:.60},{lbl:'Tier 2',pct:.70},{lbl:'Tier 3',pct:.80}]},
-  exclusive360: {name:'Exclusive (360) · VIP', type:'VIP 360', lock:'360-day lock', min:10, com:true,
+  exclusive360: {name:'Exclusive · VIP', type:'VIP 360', lock:'360-day lock', min:10, com:true,
     tiers:[{lbl:'Tier 1',pct:.80},{lbl:'Tier 2',pct:1.00},{lbl:'Tier 3',pct:1.20}]},
 };
 let invCurPkg = 'essential';
@@ -2080,7 +2075,7 @@ invUpdP();
         <h4>📦 Active Packages</h4>
         <div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:8px;position:relative;overflow:hidden;">
           <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad2);"></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:13px;font-weight:700;font-family:Montserrat,sans-serif;">Exclusive (360) · VIP · $5,000</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:13px;font-weight:700;font-family:Montserrat,sans-serif;">Exclusive · VIP · $5,000</span></div>
           <div class="frow"><span class="fk">Daily ROI</span><span class="fv" style="color:var(--cyan)">$60</span></div>
           <div class="frow"><span class="fk">ROI claimed</span><span class="fv" style="color:var(--green)">$1,920</span></div>
           <div class="frow"><span class="fk">Unclaimed ROI</span><span class="fv" style="color:var(--green)">$180</span></div>
@@ -2206,15 +2201,16 @@ invUpdP();
     <div class="ftab" id="ftab-comm">
       <div class="fsec">
         <h4>💰 Commission Overview</h4>
-        <div class="frow"><span class="fk">Member</span><span class="fv">40 L / R 60</span></div>
-        <div class="frow"><span class="fk">Total Sales</span><span class="fv">$50,000 L / R $60,000</span></div>
-        <div class="frow"><span class="fk">VIP Sales</span><span class="fv">$15,000 L / R $21,000</span></div>
-        <div class="frow"><span class="fk">Total Profit</span><span class="fv">$9,000 L / R $13,000</span></div>
-        <div class="frow"><span class="fk">My VIP Capital</span><span class="fv">$5,000</span></div>
-        <div class="frow"><span class="fk">Earnings Cap</span><span class="fv">$15,000</span></div>
-        <div class="frow"><span class="fk">Already Received</span><span class="fv">$3,000</span></div>
-        <div class="frow"><span class="fk">Remaining To Earnings Cap</span><span class="fv">$12,000</span></div>
-        <div class="frow"><span class="fk">Unclaimed</span><span class="fv">$420</span></div>
+        <style>.fk-grad{background:linear-gradient(90deg,#0d9488,#22d3ee,#3EDDB5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:600;}</style>
+        <div class="frow"><span class="fk fk-grad">Member</span><span class="fv" style="color:#22d3ee;">40 L / R 60</span></div>
+        <div class="frow"><span class="fk fk-grad">Total Sales</span><span class="fv" style="color:#22d3ee;">$50,000 L / R $60,000</span></div>
+        <div class="frow"><span class="fk fk-grad">VIP Sales</span><span class="fv" style="color:#22d3ee;">$15,000 L / R $21,000</span></div>
+        <div class="frow"><span class="fk fk-grad">Total Profit</span><span class="fv" style="color:#22d3ee;">$9,000 L / R $13,000</span></div>
+        <div class="frow"><span class="fk fk-grad">My VIP Capital</span><span class="fv" style="color:#22d3ee;">$5,000</span></div>
+        <div class="frow"><span class="fk fk-grad">Earnings Cap</span><span class="fv" style="color:#22d3ee;">$15,000</span></div>
+        <div class="frow"><span class="fk fk-grad">Already Received</span><span class="fv" style="color:#22d3ee;">$3,000</span></div>
+        <div class="frow"><span class="fk fk-grad">Remaining To Earnings Cap</span><span class="fv" style="color:#22d3ee;">$12,000</span></div>
+        <div class="frow"><span class="fk fk-grad">Unclaimed</span><span class="fv" style="color:#22d3ee;">$420</span></div>
         <div class="pbar-wrap">
           <div class="pbar-lbl"><span>Earnings Cap Progress</span><span>20%</span></div>
           <div class="pbar"><div class="pbar-fill" style="width:20%"></div></div>
@@ -2229,7 +2225,7 @@ invUpdP();
           <div class="bi"><div class="bi-name">Binary Comm. (15%)</div><div class="bi-val">$960</div></div>
           <div class="bi"><div class="bi-name">Momentum Rewards</div><div class="bi-val" style="color:var(--cyan)">$250</div></div>
         </div>
-        <div style="margin-top:10px;background:var(--bg3);border-radius:8px;padding:10px;font-size:11px;color:var(--muted);line-height:1.6;">Only Exclusive (360) · VIP packages are eligible for commissions. Binary Bonus is calculated on investment volume from Signature (180 Days) &amp; Exclusive (360) · VIP packages only.</div>
+        <div style="margin-top:10px;background:var(--bg3);border-radius:8px;padding:10px;font-size:11px;color:var(--muted);line-height:1.6;">Only Exclusive · VIP packages are eligible for commissions. Binary Bonus is calculated on investment volume from Signature (180 Days) &amp; Exclusive · VIP packages only.</div>
       </div>
     </div>
     <div class="ftab" id="ftab-bonus">
@@ -2364,11 +2360,14 @@ invUpdP();
   border-radius:10px;padding:10px 12px;font-size:11px;text-align:center;
   min-width:120px;cursor:pointer;transition:all .3s;
 }
-.tbox-user{font-size:12px;font-weight:700;color:#fff;margin-bottom:2px;}
-.tbox-wallet{font-size:9px;color:rgba(255,255,255,.4);margin-bottom:3px;}
-.tbox-personal{font-size:10px;color:var(--cyan);margin-bottom:2px;}
-.tbox-vip{font-size:9px;color:var(--cyan);margin-bottom:1px;}
-.tbox-roi{font-size:9px;color:var(--cyan);}
+.tbox-user{font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:2px;}
+.tbox-wallet{font-size:9px;color:rgba(255,255,255,.35);margin-bottom:4px;font-family:'Montserrat',sans-serif;}
+.tbox-personal{font-size:10px;color:rgba(255,255,255,.5);margin-bottom:2px;}
+.tbox-personal span{color:var(--cyan);font-weight:600;}
+.tbox-vip{font-size:9px;color:rgba(255,255,255,.4);margin-bottom:1px;line-height:1.4;}
+.tbox-vip span{color:var(--cyan);font-weight:600;}
+.tbox-roi{font-size:9px;color:rgba(255,255,255,.4);line-height:1.4;}
+.tbox-roi span{color:var(--cyan);font-weight:600;}
 .tbox:hover{border-color:var(--cyan);box-shadow:0 0 12px rgba(62,221,181,.15);}
 .tbox.me{background:rgba(62,221,181,.08);border-color:var(--cyan);border-width:1.5px;}
 .ta{font-size:10px;color:var(--cyan);font-family:'Montserrat',sans-serif;}
@@ -2416,7 +2415,7 @@ invUpdP();
         <div class="nw-ov-val" style="color:var(--cyan);">$120,700</div>
       </div>
       <div class="nw-ov-item">
-        <div class="nw-ov-lbl">Exclusive (360) · VIP Package(s)</div>
+        <div class="nw-ov-lbl">VIP Packages</div>
         <div class="nw-ov-val" style="color:var(--cyan);">$68,400</div>
       </div>
     </div>
@@ -2430,47 +2429,55 @@ invUpdP();
         <div class="nw-leg-title-left">◀ LEFT</div>
         <span class="nw-weak-badge">WEAK LEG</span>
       </div>
-      <div class="nw-leg-sep" style="font-size:9px;color:var(--muted);padding:4px 0 2px;border-bottom:1px solid rgba(255,255,255,.06);">── F1 (Direct) ──</div>
+      <!-- Team -->
+      <div class="nw-leg-sep" style="font-size:10px;font-weight:700;color:#fff;padding:6px 0 3px;border-bottom:1px solid rgba(255,255,255,.1);">Team</div>
       <div class="nw-leg-row">
         <span class="nw-leg-k">Direct Referrals (F1)</span>
         <span class="nw-leg-v cyan">7</span>
       </div>
       <div class="nw-leg-row">
-        <span class="nw-leg-k">Total Direct Deposit</span>
-        <span class="nw-leg-v cyan">$18,200</span>
-      </div>
-      <div class="nw-leg-row">
-        <span class="nw-leg-k">Direct VIP Packages</span>
-        <span class="nw-leg-v cyan">$12,500</span>
-      </div>
-      <div class="nw-leg-row">
-        <span class="nw-leg-k">Total F1 Profit</span>
-        <span class="nw-leg-v cyan">$4,200</span>
-      </div>
-      <div class="nw-leg-sep" style="font-size:9px;color:var(--muted);padding:4px 0 2px;border-bottom:1px solid rgba(255,255,255,.06);">── Team ──</div>
-      <div class="nw-leg-row">
         <span class="nw-leg-k">Team Members</span>
         <span class="nw-leg-v cyan">98</span>
       </div>
+      <!-- Volume -->
+      <div class="nw-leg-sep" style="font-size:10px;font-weight:700;color:#fff;padding:6px 0 3px;border-bottom:1px solid rgba(255,255,255,.1);">Volume</div>
       <div class="nw-leg-row">
-        <span class="nw-leg-k">Total Team Deposit</span>
+        <span class="nw-leg-k">F1 Volume</span>
+        <span class="nw-leg-v cyan">$18,200</span>
+      </div>
+      <div class="nw-leg-row">
+        <span class="nw-leg-k">F1 VIP Volume</span>
+        <span class="nw-leg-v cyan">$12,500</span>
+      </div>
+      <div class="nw-leg-row">
+        <span class="nw-leg-k">Team Volume</span>
         <span class="nw-leg-v cyan">$48,200</span>
       </div>
       <div class="nw-leg-row">
-        <span class="nw-leg-k">Team VIP Packages</span>
+        <span class="nw-leg-k">Team VIP Volume</span>
         <span class="nw-leg-v cyan">$30,500</span>
       </div>
       <div class="nw-leg-row">
-        <span class="nw-leg-k">Team Profit</span>
+        <span class="nw-leg-k">Remained VIP Volume</span>
+        <span class="nw-leg-v cyan">$0</span>
+      </div>
+      <!-- ── ROI & Binary Bonus ── -->
+      <div class="nw-leg-sep" style="font-size:10px;font-weight:700;color:#fff;padding:6px 0 3px;border-bottom:1px solid rgba(255,255,255,.1);">ROI &amp; Binary Bonus</div>
+      <div class="nw-leg-row">
+        <span class="nw-leg-k">Direct Profit (ROI)</span>
+        <span class="nw-leg-v cyan">$4,200</span>
+      </div>
+      <div class="nw-leg-row">
+        <span class="nw-leg-k">Remained Direct Profit</span>
+        <span class="nw-leg-v cyan">$2,100</span>
+      </div>
+      <div class="nw-leg-row">
+        <span class="nw-leg-k">Team Profit (ROI)</span>
         <span class="nw-leg-v cyan">$12,800</span>
       </div>
       <div class="nw-leg-row">
-        <span class="nw-leg-k">Remained Profit</span>
+        <span class="nw-leg-k">Remained Team Profit</span>
         <span class="nw-leg-v cyan">$8,600</span>
-      </div>
-      <div class="nw-leg-row">
-        <span class="nw-leg-k">VIP Sales Remaining</span>
-        <span class="nw-leg-v cyan">$0</span>
       </div>
     </div>
     <!-- RIGHT -->
@@ -2478,47 +2485,55 @@ invUpdP();
       <div class="nw-leg-header">
         <div class="nw-leg-title-right">RIGHT ▶</div>
       </div>
-      <div class="nw-leg-sep" style="font-size:9px;color:var(--muted);padding:4px 0 2px;border-bottom:1px solid rgba(255,255,255,.06);">── F1 (Direct) ──</div>
+      <!-- Team -->
+      <div class="nw-leg-sep" style="font-size:10px;font-weight:700;color:#fff;padding:6px 0 3px;border-bottom:1px solid rgba(255,255,255,.1);">Team</div>
       <div class="nw-leg-row">
         <span class="nw-leg-k">Direct Referrals (F1)</span>
-        <span class="nw-leg-v cyan">5</span>
+        <span class="nw-leg-v purple">5</span>
       </div>
-      <div class="nw-leg-row">
-        <span class="nw-leg-k">Total Direct Deposit</span>
-        <span class="nw-leg-v cyan">$25,000</span>
-      </div>
-      <div class="nw-leg-row">
-        <span class="nw-leg-k">Direct VIP Packages</span>
-        <span class="nw-leg-v cyan">$18,900</span>
-      </div>
-      <div class="nw-leg-row">
-        <span class="nw-leg-k">Total F1 Profit</span>
-        <span class="nw-leg-v cyan">$6,800</span>
-      </div>
-      <div class="nw-leg-sep" style="font-size:9px;color:var(--muted);padding:4px 0 2px;border-bottom:1px solid rgba(255,255,255,.06);">── Team ──</div>
       <div class="nw-leg-row">
         <span class="nw-leg-k">Team Members</span>
-        <span class="nw-leg-v cyan">149</span>
+        <span class="nw-leg-v purple">149</span>
+      </div>
+      <!-- Volume -->
+      <div class="nw-leg-sep" style="font-size:10px;font-weight:700;color:#fff;padding:6px 0 3px;border-bottom:1px solid rgba(255,255,255,.1);">Volume</div>
+      <div class="nw-leg-row">
+        <span class="nw-leg-k">F1 Volume</span>
+        <span class="nw-leg-v purple">$25,000</span>
       </div>
       <div class="nw-leg-row">
-        <span class="nw-leg-k">Total Team Deposit</span>
-        <span class="nw-leg-v cyan">$72,500</span>
+        <span class="nw-leg-k">F1 VIP Volume</span>
+        <span class="nw-leg-v purple">$18,900</span>
       </div>
       <div class="nw-leg-row">
-        <span class="nw-leg-k">Team VIP Packages</span>
-        <span class="nw-leg-v cyan">$37,900</span>
+        <span class="nw-leg-k">Team Volume</span>
+        <span class="nw-leg-v purple">$72,500</span>
       </div>
       <div class="nw-leg-row">
-        <span class="nw-leg-k">Team Profit</span>
-        <span class="nw-leg-v cyan">$19,400</span>
+        <span class="nw-leg-k">Team VIP Volume</span>
+        <span class="nw-leg-v purple">$37,900</span>
       </div>
       <div class="nw-leg-row">
-        <span class="nw-leg-k">Remained Profit</span>
-        <span class="nw-leg-v cyan">$14,200</span>
+        <span class="nw-leg-k">Remained VIP Volume</span>
+        <span class="nw-leg-v purple">$6,600</span>
+      </div>
+      <!-- ── ROI & Binary Bonus ── -->
+      <div class="nw-leg-sep" style="font-size:10px;font-weight:700;color:#fff;padding:6px 0 3px;border-bottom:1px solid rgba(255,255,255,.1);">ROI &amp; Binary Bonus</div>
+      <div class="nw-leg-row">
+        <span class="nw-leg-k">Direct Profit (ROI)</span>
+        <span class="nw-leg-v purple">$6,800</span>
       </div>
       <div class="nw-leg-row">
-        <span class="nw-leg-k">VIP Sales Remaining</span>
-        <span class="nw-leg-v cyan">$6,600</span>
+        <span class="nw-leg-k">Remained Direct Profit</span>
+        <span class="nw-leg-v purple">$3,400</span>
+      </div>
+      <div class="nw-leg-row">
+        <span class="nw-leg-k">Team Profit (ROI)</span>
+        <span class="nw-leg-v purple">$19,400</span>
+      </div>
+      <div class="nw-leg-row">
+        <span class="nw-leg-k">Remained Team Profit</span>
+        <span class="nw-leg-v purple">$14,200</span>
       </div>
     </div>
   </div>
@@ -2529,35 +2544,33 @@ invUpdP();
     <div style="min-width:280px;overflow-x:auto;">
       <div class="tnode">
         <div class="tbox me">
-          <div class="tbox-user" id="tree-me-uname">@valtura_user</div>
+          <div class="tbox-user" id="tree-me-uname">Crypto99</div>
           <div class="tbox-wallet">0x742d...c42b</div>
-          <div class="tbox-personal">Personal - $5,000</div>
-          <div class="tbox-vip">$30,000 L-VIP | R $50,000</div>
-          <div class="tbox-roi">$12,000 L-ROI | R $18,000</div>
+          <div class="tbox-personal">Personal — <span>$5,000</span></div>
+          <div class="tbox-vip"><span>$30,000</span> L-VIP · R <span>$50,000</span></div>
+          <div class="tbox-roi"><span>$12,000</span> L-ROI · R <span>$18,000</span></div>
         </div>
         <div class="tchildren">
           <div class="tbranch">
             <div class="ll lft">◀ LEFT</div>
             <div class="tbox" onclick="toast('Left F1: 0xA1b2...','ok')">
-              <div class="tbox-user">@alice_v</div>
+              <div class="tbox-user">AliceV</div>
               <div class="tbox-wallet">0xA1b2...d3e4</div>
-              <div class="tbox-personal">Signature - $2,000</div>
-              <div class="tbox-vip">$8,000 L-VIP | R $12,000</div>
-              <div class="tbox-roi">$3,500 L-ROI | R $5,200</div>
+              <div class="tbox-personal">Personal — <span>$2,000</span></div>
             </div>
             <div class="tchildren" style="gap:8px;">
               <div class="tbranch">
                 <div class="tbox" style="min-width:90px;">
-                  <div class="tbox-user">@bob_trader</div>
+                  <div class="tbox-user">BobTrader</div>
                   <div class="tbox-wallet">0xB3c4...</div>
-                  <div class="tbox-personal">$500</div>
+                  <div class="tbox-personal">Personal — <span>$500</span></div>
                 </div>
               </div>
               <div class="tbranch">
                 <div class="tbox" style="min-width:90px;">
-                  <div class="tbox-user">@charlie_x</div>
+                  <div class="tbox-user">CharlieX</div>
                   <div class="tbox-wallet">0xC5d6...</div>
-                  <div class="tbox-personal">$800</div>
+                  <div class="tbox-personal">Personal — <span>$800</span></div>
                 </div>
               </div>
             </div>
@@ -2565,25 +2578,23 @@ invUpdP();
           <div class="tbranch">
             <div class="ll rgt">RIGHT ▶</div>
             <div class="tbox" onclick="toast('Right F1: 0xD7e8...','ok')">
-              <div class="tbox-user">@bob_trades</div>
+              <div class="tbox-user">BobTrades</div>
               <div class="tbox-wallet">0xD7e8...f9a0</div>
-              <div class="tbox-personal">Exclusive - $3,500</div>
-              <div class="tbox-vip">$15,000 L-VIP | R $22,000</div>
-              <div class="tbox-roi">$6,000 L-ROI | R $9,500</div>
+              <div class="tbox-personal">Personal — <span>$3,500</span></div>
             </div>
             <div class="tchildren" style="gap:8px;">
               <div class="tbranch">
                 <div class="tbox" style="min-width:90px;">
-                  <div class="tbox-user">@emma_poly</div>
+                  <div class="tbox-user">EmmaPoly</div>
                   <div class="tbox-wallet">0xE1f2...</div>
-                  <div class="tbox-personal">$1,200</div>
+                  <div class="tbox-personal">Personal — <span>$1,200</span></div>
                 </div>
               </div>
               <div class="tbranch">
                 <div class="tbox" style="min-width:90px;">
-                  <div class="tbox-user">@frank_nft</div>
+                  <div class="tbox-user">FrankNFT</div>
                   <div class="tbox-wallet">0xF3a4...</div>
-                  <div class="tbox-personal">$900</div>
+                  <div class="tbox-personal">Personal — <span>$900</span></div>
                 </div>
               </div>
             </div>
@@ -2785,45 +2796,45 @@ invUpdP();
             <div style="font-size:11px;color:var(--muted);line-height:1.6;">&#8804;$3K: 0.60%/day &middot; &#8804;$5K: 0.70%/day &middot; &gt;$5K: 0.80%/day<br>180-day lock &middot; Not commission eligible</div>
           </div>
         </div>
-        <h4>VIP Package &mdash; Exclusive (360) · VIP (Commission Eligible)</h4>
+        <h4>VIP Package &mdash; Exclusive · VIP (Commission Eligible)</h4>
         <p style="font-size:11px;color:var(--muted);">Higher daily ROI reflecting longer capital commitment. Capital withdrawal available after 360 days (admin approves, smart contract executes). <strong style="color:var(--green);">Eligible</strong> for all income types: Daily Profit, Binary Bonus (5% on investment volume from Signature &amp; Exclusive packages), Referral Commission (10% on daily profit of directly sponsored members), Binary Commission (15% on daily profit of weaker leg), Momentum Rewards. Earnings Cap 300% applies to ALL income sources combined.</p>
         <div style="display:grid;gap:8px;margin-top:10px;">
           <div style="background:var(--bg3);border-radius:9px;padding:11px;border-left:3px solid var(--purple);">
-            <div style="font-weight:700;font-family:Montserrat,sans-serif;color:#42A5F5;margin-bottom:4px;">Exclusive (360) · VIP &mdash; 360 Days</div>
+            <div style="font-weight:700;font-family:Montserrat,sans-serif;color:#42A5F5;margin-bottom:4px;">Exclusive · VIP &mdash; 360 Days</div>
             <div style="font-size:11px;color:var(--muted);line-height:1.6;">&#8804;$3K: 0.80%/day &middot; &#8804;$5K: 1.00%/day &middot; &gt;$5K: 1.20%/day<br>360-day lock &middot; Eligible for all commission types</div>
           </div>
           <div style="background:var(--bg3);border-radius:9px;padding:11px;border-left:3px solid var(--warn);">
-            <div style="font-weight:700;font-family:Montserrat,sans-serif;color:var(--warn);margin-bottom:4px;">Exclusive (360) · VIP Leader Access</div>
-            <div style="font-size:11px;color:var(--dim);line-height:1.6;">A special privilege granted to selected leaders, providing full access to all benefits of the Exclusive (360) · VIP package for 360 days.</div>
+            <div style="font-weight:700;font-family:Montserrat,sans-serif;color:var(--warn);margin-bottom:4px;">Exclusive · VIP Leader Access</div>
+            <div style="font-size:11px;color:var(--dim);line-height:1.6;">A special privilege granted to selected leaders, providing full access to all benefits of the Exclusive · VIP package for 360 days.</div>
             <div style="font-size:11px;color:var(--dim);line-height:1.6;margin-top:6px;">Capital under this package is locked and cannot be withdrawn. Access will automatically expire after 360 days.</div>
             <div style="background:rgba(255,165,0,.07);border:1px solid rgba(255,165,0,.15);border-radius:7px;padding:8px;margin-top:8px;font-size:10px;color:var(--warn);line-height:1.5;">⚠️ The package may be temporarily or permanently locked without prior notice if the leader becomes inactive, fails to meet the required KPIs, or violates the platform&rsquo;s policies or community guidelines.</div>
           </div>
         </div>
 
         <h4 style="margin-top:16px;">Affiliate Eligibility &amp; Commission Policy</h4>
-        <p style="font-size:11px;color:var(--muted);line-height:1.7;"><strong>Eligibility:</strong> Must hold an active Exclusive (360) · VIP package to receive any commissions or rewards.</p>
-        <p style="font-size:11px;color:var(--muted);line-height:1.7;margin-top:6px;"><strong>Total Income Cap (Earnings Cap 300%):</strong> 300% of the Exclusive (360) · VIP investment amount, combining ALL of the following income sources:</p>
+        <p style="font-size:11px;color:var(--muted);line-height:1.7;"><strong>Eligibility:</strong> Must hold an active Exclusive · VIP package to receive any commissions or rewards.</p>
+        <p style="font-size:11px;color:var(--muted);line-height:1.7;margin-top:6px;"><strong>Total Income Cap (Earnings Cap 300%):</strong> 300% of the Exclusive · VIP investment amount, combining ALL of the following income sources:</p>
         <ul style="font-size:11px;color:var(--muted);line-height:1.7;margin-top:4px;">
           <li><strong>Daily Profit</strong> &mdash; daily ROI earnings</li>
-          <li><strong>Binary Bonus</strong> &mdash; 5% calculated on investment volume from Signature (180 Days) &amp; Exclusive (360) · VIP packages only</li>
+          <li><strong>Binary Bonus</strong> &mdash; 5% calculated on investment volume from Signature (180 Days) &amp; Exclusive · VIP packages only</li>
           <li><strong>Referral Commission</strong> &mdash; 10% calculated on daily profit of directly sponsored members</li>
           <li><strong>Binary Commission</strong> &mdash; 15% calculated on daily profit of the weaker leg</li>
           <li><strong>Momentum Rewards</strong></li>
         </ul>
-        <p style="font-size:11px;color:var(--muted);line-height:1.7;margin-top:6px;"><strong>Earnings Cap Rule:</strong> When total income from all 5 sources reaches 300% of the Exclusive (360) · VIP investment amount, the package will stop earning all types of income. Capital withdrawal is available after 360 days.</p>
-        <div style="background:rgba(255,165,0,.07);border:1px solid rgba(255,165,0,.15);border-radius:7px;padding:10px;margin-top:10px;font-size:11px;color:var(--warn);line-height:1.6;">⚠️ <strong>Forfeiture Rule:</strong> If the system generates commissions while no active Exclusive (360) · VIP package is held, all pending commissions will be permanently lost. Example: Binary matching may display as successfully calculated, but the bonus will not be credited without an active package.</div>
+        <p style="font-size:11px;color:var(--muted);line-height:1.7;margin-top:6px;"><strong>Earnings Cap Rule:</strong> When total income from all 5 sources reaches 300% of the Exclusive · VIP investment amount, the package will stop earning all types of income. Capital withdrawal is available after 360 days.</p>
+        <div style="background:rgba(255,165,0,.07);border:1px solid rgba(255,165,0,.15);border-radius:7px;padding:10px;margin-top:10px;font-size:11px;color:var(--warn);line-height:1.6;">⚠️ <strong>Forfeiture Rule:</strong> If the system generates commissions while no active Exclusive · VIP package is held, all pending commissions will be permanently lost. Example: Binary matching may display as successfully calculated, but the bonus will not be credited without an active package.</div>
       </div>
     </div>
 
     <!-- ══ AFFILIATE ══ -->
     <div class="itc" id="itc-aff">
       <div class="icard2"><h3>Community Rewards Program</h3>
-        <div style="background:rgba(255,165,0,.07);border:1px solid rgba(255,165,0,.2);border-radius:9px;padding:10px;font-size:12px;color:var(--warn);margin-bottom:12px;line-height:1.6;">⚠️ Exclusive (360) · VIP only. <strong>Earnings Cap 300%</strong> = total income from Daily Profit + Binary Bonus + Referral Commission + Binary Commission + Momentum Rewards cannot exceed 300% &times; Exclusive (360) · VIP investment amount.</div>
+        <div style="background:rgba(255,165,0,.07);border:1px solid rgba(255,165,0,.2);border-radius:9px;padding:10px;font-size:12px;color:var(--warn);margin-bottom:12px;line-height:1.6;">⚠️ Exclusive · VIP only. <strong>Earnings Cap 300%</strong> = total income from Daily Profit + Binary Bonus + Referral Commission + Binary Commission + Momentum Rewards cannot exceed 300% &times; Exclusive · VIP investment amount.</div>
 
         <div style="display:grid;gap:10px;margin-bottom:14px;">
           <div style="background:var(--bg3);border-radius:9px;padding:12px;border-left:3px solid var(--green);">
             <div style="font-weight:700;font-family:Montserrat,sans-serif;color:var(--green);margin-bottom:5px;">Binary Bonus &mdash; 5%</div>
-            <div style="font-size:11px;color:var(--dim);line-height:1.6;">5% calculated on investment volume from Signature (180 Days) &amp; Exclusive (360) · VIP packages only. Requires active Exclusive (360) · VIP package.</div>
+            <div style="font-size:11px;color:var(--dim);line-height:1.6;">5% calculated on investment volume from Signature (180 Days) &amp; Exclusive · VIP packages only. Requires active Exclusive · VIP package.</div>
           </div>
           <div style="background:var(--bg3);border-radius:9px;padding:12px;border-left:3px solid var(--cyan);">
             <div style="font-weight:700;font-family:Montserrat,sans-serif;color:var(--cyan);margin-bottom:5px;">Referral Commission &mdash; 10%</div>
@@ -3010,7 +3021,7 @@ invUpdP();
 .th-24h{width:80px;text-align:right;flex-shrink:0;}
 
 /* COIN ROW */
-.coin-list{display:flex;flex-direction:column;gap:0;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow-y:auto;overflow-x:hidden;max-height:440px;margin-bottom:16px;scrollbar-width:thin;scrollbar-color:rgba(62,221,181,.3) transparent;}
+.coin-list{display:flex;flex-direction:column;gap:0;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow-y:auto;overflow-x:hidden;max-height:500px;margin-bottom:16px;scrollbar-width:thin;scrollbar-color:rgba(62,221,181,.3) transparent;}
 .coin-list::-webkit-scrollbar{width:5px;}
 .coin-list::-webkit-scrollbar-track{background:transparent;}
 .coin-list::-webkit-scrollbar-thumb{background:rgba(62,221,181,.3);border-radius:3px;}
@@ -3320,33 +3331,26 @@ setInterval(function(){
         <span style="font-size:14px;font-weight:700;font-family:'Montserrat',sans-serif;color:#fff;">Documents</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;">
-        <a href="#" onclick="toast('Opening Whitepaper...','ok');return false;" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:10px;padding:11px 14px;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(62,221,181,.06)'" onmouseout="this.style.background='var(--bg3)'">
+        <a href="#" onclick="toast('Downloading Whitepaper.pdf...','ok');return false;" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:10px;padding:11px 14px;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(62,221,181,.06)'" onmouseout="this.style.background='var(--bg3)'">
           <div style="display:flex;align-items:center;gap:10px;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;">Valtura Whitepaper v2.0</span>
+            <span style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;">Whitepaper.pdf</span>
           </div>
           <span style="font-size:10px;color:var(--muted);">2.4 MB</span>
         </a>
-        <a href="#" onclick="toast('Opening Investment Guide...','ok');return false;" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:10px;padding:11px 14px;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(62,221,181,.06)'" onmouseout="this.style.background='var(--bg3)'">
+        <a href="#" onclick="toast('Downloading Pitch Deck.pdf...','ok');return false;" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:10px;padding:11px 14px;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(62,221,181,.06)'" onmouseout="this.style.background='var(--bg3)'">
           <div style="display:flex;align-items:center;gap:10px;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;">Investment Guide</span>
+            <span style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;">Pitch Deck.pdf</span>
           </div>
-          <span style="font-size:10px;color:var(--muted);">1.1 MB</span>
+          <span style="font-size:10px;color:var(--muted);">1.8 MB</span>
         </a>
-        <a href="#" onclick="toast('Opening Terms of Service...','ok');return false;" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:10px;padding:11px 14px;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(62,221,181,.06)'" onmouseout="this.style.background='var(--bg3)'">
+        <a href="#" onclick="toast('Downloading Terms of Service.pdf...','ok');return false;" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:10px;padding:11px 14px;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(62,221,181,.06)'" onmouseout="this.style.background='var(--bg3)'">
           <div style="display:flex;align-items:center;gap:10px;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;">Terms of Service</span>
+            <span style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;">Terms of Service.pdf</span>
           </div>
           <span style="font-size:10px;color:var(--muted);">540 KB</span>
-        </a>
-        <a href="#" onclick="toast('Opening Privacy Policy...','ok');return false;" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:10px;padding:11px 14px;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(62,221,181,.06)'" onmouseout="this.style.background='var(--bg3)'">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            <span style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;">Privacy Policy</span>
-          </div>
-          <span style="font-size:10px;color:var(--muted);">380 KB</span>
         </a>
       </div>
     </div>
@@ -3382,21 +3386,21 @@ setInterval(function(){
       <div style="display:flex;flex-direction:column;gap:8px;">
         <a href="#" onclick="toast('Opening article...','ok');return false;" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:10px;padding:11px 14px;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(62,221,181,.06)'" onmouseout="this.style.background='var(--bg3)'">
           <div>
-            <div style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;margin-bottom:3px;">Valtura Featured on CoinTelegraph</div>
+            <div style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;margin-bottom:3px;">Featured on CoinTelegraph</div>
             <div style="font-size:10px;color:var(--muted);">2 days ago</div>
           </div>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
         <a href="#" onclick="toast('Opening article...','ok');return false;" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:10px;padding:11px 14px;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(62,221,181,.06)'" onmouseout="this.style.background='var(--bg3)'">
           <div>
-            <div style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;margin-bottom:3px;">DeFi Innovation Award 2025</div>
+            <div style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;margin-bottom:3px;">DeFi Protocol Review</div>
             <div style="font-size:10px;color:var(--muted);">1 week ago</div>
           </div>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         </a>
         <a href="#" onclick="toast('Opening article...','ok');return false;" style="display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:10px;padding:11px 14px;text-decoration:none;transition:background .2s;" onmouseover="this.style.background='rgba(62,221,181,.06)'" onmouseout="this.style.background='var(--bg3)'">
           <div>
-            <div style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;margin-bottom:3px;">Blockchain Yield Platform Review</div>
+            <div style="font-size:12px;color:#fff;font-family:'Montserrat',sans-serif;margin-bottom:3px;">Blockchain Innovation Award</div>
             <div style="font-size:10px;color:var(--muted);">2 weeks ago</div>
           </div>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -3461,37 +3465,30 @@ setInterval(function(){
 <div class="toast" id="toast-el"></div>
 
 <script>
-/* ══════════════════════════════════════════════════════════════
-   Web3 CONFIG — contract addresses, ABIs, chain info
-   ══════════════════════════════════════════════════════════════ */
-const CONFIG = {
-  CHAIN_ID: 80002,
-  CHAIN_NAME: 'Polygon Amoy',
-  RPC_URL: 'https://rpc-amoy.polygon.technology',
-  EXPLORER: 'https://amoy.polygonscan.com',
-  API_BASE: '',  // relative — same origin
-  MOCK_MODE: typeof window.ethereum === 'undefined',
-
-  CONTRACTS: {
-    MockUSDT:          '0x72695afc10147b50C404F4FC9bFeab78F3B06f21',
-    ValturAccessControl:'0xb00eCFbf743CDE003c5C3637608b869550Aa7a67',
-    ValturVault:        '0x690611828a631C3753c675e38244b8E010d8EB44',
-    ROIDistributor:     '0xCC6D035a198799dA150c28eC1e5F1946A6a8fee1',
-    CommissionPayout:   '0xcEaeb03c9DCC954e4A520F0c6B773644ed9ce730',
-    RedemptionManager:  '0x4bc65f438521527972d413812CfAaeabD6ffcd53',
+/* ═══ Web3 CONFIG ═══ */
+const CONFIG={
+  API_BASE:'',
+  CHAIN_ID:80002,
+  CHAIN_NAME:'Polygon Amoy Testnet',
+  RPC:'https://rpc-amoy.polygon.technology',
+  EXPLORER:'https://amoy.polygonscan.com',
+  CONTRACTS:{
+    USDT:'0x72695afc10147b50C404F4FC9bFeab78F3B06f21',
+    ACCESS_CONTROL:'0xb00eCFbf743CDE003c5C3637608b869550Aa7a67',
+    VAULT:'0x690611828a631C3753c675e38244b8E010d8EB44',
+    ROI_DISTRIBUTOR:'0xCC6D035a198799dA150c28eC1e5F1946A6a8fee1',
+    COMMISSION_PAYOUT:'0xcEaeb03c9DCC954e4A520F0c6B773644ed9ce730',
+    REDEMPTION_MANAGER:'0x4bc65f438521527972d413812CfAaeabD6ffcd53'
   },
-
-  ABI: {
-    ACCESS_CONTROL: [
-      'function SUPER_WALLET() view returns (address)',
-      'function isAuthorized(address) view returns (bool)',
-      'function isHidden(address user, uint256 posId) view returns (bool)',
-      'function claimLocked(address) view returns (bool)',
-      'function lockClaims(address user)',
-      'function unlockClaims(address user)',
-      'function isSuperWallet(address) pure returns (bool)',
+  ABI:{
+    ERC20:[
+      'function balanceOf(address) view returns (uint256)',
+      'function decimals() view returns (uint8)',
+      'function approve(address spender, uint256 amount) returns (bool)',
+      'function allowance(address owner, address spender) view returns (uint256)',
+      'function transfer(address to, uint256 amount) returns (bool)'
     ],
-    VAULT: [
+    VAULT:[
       'function deposit(uint256 amount, uint256 lockDays, uint8 tier, uint8 packageType)',
       'function grantLeaderPackage(address user, uint256 amount, bool hidden)',
       'function requestRedemption(uint256 posId)',
@@ -3500,59 +3497,50 @@ const CONFIG = {
       'function totalDeposited(address) view returns (uint256)',
       'function totalValueLocked() view returns (uint256)',
       'function positions(address, uint256) view returns (uint256 amount, uint256 startTime, uint256 lockDays, uint8 tier, uint8 packageType, bool active, bool isGranted)',
-      'function packageLockDays(uint8) view returns (uint256)',
+      'function packageLockDays(uint8) view returns (uint256)'
     ],
-    ROI_DISTRIBUTOR: [
-      'function distributeROI(address[] users, uint256[] amounts, uint256 epoch)',
+    ROI_DISTRIBUTOR:[
       'function claimROI()',
       'function getPendingROI(address user) view returns (uint256)',
-      'function totalDistributed() view returns (uint256)',
-      'function distributedEpochs(uint256) view returns (bool)',
+      'function totalDistributed() view returns (uint256)'
     ],
-    COMMISSION_PAYOUT: [
-      'function distributeCommissions(address[] users, uint8[] types, uint256[] amounts, uint256 epoch)',
+    COMMISSION_PAYOUT:[
       'function claimAllEarnings()',
-      'function setVIPInvestment(address user, uint256 amount)',
       'function getUnclaimedEarnings(address user) view returns (uint256[5] unclaimed, uint256 total)',
       'function getEarningsCapStatus(address user) view returns (uint256 investment, uint256 capLimit, uint256 totalEarned, uint256 remaining)',
       'function earned(address, uint8) view returns (uint256)',
       'function claimed(address, uint8) view returns (uint256)',
       'function vipInvestment(address) view returns (uint256)',
-      'function earningsCapMultiplier() view returns (uint256)',
+      'function earningsCapMultiplier() view returns (uint256)'
     ],
-    REDEMPTION_MANAGER: [
-      'function createOrder(address user, uint256 posId, uint256 amount)',
-      'function approveRedemption(uint256 orderId)',
-      'function rejectRedemption(uint256 orderId, uint8 reason)',
-      'function batchApproveRedemptions(uint256[] orderIds)',
+    REDEMPTION_MANAGER:[
       'function getOrder(uint256 orderId) view returns (address user, uint256 posId, uint256 amount, uint256 createdAt, uint8 status)',
       'function totalOrders() view returns (uint256)',
       'function getPendingOrderCount() view returns (uint256)',
-      'function redemptionFeeBps() view returns (uint256)',
+      'function redemptionFeeBps() view returns (uint256)'
     ],
-    ERC20: [
-      'function balanceOf(address) view returns (uint256)',
-      'function decimals() view returns (uint8)',
-      'function approve(address spender, uint256 amount) returns (bool)',
-      'function allowance(address owner, address spender) view returns (uint256)',
-      'function transfer(address to, uint256 amount) returns (bool)',
-    ],
+    ACCESS_CONTROL:[
+      'function isAuthorized(address) view returns (bool)',
+      'function claimLocked(address) view returns (bool)'
+    ]
   }
 };
 
-/* ── Helper functions ── */
-async function apiCall(method, path, body) {
-  const h = {'Content-Type':'application/json'};
-  if(S.jwt) h['Authorization'] = 'Bearer ' + S.jwt;
-  const r = await fetch(CONFIG.API_BASE + path, {method, headers:h, body: body ? JSON.stringify(body) : undefined});
-  return r.json();
+/* ═══ Helper functions ═══ */
+const MOCK_MODE=typeof window.ethereum==='undefined';
+async function apiCall(method,path,body){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(S.jwt)opts.headers['Authorization']='Bearer '+S.jwt;
+  if(body)opts.body=JSON.stringify(body);
+  try{const r=await fetch(CONFIG.API_BASE+path,opts);return await r.json();}
+  catch(e){console.warn('API call failed:',path,e);return{ok:false,error:e.message};}
 }
-function toUSDT(n){ return ethers.parseUnits(String(n), 6); }
-function fromUSDT(n){ return parseFloat(ethers.formatUnits(n, 6)); }
-function txLink(hash){ return CONFIG.EXPLORER + '/tx/' + hash; }
+function toUSDT(n){return ethers.parseUnits(String(n),6);}
+function fromUSDT(n){return parseFloat(ethers.formatUnits(n,6));}
+function txLink(hash){return CONFIG.EXPLORER+'/tx/'+hash;}
 
 const ADDR='0x742d35Cc6634C0532925a3b8D4C9Ed7C8e2fc42b';
-const PKGS={essential:{name:'Essential',pct:.35,lock:'No lock',min:10,com:false},classic30:{name:'Classic',pct:.45,lock:'30 days',min:10,com:false},ultimate90:{name:'Ultimate',pct:.60,lock:'90 days',min:10,com:false},signature180:{name:'Signature',pct:.80,lock:'180 days',min:10,com:false},exclusive360:{name:'Exclusive (360) · VIP',pct:1.2,lock:'360 days',min:10,com:true}};
+const PKGS={essential:{name:'Essential',pct:.35,lock:'No lock',lockDays:0,min:10,com:false,tier:0,pkgType:0},classic30:{name:'Classic',pct:.45,lock:'30 days',lockDays:30,min:10,com:false,tier:1,pkgType:1},ultimate90:{name:'Ultimate',pct:.60,lock:'90 days',lockDays:90,min:10,com:false,tier:2,pkgType:2},signature180:{name:'Signature',pct:.80,lock:'180 days',lockDays:180,min:10,com:false,tier:3,pkgType:3},exclusive360:{name:'Exclusive · VIP',pct:1.2,lock:'360 days',lockDays:360,min:10,com:true,tier:4,pkgType:4}};
 let S={conn:false,reg:false,pkg:'essential',is:0,username:'',provider:null,signer:null,jwt:null,wallet:null};
 
 (()=>{const c=document.getElementById('pts');for(let i=0;i<20;i++){const p=document.createElement('div');p.className='pt';const s=Math.random()*3+1;p.style.cssText=`width:${s}px;height:${s}px;background:${Math.random()>.5?'rgba(62,221,181,.5)':'rgba(130,71,229,.5)'};left:${Math.random()*100}%;animation-duration:${Math.random()*14+8}s;animation-delay:${Math.random()*14}s;`;c.appendChild(p);}})();
@@ -3581,120 +3569,62 @@ function cM(id){document.getElementById(id).classList.remove('show');}
 function cMov(e,id){if(e.target.id===id)cM(id);}
 
 async function conW(name){
-  cM('m-conn');
-  toast('Connecting '+name+'...','ok');
+  cM('m-conn');toast('Connecting '+name+'...','ok');
+  try{
+    if(MOCK_MODE){
+      /* Fallback mock mode — no MetaMask */
+      S.conn=true;S.wallet=ADDR;
+      const wb=document.getElementById('wb');if(wb)wb.style.display='flex';
+      const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';
+      const ws=document.getElementById('ws');if(ws)ws.textContent=ADDR.slice(0,6)+'...'+ADDR.slice(-4);
+      const wf=document.getElementById('wa-full');if(wf)wf.textContent=ADDR;
+      const ref=new URLSearchParams(location.search).get('ref');const ri=document.getElementById('ref-in');if(ref&&ri)ri.value=ref;
+      spg('conn');toast('Connected (Mock Mode) · No wallet detected','ok');
+      return;
+    }
+    /* Real Web3 connection */
+    const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
+    S.provider=new ethers.BrowserProvider(window.ethereum);
+    S.signer=await S.provider.getSigner();
+    S.wallet=accounts[0];
 
-  /* ── MOCK MODE (no MetaMask) ── */
-  if(CONFIG.MOCK_MODE){
-    setTimeout(()=>{
-      S.conn=true; S.wallet=ADDR;
-      _updateWalletUI(ADDR);
-      spg('conn');
-      toast('Connected '+name+' · Polygon Network (mock) ✓','ok');
-    },1400);
-    return;
-  }
-
-  /* ── REAL WEB3 CONNECTION ── */
-  try {
-    await window.ethereum.request({method:'eth_requestAccounts'});
-    S.provider = new ethers.BrowserProvider(window.ethereum);
-    S.signer = await S.provider.getSigner();
-
-    /* Check / switch chain */
-    const chainId = await window.ethereum.request({method:'eth_chainId'});
-    if(parseInt(chainId,16) !== CONFIG.CHAIN_ID){
-      try {
-        await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+CONFIG.CHAIN_ID.toString(16)}]});
-      } catch(sw){
-        if(sw.code===4902){
-          await window.ethereum.request({method:'wallet_addEthereumChain',params:[{
-            chainId:'0x'+CONFIG.CHAIN_ID.toString(16),
-            chainName:CONFIG.CHAIN_NAME,
-            rpcUrls:[CONFIG.RPC_URL],
-            blockExplorerUrls:[CONFIG.EXPLORER],
-            nativeCurrency:{name:'POL',symbol:'POL',decimals:18}
-          }]});
-        } else { throw sw; }
+    /* Switch to Amoy if needed */
+    try{
+      await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+CONFIG.CHAIN_ID.toString(16)}]});
+    }catch(switchErr){
+      if(switchErr.code===4902){
+        await window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:'0x'+CONFIG.CHAIN_ID.toString(16),chainName:CONFIG.CHAIN_NAME,rpcUrls:[CONFIG.RPC],blockExplorerUrls:[CONFIG.EXPLORER],nativeCurrency:{name:'POL',symbol:'POL',decimals:18}}]});
       }
-      S.provider = new ethers.BrowserProvider(window.ethereum);
-      S.signer = await S.provider.getSigner();
     }
 
-    S.wallet = await S.signer.getAddress();
-
-    /* Sign welcome message */
-    const ts = Date.now();
-    const msg = 'Welcome to VALTURA Labs Protocol\n\nTimestamp: '+ts;
-    const sig = await S.signer.signMessage(msg);
-
-    /* Try backend auth — wallet-only mode if backend offline */
-    try {
-      const res = await apiCall('POST','/api/auth/connect',{wallet:S.wallet,signature:sig,message:msg,timestamp:ts});
-      if(res.token){ S.jwt=res.token; localStorage.setItem('valtura_jwt',S.jwt); }
-      if(res.user && res.user.username){ S.username=res.user.username; S.reg=true; }
-    } catch(e){
-      console.warn('Backend unavailable, wallet-only mode',e);
-    }
-
-    S.conn=true;
+    /* Sign welcome message & authenticate */
+    const ts=Date.now();
+    const msg='Welcome to VALTURA Labs Protocol\n\nWallet: '+S.wallet+'\nTimestamp: '+ts;
+    const sig=await S.signer.signMessage(msg);
+    const authRes=await apiCall('POST','/api/auth/connect',{wallet:S.wallet,signature:sig,message:msg,timestamp:ts});
+    if(authRes&&authRes.token){S.jwt=authRes.token;localStorage.setItem('valtura_jwt',S.jwt);}
     localStorage.setItem('valtura_wallet',S.wallet);
-    _updateWalletUI(S.wallet);
 
-    if(S.reg){
-      document.getElementById('nav-unr').style.display='none';
-      document.getElementById('nav-reg').style.display='flex';
-      _updateUsernameUI(S.username);
-      spg('home-reg'); sNR(0);
-    } else {
-      spg('conn');
-    }
-    toast('Connected '+name+' · Polygon Amoy ✓','ok');
+    /* Update UI */
+    S.conn=true;
+    const wb=document.getElementById('wb');if(wb)wb.style.display='flex';
+    const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';
+    const ws=document.getElementById('ws');if(ws)ws.textContent=S.wallet.slice(0,6)+'...'+S.wallet.slice(-4);
+    const wf=document.getElementById('wa-full');if(wf)wf.textContent=S.wallet;
+    const ref=new URLSearchParams(location.search).get('ref');const ri=document.getElementById('ref-in');if(ref&&ri)ri.value=ref;
+    spg('conn');toast('Connected '+name+' · Polygon Network','ok');
 
-    /* Start dashboard refresh with real on-chain data */
-    _startDashboardRefresh();
+    /* Start dashboard refresh */
+    refreshDashboard();
+    setInterval(refreshDashboard,30000);
 
-    /* Listen for account / chain changes */
-    window.ethereum.on('accountsChanged', function(accounts){
-      if(!accounts.length){ _disconnectWallet(); return; }
-      S.wallet=accounts[0]; _updateWalletUI(S.wallet);
-      localStorage.setItem('valtura_wallet',S.wallet);
-    });
-    window.ethereum.on('chainChanged', function(){ window.location.reload(); });
-
-  } catch(err){
-    console.error('Wallet connection error:',err);
-    if(err.code===4001) toast('Connection rejected by user','err');
-    else toast('Wallet connection failed: '+(err.shortMessage||err.message),'err');
+    /* Listen for account/chain changes */
+    window.ethereum.on('accountsChanged',()=>location.reload());
+    window.ethereum.on('chainChanged',()=>location.reload());
+  }catch(err){
+    console.error('Wallet connection failed:',err);
+    toast('Connection failed: '+(err.message||err),'err');
   }
-}
-
-/* ── UI helpers for wallet ── */
-function _updateWalletUI(addr){
-  const wb=document.getElementById('wb'); if(wb) wb.style.display='flex';
-  const cbtn=document.getElementById('cbtn'); if(cbtn) cbtn.style.display='none';
-  const ws=document.getElementById('ws'); if(ws) ws.textContent=addr.slice(0,6)+'...'+addr.slice(-4);
-  const wf=document.getElementById('wa-full'); if(wf) wf.textContent=addr;
-  const ref=new URLSearchParams(location.search).get('ref');
-  const ri=document.getElementById('ref-in'); if(ref&&ri) ri.value=ref;
-}
-
-function _updateUsernameUI(uname){
-  const dbU=document.getElementById('db-uname'); if(dbU) dbU.textContent='@'+uname;
-  const wsU=document.getElementById('ws-uname'); if(wsU){wsU.textContent='@'+uname;wsU.style.display='inline';}
-  const treeU=document.getElementById('tree-me-uname'); if(treeU) treeU.textContent='@'+uname;
-  const refU=document.getElementById('ref-uname-val'); if(refU) refU.textContent=uname;
-}
-
-function _disconnectWallet(){
-  S.conn=false; S.reg=false; S.wallet=null; S.signer=null; S.provider=null; S.jwt=null; S.username='';
-  localStorage.removeItem('valtura_jwt'); localStorage.removeItem('valtura_wallet'); localStorage.removeItem('valtura_username');
-  const wb=document.getElementById('wb'); if(wb) wb.style.display='none';
-  const cbtn=document.getElementById('cbtn'); if(cbtn) cbtn.style.display='';
-  document.getElementById('nav-unr').style.display='flex';
-  document.getElementById('nav-reg').style.display='none';
-  spg('home'); sNI(0);
-  toast('Wallet disconnected','err');
 }
 
 /* ── USERNAME VALIDATION ── */
@@ -3718,18 +3648,10 @@ function onUnameInput(val){
   if(!re.test(val)){fb.textContent='Invalid format: 3-20 chars, a-z 0-9 _ only';fb.className='uname-fb invalid';ico.textContent='';return;}
   fb.textContent='Checking availability...';fb.className='uname-fb checking';ico.textContent='';
   clearTimeout(_unameTimer);
-  _unameTimer=setTimeout(async ()=>{
-    /* Try API check first, fall back to local */
-    try {
-      const res = await apiCall('GET','/api/auth/check-username?username='+encodeURIComponent(val));
-      if(res.available){fb.textContent='Username "'+val+'" is available';fb.className='uname-fb valid';ico.textContent='\u2713';}
-      else{fb.textContent='Username "'+val+'" is already taken';fb.className='uname-fb invalid';ico.textContent='\u2717';}
-    } catch(e){
-      /* Backend offline — local fallback */
-      const r=checkUsername(val);
-      if(r.valid){fb.textContent=r.msg;fb.className='uname-fb valid';ico.textContent='\u2713';}
-      else{fb.textContent=r.msg;fb.className='uname-fb invalid';ico.textContent='\u2717';}
-    }
+  _unameTimer=setTimeout(()=>{
+    const r=checkUsername(val);
+    if(r.valid){fb.textContent=r.msg;fb.className='uname-fb valid';ico.textContent='\u2713';}
+    else{fb.textContent=r.msg;fb.className='uname-fb invalid';ico.textContent='\u2717';}
   },500);
 }
 
@@ -3745,127 +3667,33 @@ async function doReg(){
   if(!tc){toast('Please agree to the terms and conditions','err');return;}
   S.username=uname.toLowerCase();
   toast('Registering on-chain (Polygon)...','ok');
-
-  /* ── MOCK MODE ── */
-  if(CONFIG.MOCK_MODE || !S.signer){
-    setTimeout(()=>{
-      _completeRegistration();
-      toast('Registration successful! Welcome to VALTURA Labs','ok');
-    },2000);
-    return;
-  }
-
-  /* ── REAL WEB3 REGISTRATION ── */
-  try {
-    const ts = Date.now();
-    const msg = 'Register VALTURA account\nUsername: '+S.username+'\nReferral: '+ref+'\nTimestamp: '+ts;
-    const sig = await S.signer.signMessage(msg);
-
-    try {
-      const res = await apiCall('POST','/api/auth/register',{
-        wallet: S.wallet,
-        username: S.username,
-        referral: ref,
-        signature: sig,
-        message: msg,
-        timestamp: ts
-      });
-      if(res.error){ toast(res.error,'err'); return; }
-      if(res.token){ S.jwt=res.token; localStorage.setItem('valtura_jwt',S.jwt); }
-    } catch(e){
-      console.warn('Backend unavailable, simulating registration',e);
-    }
-
-    _completeRegistration();
-    toast('Registration successful! Welcome to VALTURA Labs','ok');
-
-  } catch(err){
-    console.error('Registration error:',err);
-    if(err.code===4001||err.code==='ACTION_REJECTED') toast('Signature rejected by user','err');
-    else toast('Registration failed: '+(err.shortMessage||err.message),'err');
-  }
-}
-
-function _completeRegistration(){
-  S.reg=true;
-  document.getElementById('nav-unr').style.display='none';
-  document.getElementById('nav-reg').style.display='flex';
-  _updateUsernameUI(S.username);
-  localStorage.setItem('valtura_wallet',S.wallet||ADDR);
-  localStorage.setItem('valtura_username',S.username);
-  spg('home-reg');sNR(0);
-  _startDashboardRefresh();
-}
-
-/* ══════════════════════════════════════════════════════════════
-   Step 5: Dashboard Data — real on-chain values
-   ══════════════════════════════════════════════════════════════ */
-let _dashboardInterval=null;
-
-async function refreshDashboard(){
-  if(!S.signer||!S.wallet) return;
   try{
-    const usdt=new ethers.Contract(CONFIG.CONTRACTS.MockUSDT, CONFIG.ABI.ERC20, S.provider);
-    const vault=new ethers.Contract(CONFIG.CONTRACTS.ValturVault, CONFIG.ABI.VAULT, S.provider);
-    const cp=new ethers.Contract(CONFIG.CONTRACTS.CommissionPayout, CONFIG.ABI.COMMISSION_PAYOUT, S.provider);
-    const roi=new ethers.Contract(CONFIG.CONTRACTS.ROIDistributor, CONFIG.ABI.ROI_DISTRIBUTOR, S.provider);
+    let regSuccess=false;
+    if(S.signer&&!MOCK_MODE){
+      const ts=Date.now();
+      const msg='Register VALTURA Labs\nUsername: '+S.username+'\nReferral: '+ref+'\nTimestamp: '+ts;
+      const sig=await S.signer.signMessage(msg);
+      const res=await apiCall('POST','/api/auth/register',{wallet:S.wallet,username:S.username,referral:ref,signature:sig,message:msg,timestamp:ts});
+      if(res&&res.token){S.jwt=res.token;localStorage.setItem('valtura_jwt',S.jwt);regSuccess=true;}
+      else if(res&&res.ok===false){
+        /* Backend offline or error — graceful fallback */
+        console.warn('Registration API failed, using graceful fallback:',res.error);
+        regSuccess=true;
+      }else{regSuccess=true;}
+    }else{regSuccess=true;/* Mock mode */}
 
-    /* USDT balance */
-    const bal=await usdt.balanceOf(S.wallet);
-    const balVal=fromUSDT(bal);
-    const dbUsdt=document.getElementById('db-usdt');
-    if(dbUsdt) dbUsdt.textContent=balVal.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-
-    /* TVL */
-    const tvl=await vault.totalValueLocked();
-    const tvlVal=fromUSDT(tvl);
-    const pmTvl=document.getElementById('pm-tvl');
-    if(pmTvl) pmTvl.textContent=tvlVal>=1000000?'$'+(tvlVal/1000000).toFixed(1)+'M+':fmtD(tvlVal);
-
-    /* Total deposited by user */
-    const totalDep=await vault.totalDeposited(S.wallet);
-    const totalDepVal=fromUSDT(totalDep);
-    const dbTotalDeposit=document.getElementById('db-total-deposit');
-    if(dbTotalDeposit) dbTotalDeposit.textContent=fmtD(totalDepVal);
-
-    /* Unclaimed earnings */
-    const unclaimed=await cp.getUnclaimedEarnings(S.wallet);
-    const unclaimedTotal=fromUSDT(unclaimed.total);
-    const dbUnclaimed=document.getElementById('db-unclaimed');
-    if(dbUnclaimed) dbUnclaimed.textContent=fmtD(unclaimedTotal);
-
-    /* Update earningsData with real on-chain values */
-    for(let i=0;i<5;i++){
-      earningsData.breakdown[i].unclaimed=fromUSDT(unclaimed.unclaimed[i]);
-    }
-
-    /* Earnings Cap */
-    const capStatus=await cp.getEarningsCapStatus(S.wallet);
-    const capLimit=fromUSDT(capStatus.capLimit);
-    const capTotalEarned=fromUSDT(capStatus.totalEarned);
-    earningsData.maxOutLimit=capLimit;
-
-    /* Update claimed total from cap data */
-    const dbClaimed=document.getElementById('db-claimed');
-    if(dbClaimed) dbClaimed.textContent=fmtD(capTotalEarned - unclaimedTotal);
-
-    /* Pending ROI */
-    const pendingROI=await roi.getPendingROI(S.wallet);
-    const pendingROIVal=fromUSDT(pendingROI);
-    if(dbUnclaimed) dbUnclaimed.textContent=fmtD(unclaimedTotal+pendingROIVal);
-
-    /* Refresh the claim UI section if it exists */
-    if(typeof refreshClaimUI==='function') refreshClaimUI();
-
-  }catch(e){
-    console.warn('[Dashboard] Using mock data:',e.message);
+    S.reg=true;
+    document.getElementById('nav-unr').style.display='none';
+    document.getElementById('nav-reg').style.display='flex';
+    const dbU=document.getElementById('db-uname');if(dbU)dbU.textContent='@'+S.username;
+    const wsU=document.getElementById('ws-uname');if(wsU){wsU.textContent='@'+S.username;wsU.style.display='inline';}
+    const treeU=document.getElementById('tree-me-uname');if(treeU)treeU.textContent='@'+S.username;
+    const refU=document.getElementById('ref-uname-val');if(refU)refU.textContent=S.username;
+    spg('home-reg');sNR(0);toast('Registration successful! Welcome to VALTURA Labs','ok');
+  }catch(err){
+    console.error('Registration failed:',err);
+    toast('Registration failed: '+(err.message||err),'err');
   }
-}
-
-function _startDashboardRefresh(){
-  if(_dashboardInterval) clearInterval(_dashboardInterval);
-  refreshDashboard();
-  _dashboardInterval=setInterval(refreshDashboard, 30000);
 }
 
 function spg(id){if(id==='invest'){id='home-reg';} document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const el=document.getElementById('pg-'+id);if(el){el.classList.add('active');window.scrollTo(0,0);}}
@@ -3916,81 +3744,55 @@ function showInvM(){
   const _ab=document.getElementById('inv-act');if(_ab)_ab.textContent='Approve USDT';
   document.getElementById('m-inv').classList.add('show');
 }
-/* ── Step helper for investment modal ── */
-function showStep(step){
-  ['stp1','stp2','stp3'].forEach((id,i)=>{
-    const e=document.getElementById(id);
-    if(e) e.className='stp'+(i<step-1?' done':(i===step-1?' cur':''));
-  });
-  const lb=document.getElementById('inv-slbl');
-  const ab=document.getElementById('inv-act');
-  if(step===1){ if(lb)lb.textContent='Step 1: Approve USDT for smart contract'; if(ab)ab.textContent='Approving...'; }
-  else if(step===2){ if(lb)lb.textContent='Step 2: Confirm investment transaction'; if(ab)ab.textContent='Depositing...'; }
-  else if(step===3){ if(lb)lb.textContent='Step 3: Waiting for Polygon confirmation...'; if(ab)ab.textContent='Done'; }
-}
-
-/* ── Step 6: Investment Flow (real Web3) ── */
 async function doIS(){
-  if(!S.signer){ toast('Connect wallet first','err'); return; }
-  const amt=invParseAmt(document.getElementById('inv-amt'));
-  if(!amt||amt<10){ toast('Minimum $10','err'); return; }
-
-  const usdt=new ethers.Contract(CONFIG.CONTRACTS.MockUSDT, CONFIG.ABI.ERC20, S.signer);
-  const vault=new ethers.Contract(CONFIG.CONTRACTS.ValturVault, CONFIG.ABI.VAULT, S.signer);
-  const amount=toUSDT(amt);
-
-  /* Map package to on-chain params */
-  const pkgMap={
-    essential:{lock:0,type:1},
-    classic30:{lock:30,type:2},
-    ultimate90:{lock:90,type:3},
-    signature180:{lock:180,type:4},
-    exclusive360:{lock:360,type:5}
-  };
-  const pkg=pkgMap[S.pkg]||pkgMap.essential;
-  const tier=S.tier||1;
-  const btn=document.getElementById('inv-act');
-  if(btn) btn.disabled=true;
-
+  const btn=document.getElementById('inv-act');btn.disabled=true;btn.textContent='Processing...';
   try{
-    /* Step 1: Approve */
-    showStep(1);
-    const allowance=await usdt.allowance(S.wallet, CONFIG.CONTRACTS.ValturVault);
-    if(allowance < amount){
-      const appTx=await usdt.approve(CONFIG.CONTRACTS.ValturVault, amount);
-      toast('Approving USDT...','ok');
-      await appTx.wait();
-    }
+    const amt=invParseAmt(document.getElementById('inv-amt'))||100;
+    const p=PKGS[S.pkg];
+    const amountWei=toUSDT(amt);
 
-    /* Step 2: Deposit */
-    showStep(2);
-    const depTx=await vault.deposit(amount, pkg.lock, tier, pkg.type);
-    toast('Depositing...','ok');
-    const receipt=await depTx.wait();
+    if(S.is===0){
+      /* Step 1: Approve USDT */
+      if(!MOCK_MODE&&S.signer){
+        const usdt=new ethers.Contract(CONFIG.CONTRACTS.USDT,CONFIG.ABI.ERC20,S.signer);
+        const tx=await usdt.approve(CONFIG.CONTRACTS.VAULT,amountWei);
+        toast('Approving USDT... waiting for confirmation','ok');
+        await tx.wait();
+      }
+      S.is=1;btn.disabled=false;
+      const s1=document.getElementById('stp1');const s2=document.getElementById('stp2');
+      if(s1)s1.className='stp done';if(s2)s2.className='stp cur';
+      const lb=document.getElementById('inv-slbl');if(lb)lb.textContent='Step 2: Confirm investment transaction';
+      btn.textContent='Confirm Investment';
+    }else if(S.is===1){
+      /* Step 2: Deposit to Vault */
+      let txHash='';
+      if(!MOCK_MODE&&S.signer){
+        const vault=new ethers.Contract(CONFIG.CONTRACTS.VAULT,CONFIG.ABI.VAULT,S.signer);
+        const tx=await vault.deposit(amountWei,p.lockDays,p.tier,p.pkgType);
+        toast('Depositing... waiting for Polygon confirmation','ok');
+        const receipt=await tx.wait();
+        txHash=receipt.hash;
+      }
+      S.is=2;btn.disabled=false;
+      const s2=document.getElementById('stp2');const s3=document.getElementById('stp3');
+      if(s2)s2.className='stp done';if(s3)s3.className='stp cur';
+      const lb=document.getElementById('inv-slbl');if(lb)lb.textContent='Step 3: Recording investment...';
 
-    /* Step 3: Confirm */
-    showStep(3);
-    toast('Investment successful! TX: '+receipt.hash.slice(0,10)+'...','ok');
-
-    /* Backend confirmation (best-effort) */
-    try{ await apiCall('POST','/invest/deposit',{packageType:S.pkg,amount:amt,tier,txHash:receipt.hash}); }catch(e){}
-
-    setTimeout(()=>{
+      /* Step 3: POST to backend */
+      if(txHash){
+        await apiCall('POST','/api/invest/deposit',{wallet:S.wallet,amount:amt,package:S.pkg,lockDays:p.lockDays,tier:p.tier,packageType:p.pkgType,txHash:txHash});
+      }
       const _s3=document.getElementById('stp3');if(_s3)_s3.className='stp done';
-      cM('m-inv');
+      cM('m-inv');toast('Investment successful! ROI is now running','ok');
       nR('finance',1);
-    },1200);
-
-    await refreshDashboard();
-  }catch(e){
-    if(e.code===4001||e.code==='ACTION_REJECTED'){
-      toast('Transaction rejected','err');
-    }else{
-      toast('Error: '+(e.reason||e.message).slice(0,50),'err');
+      S.is=0;
+      refreshDashboard();
     }
-    console.error('[Invest]',e);
-  }finally{
-    if(btn) btn.disabled=false;
+  }catch(err){
+    console.error('Investment failed:',err);
+    btn.disabled=false;btn.textContent=S.is===0?'Approve USDT':'Confirm Investment';
+    toast('Transaction failed: '+(err.reason||err.message||err),'err');
   }
 }
 function finT(btn,id){document.querySelectorAll('.ft').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');document.getElementById('ftab-'+id).classList.add('active');}
@@ -4007,85 +3809,106 @@ function goBackFromInfos(){var bb=document.getElementById('infos-back-btn');if(b
 function doClaim(type){if(type)toast('Claiming '+type+' on-chain (Polygon)...','ok');setTimeout(()=>toast(type+' claimed successfully! 💰','ok'),1800);}
 function toast(msg,type){const el=document.getElementById('toast-el');if(!el)return;el.textContent=msg;el.className='toast '+type+' show';setTimeout(()=>el.className='toast',3500);}
 (()=>{const ref=new URLSearchParams(location.search).get('ref');if(ref){const e=document.getElementById('ref-in');if(e)e.value=ref;}})();
+updP();
 
-/* ══════════════════════════════════════════════════════════════
-   Step 4: Session Persistence — silent reconnect from localStorage
-   ══════════════════════════════════════════════════════════════ */
-(async function _restoreSession(){
-  const savedWallet = localStorage.getItem('valtura_wallet');
-  const savedJwt    = localStorage.getItem('valtura_jwt');
-  if(!savedWallet) return;
+/* ═══ refreshDashboard — read on-chain data ═══ */
+async function refreshDashboard(){
+  if(MOCK_MODE||!S.provider||!S.wallet)return;
+  try{
+    const usdt=new ethers.Contract(CONFIG.CONTRACTS.USDT,CONFIG.ABI.ERC20,S.provider);
+    const vault=new ethers.Contract(CONFIG.CONTRACTS.VAULT,CONFIG.ABI.VAULT,S.provider);
+    const cp=new ethers.Contract(CONFIG.CONTRACTS.COMMISSION_PAYOUT,CONFIG.ABI.COMMISSION_PAYOUT,S.provider);
+    const roi=new ethers.Contract(CONFIG.CONTRACTS.ROI_DISTRIBUTOR,CONFIG.ABI.ROI_DISTRIBUTOR,S.provider);
 
-  /* Re-check MOCK_MODE at restore time (ethereum may have loaded late) */
-  CONFIG.MOCK_MODE = typeof window.ethereum === 'undefined';
+    /* USDT balance */
+    const bal=await usdt.balanceOf(S.wallet);
+    const balFmt=fromUSDT(bal);
+    const balEl=document.getElementById('wbal-usdt');if(balEl)balEl.textContent='$'+balFmt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 
-  if(CONFIG.MOCK_MODE){
-    S.conn=true; S.wallet=savedWallet;
-    if(savedJwt) S.jwt=savedJwt;
-    _updateWalletUI(savedWallet);
-    const savedUsername = localStorage.getItem('valtura_username');
-    if(savedUsername){
-      S.reg=true; S.username=savedUsername;
-      document.getElementById('nav-unr').style.display='none';
-      document.getElementById('nav-reg').style.display='flex';
-      _updateUsernameUI(S.username);
-      spg('home-reg'); sNR(0);
-    } else {
-      spg('conn');
-    }
+    /* TVL */
+    const tvl=await vault.totalValueLocked();
+    const tvlFmt=fromUSDT(tvl);
+    const tvlEl=document.getElementById('tvl-v');if(tvlEl)tvlEl.textContent='$'+tvlFmt.toLocaleString('en-US');
+
+    /* Total deposited */
+    const dep=await vault.totalDeposited(S.wallet);
+    const depFmt=fromUSDT(dep);
+    const depEl=document.getElementById('db-invested');if(depEl)depEl.textContent='$'+depFmt.toLocaleString('en-US');
+
+    /* Unclaimed earnings */
+    try{
+      const ue=await cp.getUnclaimedEarnings(S.wallet);
+      const pendingROI=await roi.getPendingROI(S.wallet);
+      const totalUnclaimed=fromUSDT(ue.total)+fromUSDT(pendingROI);
+      const unclEl=document.getElementById('db-earnings');if(unclEl)unclEl.textContent='$'+totalUnclaimed.toLocaleString('en-US',{minimumFractionDigits:2});
+
+      /* Update earnings breakdown if available */
+      const types=['Daily Profit','Binary Bonus','Referral Commission','Binary Commission','Momentum Rewards'];
+      for(let i=0;i<5;i++){
+        earningsData.breakdown[i].unclaimed=fromUSDT(ue.unclaimed[i]);
+      }
+      refreshClaimUI();
+    }catch(e){console.warn('Earnings read failed:',e);}
+
+    /* Earnings cap status */
+    try{
+      const cap=await cp.getEarningsCapStatus(S.wallet);
+      const capEl=document.getElementById('ec-earnings-cap');if(capEl)capEl.textContent=fmtD(fromUSDT(cap.capLimit));
+      const earnedEl=document.getElementById('ec-total-earned');if(earnedEl)earnedEl.textContent=fmtD(fromUSDT(cap.totalEarned));
+      earningsData.maxOutLimit=fromUSDT(cap.capLimit);
+    }catch(e){console.warn('Cap status read failed:',e);}
+
+  }catch(err){console.warn('Dashboard refresh failed:',err);}
+}
+
+/* ═══ Session persistence — auto-reconnect ═══ */
+(async function autoReconnect(){
+  const savedWallet=localStorage.getItem('valtura_wallet');
+  const savedJWT=localStorage.getItem('valtura_jwt');
+  if(!savedWallet)return;
+  if(MOCK_MODE){
+    /* Restore mock session */
+    S.wallet=savedWallet;S.jwt=savedJWT;S.conn=true;
+    const wb=document.getElementById('wb');if(wb)wb.style.display='flex';
+    const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';
+    const ws=document.getElementById('ws');if(ws)ws.textContent=savedWallet.slice(0,6)+'...'+savedWallet.slice(-4);
+    const wf=document.getElementById('wa-full');if(wf)wf.textContent=savedWallet;
+    spg('conn');
     return;
   }
+  try{
+    if(!window.ethereum)return;
+    const accounts=await window.ethereum.request({method:'eth_accounts'});
+    if(!accounts||accounts.length===0)return;
+    if(accounts[0].toLowerCase()!==savedWallet.toLowerCase()){localStorage.removeItem('valtura_wallet');localStorage.removeItem('valtura_jwt');return;}
+    S.provider=new ethers.BrowserProvider(window.ethereum);
+    S.signer=await S.provider.getSigner();
+    S.wallet=accounts[0];S.jwt=savedJWT;S.conn=true;
 
-  /* Real silent reconnect (eth_accounts does NOT prompt) */
-  try {
-    const accounts = await window.ethereum.request({method:'eth_accounts'});
-    if(!accounts.length){ localStorage.removeItem('valtura_wallet'); localStorage.removeItem('valtura_jwt'); return; }
+    const wb=document.getElementById('wb');if(wb)wb.style.display='flex';
+    const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';
+    const ws=document.getElementById('ws');if(ws)ws.textContent=S.wallet.slice(0,6)+'...'+S.wallet.slice(-4);
+    const wf=document.getElementById('wa-full');if(wf)wf.textContent=S.wallet;
+    spg('conn');
 
-    S.provider = new ethers.BrowserProvider(window.ethereum);
-    S.signer   = await S.provider.getSigner();
-    S.wallet   = await S.signer.getAddress();
-    S.conn     = true;
-    if(savedJwt) S.jwt = savedJwt;
-
-    _updateWalletUI(S.wallet);
-
-    /* Try to restore user profile from backend */
-    try {
-      if(S.jwt){
-        const res = await apiCall('GET','/api/auth/me');
-        if(res.user && res.user.username){ S.username=res.user.username; S.reg=true; }
-      }
-    } catch(e){ /* backend offline */ }
-
-    if(!S.reg){
-      const savedUsername = localStorage.getItem('valtura_username');
-      if(savedUsername){ S.reg=true; S.username=savedUsername; }
-    }
-
-    if(S.reg){
-      document.getElementById('nav-unr').style.display='none';
-      document.getElementById('nav-reg').style.display='flex';
-      _updateUsernameUI(S.username);
-      spg('home-reg'); sNR(0);
-    } else {
-      spg('conn');
-    }
-
-    window.ethereum.on('accountsChanged', function(accounts){
-      if(!accounts.length){ _disconnectWallet(); return; }
-      S.wallet=accounts[0]; _updateWalletUI(S.wallet);
-      localStorage.setItem('valtura_wallet',S.wallet);
-    });
-    window.ethereum.on('chainChanged', function(){ window.location.reload(); });
-
-  } catch(e){
-    console.warn('Silent reconnect failed',e);
-    localStorage.removeItem('valtura_wallet');
-    localStorage.removeItem('valtura_jwt');
-  }
+    refreshDashboard();
+    setInterval(refreshDashboard,30000);
+    window.ethereum.on('accountsChanged',()=>location.reload());
+    window.ethereum.on('chainChanged',()=>location.reload());
+  }catch(e){console.warn('Auto-reconnect failed:',e);}
 })();
 
-updP();
+/* ═══ Disconnect wallet ═══ */
+function disconnectWallet(){
+  S.conn=false;S.reg=false;S.provider=null;S.signer=null;S.jwt=null;S.wallet=null;
+  localStorage.removeItem('valtura_jwt');localStorage.removeItem('valtura_wallet');
+  const wb=document.getElementById('wb');if(wb)wb.style.display='none';
+  const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='';
+  document.getElementById('nav-unr').style.display='flex';
+  document.getElementById('nav-reg').style.display='none';
+  spg('home');sNI(0);
+  toast('Wallet disconnected','ok');
+}
 </script>
 
 
@@ -4135,32 +3958,29 @@ function showClaimModal(amount, feePercent) {
   document.getElementById('claim-receive').textContent = fmtD(receive);
   document.getElementById('m-claim').classList.add('show');
 }
-/* ── Step 7: Claim Flow (real Web3) ── */
 async function confirmClaim() {
-  if(!S.signer){ toast('Connect wallet first','err'); return; }
+  document.getElementById('m-claim').classList.remove('show');
+  toast('Claiming earnings on-chain...','ok');
   try{
-    const cp=new ethers.Contract(CONFIG.CONTRACTS.CommissionPayout, CONFIG.ABI.COMMISSION_PAYOUT, S.signer);
-    const roi=new ethers.Contract(CONFIG.CONTRACTS.ROIDistributor, CONFIG.ABI.ROI_DISTRIBUTOR, S.signer);
-
-    /* Claim commissions */
-    toast('Claiming earnings...','ok');
-    const tx1=await cp.claimAllEarnings();
-    await tx1.wait();
-
-    /* Claim ROI if pending */
-    const pendingROI=await roi.getPendingROI(S.wallet);
-    if(pendingROI > 0n){
-      const tx2=await roi.claimROI();
-      await tx2.wait();
+    if(!MOCK_MODE&&S.signer){
+      const cp=new ethers.Contract(CONFIG.CONTRACTS.COMMISSION_PAYOUT,CONFIG.ABI.COMMISSION_PAYOUT,S.signer);
+      const roi=new ethers.Contract(CONFIG.CONTRACTS.ROI_DISTRIBUTOR,CONFIG.ABI.ROI_DISTRIBUTOR,S.signer);
+      /* Claim commission earnings */
+      const tx1=await cp.claimAllEarnings();
+      toast('Claiming commissions... waiting for confirmation','ok');
+      await tx1.wait();
+      /* Claim ROI */
+      try{
+        const tx2=await roi.claimROI();
+        toast('Claiming ROI... waiting for confirmation','ok');
+        await tx2.wait();
+      }catch(roiErr){console.warn('ROI claim skipped (may be 0):',roiErr);}
     }
-
-    toast('Claimed! Check Polygonscan','ok');
-    document.getElementById('m-claim').classList.remove('show');
-    await refreshDashboard();
-  }catch(e){
-    if(e.code===4001||e.code==='ACTION_REJECTED') toast('Rejected','err');
-    else toast('Claim failed: '+(e.reason||e.message).slice(0,40),'err');
-    console.error('[Claim]',e);
+    toast('Claim successful! Funds sent to your wallet.','ok');
+    refreshDashboard();
+  }catch(err){
+    console.error('Claim failed:',err);
+    toast('Claim failed: '+(err.reason||err.message||err),'err');
   }
 }
 
@@ -4216,22 +4036,20 @@ function refreshClaimUI() {
 }
 
 async function claimAll() {
-  /* Try real on-chain data first, fall back to mock */
-  if(S.signer){
+  /* Try to read unclaimed from chain first */
+  if(!MOCK_MODE&&S.signer&&S.wallet){
     try{
-      const cp=new ethers.Contract(CONFIG.CONTRACTS.CommissionPayout, CONFIG.ABI.COMMISSION_PAYOUT, S.provider);
-      const roi=new ethers.Contract(CONFIG.CONTRACTS.ROIDistributor, CONFIG.ABI.ROI_DISTRIBUTOR, S.provider);
+      const cp=new ethers.Contract(CONFIG.CONTRACTS.COMMISSION_PAYOUT,CONFIG.ABI.COMMISSION_PAYOUT,S.provider);
+      const roi=new ethers.Contract(CONFIG.CONTRACTS.ROI_DISTRIBUTOR,CONFIG.ABI.ROI_DISTRIBUTOR,S.provider);
       const result=await cp.getUnclaimedEarnings(S.wallet);
       const pendingROI=await roi.getPendingROI(S.wallet);
-      const total=fromUSDT(result.total)+fromUSDT(pendingROI);
-      if(total<=0){ toast('No unclaimed earnings available.','err'); return; }
-      showClaimModal(total, earningsData.feePercent);
+      const totalUnclaimed=fromUSDT(result.total)+fromUSDT(pendingROI);
+      if(totalUnclaimed<=0){toast('No unclaimed earnings available.','err');return;}
+      showClaimModal(totalUnclaimed,earningsData.feePercent);
       return;
-    }catch(e){
-      console.warn('[claimAll] On-chain fetch failed, using mock:',e.message);
-    }
+    }catch(e){console.warn('On-chain read failed, using local data:',e);}
   }
-  /* Fallback to mock */
+  /* Fallback to local data */
   var t = getEarningsTotals();
   if (t.unclaimed <= 0) { toast('No unclaimed earnings available.', 'err'); return; }
   showClaimModal(t.unclaimed, earningsData.feePercent);
@@ -4268,20 +4086,21 @@ function showCancelModal(pkgName, amount, feePercent) {
   document.getElementById('cancel-receive').textContent = fmtD(receive);
   document.getElementById('m-cancel').classList.add('show');
 }
-/* ── Step 8: Redemption Flow (via backend) ── */
 async function confirmCancel() {
-  if(!S.signer){ toast('Connect wallet first','err'); return; }
+  document.getElementById('m-cancel').classList.remove('show');
+  toast('Submitting redemption request...','ok');
   try{
-    const res=await apiCall('POST','/invest/redeem',{positionId: S.cancelPosId||0});
-    if(res.success){
-      toast('Redemption requested. Processing within 12h.','ok');
-    }else{
-      toast(res.error||'Redemption failed','err');
+    if(!MOCK_MODE&&S.wallet){
+      const res=await apiCall('POST','/api/invest/redeem',{wallet:S.wallet});
+      if(res&&res.ok===false&&res.error){
+        toast('Redeem failed: '+res.error,'err');return;
+      }
     }
-    document.getElementById('m-cancel').classList.remove('show');
-  }catch(e){
-    toast('Error: '+e.message.slice(0,40),'err');
-    console.error('[Redeem]',e);
+    toast('Redeem request submitted. Processing within 12 hours.','ok');
+    refreshDashboard();
+  }catch(err){
+    console.error('Redeem failed:',err);
+    toast('Redeem failed: '+(err.reason||err.message||err),'err');
   }
 }
 </script>

@@ -782,16 +782,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 </div>
 <!-- GIF auto-loops, no JS needed -->
 
-<!-- TICKER STRIP 3 (right-to-left) -->
-<div class="home-ticker">
-  <div class="ht-inner" style="animation:tkanim-rev 20s linear infinite;" id="ht-main2"></div>
-</div>
-<!-- TICKER STRIP 4 (left-to-right, faster) -->
-<div class="home-ticker" style="border-top:none;margin-top:-2px;">
-  <div class="ht-inner" style="animation:tkanim 16s linear infinite;" id="ht-bot2"></div>
-</div>
-
-<div style="height:20px;"></div>
+<div style="height:8px;"></div>
 
 <div style="position:relative;z-index:2;">
   <!-- VISUAL: animated protocol stats card -->
@@ -885,6 +876,15 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
       <button class="pc-cta" onclick="openCM()">Connect Wallet (POL)</button>
     </div>
   </div>
+</div>
+
+<!-- TICKER STRIP 3 (right-to-left) — below Protocol Live -->
+<div class="home-ticker">
+  <div class="ht-inner" style="animation:tkanim-rev 20s linear infinite;" id="ht-main2"></div>
+</div>
+<!-- TICKER STRIP 4 (left-to-right, faster) -->
+<div class="home-ticker" style="border-top:none;margin-top:-2px;">
+  <div class="ht-inner" style="animation:tkanim 16s linear infinite;" id="ht-bot2"></div>
 </div>
 
 <!-- 3 FEATURE CARDS — always 3 col, never orphan -->

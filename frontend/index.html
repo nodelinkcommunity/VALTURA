@@ -2080,29 +2080,7 @@ invUpdP();
     <div class="ftab active" id="ftab-my-pkg">
       <div class="fsec">
         <h4>📦 Active Packages</h4>
-        <div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:8px;position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad2);"></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:13px;font-weight:700;font-family:Montserrat,sans-serif;">Exclusive · VIP · $5,000</span></div>
-          <div class="frow"><span class="fk">Daily ROI</span><span class="fv" style="color:var(--cyan)">$60</span></div>
-          <div class="frow"><span class="fk">ROI claimed</span><span class="fv" style="color:var(--green)">$1,920</span></div>
-          <div class="frow"><span class="fk">Unclaimed ROI</span><span class="fv" style="color:var(--green)">$180</span></div>
-          <div class="frow"><span class="fk">Remaining</span><span class="fv">328 days</span></div>
-          <div class="frow" style="border:none;"><span class="fk">Commission / Rewards</span><span class="bdg bc">Eligible</span></div>
-          <div style="display:flex;align-items:center;justify-content:flex-end;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);">
-            <button class="clm-btn" style="opacity:.35;cursor:not-allowed;" disabled title="Available after term expires">Redeem Funds</button>
-          </div>
-        </div>
-        <div style="background:var(--bg3);border-radius:10px;padding:12px;position:relative;overflow:hidden;">
-          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan);"></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:13px;font-weight:700;font-family:Montserrat,sans-serif;">Essential · $200</span></div>
-          <div class="frow"><span class="fk">Daily ROI</span><span class="fv" style="color:var(--cyan)">$1</span></div>
-          <div class="frow"><span class="fk">Unclaimed ROI</span><span class="fv" style="color:var(--green)">$13</span></div>
-          <div class="frow"><span class="fk">Remaining</span><span class="fv" style="color:var(--green)">Anytime</span></div>
-          <div class="frow" style="border:none;"><span class="fk">Commission / Rewards</span><span class="bdg br">Not eligible</span></div>
-          <div style="display:flex;align-items:center;justify-content:flex-end;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);">
-            <button class="clm-btn" onclick="showCancelModal('Essential',200,2.5)">Redeem Funds</button>
-          </div>
-        </div>
+        <div id="active-pkg-list"><div style="text-align:center;color:var(--muted);padding:20px;">Loading positions...</div></div>
         <button class="btn2 mt8" onclick="spg('home-reg');setTimeout(function(){var el=document.getElementById('home-invest-container');if(el)el.scrollIntoView({behavior:'smooth'});},100);">+ Invest More</button>
       </div>
     </div>
@@ -3903,6 +3881,7 @@ async function refreshDashboard(){
     }catch(e){console.warn('Cap read:',e.message);}
 
     console.log('[Dashboard] Refreshed — USDT:',balStr,'POL:',polStr);
+    loadActivePackages();
   }catch(err){console.warn('Dashboard refresh failed:',err);}
 }
 
@@ -3953,6 +3932,77 @@ function disconnectWallet(){
   document.getElementById('nav-reg').style.display='none';
   spg('home');sNI(0);
   toast('Wallet disconnected','ok');
+}
+
+/* ═══ Load Active Packages from on-chain ═══ */
+const PKG_NAMES={1:'Essential',2:'Classic',3:'Ultimate',4:'Signature · VIP',5:'Exclusive · VIP',6:'Exclusive Leader · VIP'};
+const PKG_COLORS={1:'var(--cyan)',2:'#64B5F6',3:'#b39dff',4:'linear-gradient(90deg,#7c3aed,#db2777)',5:'linear-gradient(90deg,#db2777,#dc2626)',6:'linear-gradient(90deg,#FFD700,#dc2626)'};
+const PKG_LOCK={1:1,2:30,3:90,4:180,5:360,6:360};
+const PKG_COM={1:false,2:false,3:false,4:false,5:true,6:true};
+const PKG_RATES={1:[.20,.25,.35],2:[.25,.35,.45],3:[.40,.50,.60],4:[.60,.70,.80],5:[.80,1.00,1.20],6:[.80,1.00,1.20]};
+
+async function loadActivePackages(){
+  const el=document.getElementById('active-pkg-list');
+  if(!el)return;
+  if(MOCK_MODE||!S.provider||!S.wallet){
+    el.innerHTML='<div style="text-align:center;color:var(--muted);padding:20px;">Connect wallet to view packages</div>';
+    return;
+  }
+  try{
+    const vault=new ethers.Contract(CONFIG.CONTRACTS.VAULT,CONFIG.ABI.VAULT,S.provider);
+    const count=await vault.getUserPositionCount(S.wallet);
+    const n=Number(count);
+    if(n===0){
+      el.innerHTML='<div style="text-align:center;color:var(--muted);padding:20px;">No active packages. Invest to get started!</div>';
+      return;
+    }
+    let html='';
+    for(let i=0;i<n;i++){
+      const pos=await vault.positions(S.wallet,i);
+      const amt=parseFloat(ethers.formatUnits(pos.amount,6));
+      const start=Number(pos.startTime);
+      const lock=Number(pos.lockDays);
+      const tier=Number(pos.tier);
+      const pkg=Number(pos.packageType);
+      const active=pos.active;
+      const granted=pos.isGranted;
+      if(!active)continue;
+      const name=PKG_NAMES[pkg]||('Package '+pkg);
+      const rates=PKG_RATES[pkg]||[0,0,0];
+      const dailyRate=rates[Math.min(tier-1,2)]||rates[0];
+      const dailyROI=(amt*dailyRate/100).toFixed(2);
+      const isCom=PKG_COM[pkg];
+      const startDate=new Date(start*1000);
+      const endDate=new Date(startDate.getTime()+lock*86400000);
+      const now=Date.now();
+      const remainDays=Math.max(0,Math.ceil((endDate.getTime()-now)/86400000));
+      const remainText=lock<=1?'Anytime':remainDays+' days';
+      const canRedeem=lock<=1||(now>=endDate.getTime());
+      const borderColor=pkg>=4?'var(--grad2)':'var(--cyan)';
+      html+='<div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:8px;position:relative;overflow:hidden;">';
+      html+='<div style="position:absolute;top:0;left:0;right:0;height:2px;background:'+borderColor+';"></div>';
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">';
+      html+='<span style="font-size:13px;font-weight:700;font-family:Montserrat,sans-serif;">'+name+' · $'+amt.toLocaleString()+'</span>';
+      if(granted)html+='<span class="bdg" style="background:rgba(251,191,36,.15);color:#fbbf24;font-size:9px;">Granted</span>';
+      html+='</div>';
+      html+='<div class="frow"><span class="fk">Daily ROI (Tier '+tier+')</span><span class="fv" style="color:var(--cyan)">$'+dailyROI+'/day</span></div>';
+      html+='<div class="frow"><span class="fk">Lock Period</span><span class="fv">'+(lock<=1?'No lock':lock+' days')+'</span></div>';
+      html+='<div class="frow"><span class="fk">Remaining</span><span class="fv" style="color:'+(canRedeem?'var(--green)':'var(--dim)')+'">'+remainText+'</span></div>';
+      html+='<div class="frow"><span class="fk">Started</span><span class="fv">'+startDate.toLocaleDateString()+'</span></div>';
+      html+='<div class="frow" style="border:none;"><span class="fk">Commission / Rewards</span><span class="bdg '+(isCom?'bc':'br')+'">'+(isCom?'Eligible':'Not eligible')+'</span></div>';
+      html+='<div style="display:flex;align-items:center;justify-content:flex-end;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.05);">';
+      if(canRedeem){
+        html+='<button class="clm-btn" onclick="showCancelModal(\''+name+'\','+amt+',2.5,'+i+')">Redeem Funds</button>';
+      }else{
+        html+='<button class="clm-btn" style="opacity:.35;cursor:not-allowed;" disabled title="Available after '+remainDays+' days">Redeem Funds</button>';
+      }
+      html+='</div></div>';
+    }
+    el.innerHTML=html||'<div style="text-align:center;color:var(--muted);padding:20px;">No active packages</div>';
+  }catch(e){
+    console.warn('loadActivePackages error:',e);
+    el.innerHTML='<div style="text-align:center;color:var(--muted);padding:20px;">Error loading packages</div>';
+  }
 }
 </script>
 

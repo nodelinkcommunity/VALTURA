@@ -3816,48 +3816,70 @@ async function refreshDashboard(){
   if(MOCK_MODE||!S.provider||!S.wallet)return;
   try{
     const usdt=new ethers.Contract(CONFIG.CONTRACTS.USDT,CONFIG.ABI.ERC20,S.provider);
-    const vault=new ethers.Contract(CONFIG.CONTRACTS.VAULT,CONFIG.ABI.VAULT,S.provider);
-    const cp=new ethers.Contract(CONFIG.CONTRACTS.COMMISSION_PAYOUT,CONFIG.ABI.COMMISSION_PAYOUT,S.provider);
-    const roi=new ethers.Contract(CONFIG.CONTRACTS.ROI_DISTRIBUTOR,CONFIG.ABI.ROI_DISTRIBUTOR,S.provider);
 
-    /* USDT balance */
+    /* USDT balance — update ALL possible elements */
     const bal=await usdt.balanceOf(S.wallet);
     const balFmt=fromUSDT(bal);
-    const balEl=document.getElementById('wbal-usdt');if(balEl)balEl.textContent='$'+balFmt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const balStr=balFmt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    ['usd-b','db-usdt','wbal-usdt','db-bal'].forEach(function(id){
+      var el=document.getElementById(id);if(el)el.textContent=balStr;
+    });
+
+    /* POL (native) balance */
+    const polBal=await S.provider.getBalance(S.wallet);
+    const polFmt=parseFloat(ethers.formatEther(polBal));
+    const polStr=polFmt.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:4});
+    ['pol-b','db-pol'].forEach(function(id){
+      var el=document.getElementById(id);if(el)el.textContent=polStr;
+    });
+    /* Update POL USD estimate */
+    var polUsdEl=document.querySelector('#pol-b')&&document.querySelector('#pol-b').parentElement.querySelector('.wbal-usd');
+    if(polUsdEl)polUsdEl.textContent='≈ $'+(polFmt*0.50).toFixed(2);
 
     /* TVL */
-    const tvl=await vault.totalValueLocked();
-    const tvlFmt=fromUSDT(tvl);
-    const tvlEl=document.getElementById('tvl-v');if(tvlEl)tvlEl.textContent='$'+tvlFmt.toLocaleString('en-US');
-
-    /* Total deposited */
-    const dep=await vault.totalDeposited(S.wallet);
-    const depFmt=fromUSDT(dep);
-    const depEl=document.getElementById('db-invested');if(depEl)depEl.textContent='$'+depFmt.toLocaleString('en-US');
+    try{
+      const vault=new ethers.Contract(CONFIG.CONTRACTS.VAULT,CONFIG.ABI.VAULT,S.provider);
+      const tvl=await vault.totalValueLocked();
+      const tvlFmt=fromUSDT(tvl);
+      ['pm-tvl','tvl-v'].forEach(function(id){
+        var el=document.getElementById(id);if(el)el.textContent='$'+tvlFmt.toLocaleString('en-US');
+      });
+    }catch(e){console.warn('TVL read failed:',e);}
 
     /* Unclaimed earnings */
     try{
+      const cp=new ethers.Contract(CONFIG.CONTRACTS.COMMISSION_PAYOUT,CONFIG.ABI.COMMISSION_PAYOUT,S.provider);
+      const roi=new ethers.Contract(CONFIG.CONTRACTS.ROI_DISTRIBUTOR,CONFIG.ABI.ROI_DISTRIBUTOR,S.provider);
       const ue=await cp.getUnclaimedEarnings(S.wallet);
       const pendingROI=await roi.getPendingROI(S.wallet);
-      const totalUnclaimed=fromUSDT(ue.total)+fromUSDT(pendingROI);
-      const unclEl=document.getElementById('db-earnings');if(unclEl)unclEl.textContent='$'+totalUnclaimed.toLocaleString('en-US',{minimumFractionDigits:2});
+      const totalUnclaimed=fromUSDT(ue.total||ue[5]||0n)+fromUSDT(pendingROI);
+      ['db-unclaimed','db-earnings'].forEach(function(id){
+        var el=document.getElementById(id);if(el)el.textContent='$'+totalUnclaimed.toLocaleString('en-US',{minimumFractionDigits:2});
+      });
 
-      /* Update earnings breakdown if available */
-      const types=['Daily Profit','Binary Bonus','Referral Commission','Binary Commission','Momentum Rewards'];
-      for(let i=0;i<5;i++){
-        earningsData.breakdown[i].unclaimed=fromUSDT(ue.unclaimed[i]);
-      }
-      refreshClaimUI();
-    }catch(e){console.warn('Earnings read failed:',e);}
+      /* Update earnings breakdown */
+      try{
+        for(var i=0;i<5;i++){
+          if(earningsData&&earningsData.breakdown&&earningsData.breakdown[i]){
+            earningsData.breakdown[i].unclaimed=fromUSDT(ue.unclaimed?ue.unclaimed[i]:(ue[i]||0n));
+          }
+        }
+        if(typeof refreshClaimUI==='function')refreshClaimUI();
+      }catch(e2){}
+    }catch(e){console.warn('Earnings read:',e.message);}
 
-    /* Earnings cap status */
+    /* Earnings cap */
     try{
-      const cap=await cp.getEarningsCapStatus(S.wallet);
-      const capEl=document.getElementById('ec-earnings-cap');if(capEl)capEl.textContent=fmtD(fromUSDT(cap.capLimit));
-      const earnedEl=document.getElementById('ec-total-earned');if(earnedEl)earnedEl.textContent=fmtD(fromUSDT(cap.totalEarned));
-      earningsData.maxOutLimit=fromUSDT(cap.capLimit);
-    }catch(e){console.warn('Cap status read failed:',e);}
+      const cp2=new ethers.Contract(CONFIG.CONTRACTS.COMMISSION_PAYOUT,CONFIG.ABI.COMMISSION_PAYOUT,S.provider);
+      const cap=await cp2.getEarningsCapStatus(S.wallet);
+      var capLimit=fromUSDT(cap.capLimit||cap[1]||0n);
+      var totalEarned=fromUSDT(cap.totalEarned||cap[2]||0n);
+      ['ec-maxout','ec-earnings-cap'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent='$'+capLimit.toLocaleString('en-US');});
+      ['ec-total-earned'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent='$'+totalEarned.toLocaleString('en-US');});
+      if(earningsData)earningsData.maxOutLimit=capLimit;
+    }catch(e){console.warn('Cap read:',e.message);}
 
+    console.log('[Dashboard] Refreshed — USDT:',balStr,'POL:',polStr);
   }catch(err){console.warn('Dashboard refresh failed:',err);}
 }
 

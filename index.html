@@ -3547,7 +3547,7 @@ function fromUSDT(n){return parseFloat(ethers.formatUnits(n,6));}
 function txLink(hash){return CONFIG.EXPLORER+'/tx/'+hash;}
 
 const ADDR='0x742d35Cc6634C0532925a3b8D4C9Ed7C8e2fc42b';
-const PKGS={essential:{name:'Essential',lock:'No lock',lockDays:0,min:10,com:false,pkgType:0,
+const PKGS={essential:{name:'Essential',lock:'No lock',lockDays:1,min:10,com:false,pkgType:1,
     tiers:[{lbl:'Tier 1',pct:.20},{lbl:'Tier 2',pct:.25},{lbl:'Tier 3',pct:.35}]},
   classic30:{name:'Classic',lock:'30 days',lockDays:30,min:10,com:false,pkgType:2,
     tiers:[{lbl:'Tier 1',pct:.25},{lbl:'Tier 2',pct:.35},{lbl:'Tier 3',pct:.45}]},

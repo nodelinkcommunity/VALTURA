@@ -499,7 +499,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
   margin-bottom:6px;
   font-family:'Montserrat',sans-serif;
 }
-.hero-h1 .grad{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-h1 .grad{background:linear-gradient(90deg,#0d9488,#22d3ee,#3EDDB5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .hero-sub{
   font-size:clamp(13px,2vw,16px);
   color:rgba(255,255,255,.65);
@@ -669,8 +669,8 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
   position:relative;z-index:2;
   background:rgba(11,20,38,.85);
   border-top:1px solid rgba(62,221,181,.08);
-  border-bottom:1px solid rgba(62,221,181,.08);
-  padding:9px 0;overflow:hidden;margin-bottom:0;
+  border-bottom:none;
+  padding:6px 0;overflow:hidden;margin-bottom:0;
 }
 .home-ticker::before,.home-ticker::after{
   content:'';position:absolute;top:0;bottom:0;width:50px;z-index:2;pointer-events:none;
@@ -771,23 +771,27 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
   <div class="ht-inner" id="ht-main"></div>
 </div>
 <!-- TICKER STRIP 2 (right-to-left, faster) -->
-<div class="home-ticker" style="border-top:none;margin-top:-1px;">
+<div class="home-ticker" style="border-top:none;margin-top:-2px;">
   <div class="ht-inner" style="animation:tkanim-rev 16s linear infinite;" id="ht-top2"></div>
 </div>
 
 <!-- HERO VIDEO -->
-<div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:1px solid rgba(62,221,181,.08);margin:4px 0;background:#000;">
-  <video autoplay muted loop playsinline style="width:100%;display:block;opacity:.85;">
+<div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:1px solid rgba(62,221,181,.08);margin:0;background:#000;">
+  <video autoplay muted loop playsinline webkit-playsinline preload="auto" style="width:100%;display:block;opacity:.85;" id="hero-vid">
     <source src="assets/hero-video.mp4" type="video/mp4">
   </video>
 </div>
+<script>
+// Force autoplay on iOS
+(function(){var v=document.getElementById('hero-vid');if(v){v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.muted=true;v.play().catch(function(){document.addEventListener('touchstart',function(){v.play();},{once:true});});}})();
+</script>
 
 <!-- TICKER STRIP 3 (right-to-left) -->
 <div class="home-ticker">
   <div class="ht-inner" style="animation:tkanim-rev 20s linear infinite;" id="ht-main2"></div>
 </div>
 <!-- TICKER STRIP 4 (left-to-right, faster) -->
-<div class="home-ticker" style="border-top:none;margin-top:-1px;">
+<div class="home-ticker" style="border-top:none;margin-top:-2px;">
   <div class="ht-inner" style="animation:tkanim 16s linear infinite;" id="ht-bot2"></div>
 </div>
 

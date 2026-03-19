@@ -1,5 +1,5 @@
 // ══════════════════════════════════════
-// Valtura — Auth Routes
+// Valtura — Auth Routes (In-Memory)
 // ══════════════════════════════════════
 
 const router = require('express').Router();
@@ -10,9 +10,74 @@ const blockchain = require('../services/blockchain');
 const treeService = require('../services/tree');
 const { authenticate } = require('../middleware/auth');
 
+// ── POST /api/auth/connect ──
+// Connect wallet — verify signature, issue JWT, return user profile if registered
+router.post('/connect', (req, res) => {
+  try {
+    const { wallet, signature, message } = req.body;
+
+    if (!wallet || !signature || !message) {
+      return res.status(400).json({ error: 'Wallet, signature, and message are required' });
+    }
+
+    // Verify signature
+    let recoveredAddress;
+    try {
+      recoveredAddress = blockchain.verifySignature(message, signature);
+    } catch (err) {
+      return res.status(400).json({ error: 'Invalid signature' });
+    }
+
+    if (recoveredAddress.toLowerCase() !== wallet.toLowerCase()) {
+      return res.status(400).json({ error: 'Signature does not match wallet' });
+    }
+
+    // Check if user exists
+    const user = db.findUser((u) => u.wallet.toLowerCase() === wallet.toLowerCase());
+
+    const token = jwt.sign(
+      { wallet: wallet.toLowerCase(), userId: user ? user.id : null },
+      config.jwt.secret,
+      { expiresIn: config.jwt.expiresIn }
+    );
+
+    if (!user) {
+      return res.json({
+        connected: true,
+        registered: false,
+        token,
+        user: null,
+      });
+    }
+
+    // Get active positions summary
+    const activePositions = db.store.positions.filter(
+      (p) => p.user_id === user.id && p.status === 'active'
+    );
+    const totalInvested = activePositions.reduce((sum, p) => sum + p.amount, 0);
+
+    res.json({
+      connected: true,
+      registered: true,
+      token,
+      user: {
+        id: user.id,
+        wallet: user.wallet,
+        username: user.username,
+        totalInvested,
+        activePositions: activePositions.length,
+        createdAt: user.created_at,
+      },
+    });
+  } catch (err) {
+    console.error('[Auth] Connect error:', err.message);
+    res.status(500).json({ error: 'Connection failed' });
+  }
+});
+
 // ── POST /api/auth/register ──
 // Register a new user with wallet + username + referrer
-router.post('/register', async (req, res) => {
+router.post('/register', (req, res) => {
   try {
     const { wallet, username, signature, message, referrer, side } = req.body;
 
@@ -21,7 +86,7 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Invalid wallet address' });
     }
 
-    // Validate username: 3-20 chars, alphanumeric + underscore
+    // Validate username
     if (!username || !/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
       return res.status(400).json({
         error: 'Username must be 3-20 characters, alphanumeric and underscore only',
@@ -46,59 +111,47 @@ router.post('/register', async (req, res) => {
     }
 
     // Check if wallet already registered
-    const { rows: existingWallet } = await db.query(
-      'SELECT id FROM users WHERE LOWER(wallet) = $1',
-      [wallet.toLowerCase()]
-    );
-    if (existingWallet.length > 0) {
+    if (db.findUser((u) => u.wallet.toLowerCase() === wallet.toLowerCase())) {
       return res.status(409).json({ error: 'Wallet already registered' });
     }
 
     // Check username uniqueness
-    const { rows: existingUsername } = await db.query(
-      'SELECT id FROM users WHERE LOWER(username) = $1',
-      [username.toLowerCase()]
-    );
-    if (existingUsername.length > 0) {
+    if (db.findUser((u) => u.username.toLowerCase() === username.toLowerCase())) {
       return res.status(409).json({ error: 'Username already taken' });
     }
 
     // Find referrer
     let referrerId = null;
     if (referrer) {
-      const referrerQuery = referrer.startsWith('0x')
-        ? 'SELECT id FROM users WHERE LOWER(wallet) = $1'
-        : 'SELECT id FROM users WHERE LOWER(username) = $1';
-      const referrerValue = referrer.toLowerCase().replace(/^@/, '');
-      const { rows: refRows } = await db.query(referrerQuery, [referrerValue]);
-      if (refRows.length === 0) {
+      const refValue = referrer.toLowerCase().replace(/^@/, '');
+      const refUser = referrer.startsWith('0x')
+        ? db.findUser((u) => u.wallet.toLowerCase() === refValue)
+        : db.findUser((u) => u.username.toLowerCase() === refValue);
+      if (!refUser) {
         return res.status(400).json({ error: 'Referrer not found' });
       }
-      referrerId = refRows[0].id;
+      referrerId = refUser.id;
     }
 
-    // Insert user and place in binary tree (transaction)
+    // Create user
     const placement = side === 'right' ? 'right' : 'left';
+    const userId = db.nextUserId();
+    const user = {
+      id: userId,
+      wallet,
+      username: username.toLowerCase(),
+      referrer_id: referrerId,
+      placement,
+      created_at: new Date().toISOString(),
+    };
+    db.store.users.push(user);
 
-    const result = await db.transaction(async (client) => {
-      // Insert user
-      const { rows } = await client.query(
-        `INSERT INTO users (wallet, username, referrer_id, placement)
-         VALUES ($1, $2, $3, $4)
-         RETURNING id, wallet, username, created_at`,
-        [wallet, username.toLowerCase(), referrerId, placement]
-      );
-      const user = rows[0];
-
-      // Place in binary tree
-      await treeService.placeMember(user.id, referrerId, placement, client);
-
-      return user;
-    });
+    // Place in binary tree
+    treeService.placeMember(userId, referrerId, placement);
 
     // Issue JWT
     const token = jwt.sign(
-      { wallet: result.wallet, userId: result.id },
+      { wallet: user.wallet, userId: user.id },
       config.jwt.secret,
       { expiresIn: config.jwt.expiresIn }
     );
@@ -108,10 +161,10 @@ router.post('/register', async (req, res) => {
       message: 'Registration successful',
       token,
       user: {
-        id: result.id,
-        wallet: result.wallet,
-        username: result.username,
-        createdAt: result.created_at,
+        id: user.id,
+        wallet: user.wallet,
+        username: user.username,
+        createdAt: user.created_at,
       },
     });
   } catch (err) {
@@ -121,8 +174,7 @@ router.post('/register', async (req, res) => {
 });
 
 // ── GET /api/auth/check-username/:username ──
-// Check if a username is available
-router.get('/check-username/:username', async (req, res) => {
+router.get('/check-username/:username', (req, res) => {
   try {
     const { username } = req.params;
 
@@ -130,13 +182,10 @@ router.get('/check-username/:username', async (req, res) => {
       return res.json({ available: false, reason: 'Invalid format' });
     }
 
-    const { rows } = await db.query(
-      'SELECT id FROM users WHERE LOWER(username) = $1',
-      [username.toLowerCase()]
-    );
+    const exists = db.findUser((u) => u.username.toLowerCase() === username.toLowerCase());
 
     res.json({
-      available: rows.length === 0,
+      available: !exists,
       username: username.toLowerCase(),
     });
   } catch (err) {
@@ -145,121 +194,35 @@ router.get('/check-username/:username', async (req, res) => {
   }
 });
 
-// ── POST /api/auth/verify-wallet ──
-// Verify wallet ownership via EIP-191 signature, issue JWT
-router.post('/verify-wallet', async (req, res) => {
-  try {
-    const { wallet, signature, message } = req.body;
-
-    if (!wallet || !signature || !message) {
-      return res.status(400).json({ error: 'Wallet, signature, and message are required' });
-    }
-
-    // Verify signature
-    let recoveredAddress;
-    try {
-      recoveredAddress = blockchain.verifySignature(message, signature);
-    } catch (err) {
-      return res.status(400).json({ error: 'Invalid signature' });
-    }
-
-    if (recoveredAddress.toLowerCase() !== wallet.toLowerCase()) {
-      return res.status(400).json({ error: 'Signature does not match wallet', verified: false });
-    }
-
-    // Check if user is registered
-    const { rows } = await db.query(
-      'SELECT id, wallet, username, created_at FROM users WHERE LOWER(wallet) = $1',
-      [wallet.toLowerCase()]
-    );
-
-    const token = jwt.sign(
-      { wallet: wallet.toLowerCase(), userId: rows[0]?.id || null },
-      config.jwt.secret,
-      { expiresIn: config.jwt.expiresIn }
-    );
-
-    res.json({
-      verified: true,
-      token,
-      registered: rows.length > 0,
-      user: rows.length > 0
-        ? { id: rows[0].id, wallet: rows[0].wallet, username: rows[0].username, createdAt: rows[0].created_at }
-        : null,
-    });
-  } catch (err) {
-    console.error('[Auth] Verify wallet error:', err.message);
-    res.status(500).json({ error: 'Verification failed' });
+// ── GET /api/auth/me ──
+// Get current user profile from JWT
+router.get('/me', authenticate, (req, res) => {
+  if (!req.user || !req.user.registered) {
+    return res.json({ registered: false, wallet: req.user?.wallet || null });
   }
-});
 
-// ── POST /api/auth/connect ──
-// Connect wallet — returns JWT + user profile if registered
-router.post('/connect', async (req, res) => {
-  try {
-    const { wallet, signature, message } = req.body;
+  const activePositions = db.store.positions.filter(
+    (p) => p.user_id === req.user.id && p.status === 'active'
+  );
+  const totalInvested = activePositions.reduce((sum, p) => sum + p.amount, 0);
 
-    if (!wallet || !signature || !message) {
-      return res.status(400).json({ error: 'Wallet, signature, and message are required' });
-    }
-
-    // Verify signature
-    let recoveredAddress;
-    try {
-      recoveredAddress = blockchain.verifySignature(message, signature);
-    } catch (err) {
-      return res.status(400).json({ error: 'Invalid signature' });
-    }
-
-    if (recoveredAddress.toLowerCase() !== wallet.toLowerCase()) {
-      return res.status(400).json({ error: 'Signature does not match wallet' });
-    }
-
-    // Check if user exists
-    const { rows } = await db.query(
-      `SELECT u.id, u.wallet, u.username, u.referrer_id, u.created_at,
-              COALESCE(SUM(p.amount) FILTER (WHERE p.status = 'active'), 0) as total_invested,
-              COUNT(p.id) FILTER (WHERE p.status = 'active') as active_positions
-       FROM users u
-       LEFT JOIN positions p ON p.user_id = u.id
-       WHERE LOWER(u.wallet) = $1
-       GROUP BY u.id`,
-      [wallet.toLowerCase()]
-    );
-
-    const token = jwt.sign(
-      { wallet: wallet.toLowerCase(), userId: rows[0]?.id || null },
-      config.jwt.secret,
-      { expiresIn: config.jwt.expiresIn }
-    );
-
-    if (rows.length === 0) {
-      return res.json({
-        connected: true,
-        registered: false,
-        token,
-        user: null,
-      });
-    }
-
-    const user = rows[0];
-    res.json({
-      connected: true,
-      registered: true,
-      token,
-      user: {
-        id: user.id,
-        wallet: user.wallet,
-        username: user.username,
-        totalInvested: parseFloat(user.total_invested) || 0,
-        activePositions: parseInt(user.active_positions, 10) || 0,
-        createdAt: user.created_at,
-      },
-    });
-  } catch (err) {
-    console.error('[Auth] Connect error:', err.message);
-    res.status(500).json({ error: 'Connection failed' });
+  // Get referrer
+  let referrer = null;
+  if (req.user.referrerId) {
+    const refUser = db.findUser((u) => u.id === req.user.referrerId);
+    if (refUser) referrer = { username: refUser.username, wallet: refUser.wallet };
   }
+
+  res.json({
+    registered: true,
+    id: req.user.id,
+    wallet: req.user.wallet,
+    username: req.user.username,
+    referrer,
+    totalInvested,
+    activePositions: activePositions.length,
+    createdAt: req.user.createdAt,
+  });
 });
 
 module.exports = router;

@@ -1,5 +1,5 @@
 // ══════════════════════════════════════
-// Valtura — Express API Server
+// Valtura — Express API Server (In-Memory)
 // ══════════════════════════════════════
 
 require('dotenv').config();
@@ -55,12 +55,13 @@ app.get('/api/health', (req, res) => {
     version: '1.0.0',
     chain: 'polygon',
     network: config.polygon.chainId === 137 ? 'mainnet' : 'amoy-testnet',
+    storage: 'in-memory',
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
   });
 });
 
-// ── Manual cron trigger (admin only, for testing) ──
+// ── Manual cron trigger (admin only) ──
 app.post('/api/admin/trigger-cron', authenticate, requireAdmin, async (req, res) => {
   try {
     console.log('[Server] Manual cron trigger by', req.user.wallet);
@@ -77,9 +78,8 @@ app.use('/api/*', (req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });
 });
 
-// ── SPA fallback: serve frontend for non-API routes ──
+// ── SPA fallback ──
 app.get('*', (req, res) => {
-  // Check if the request is for admin panel
   if (req.path.startsWith('/admin')) {
     return res.sendFile(path.join(__dirname, '../admin/index.html'));
   }
@@ -89,12 +89,8 @@ app.get('*', (req, res) => {
 // ── Global error handler ──
 app.use((err, req, res, next) => {
   console.error('[Server] Unhandled error:', err.message);
-  console.error(err.stack);
-
   res.status(err.status || 500).json({
-    error: config.server.env === 'production'
-      ? 'Internal server error'
-      : err.message,
+    error: config.server.env === 'production' ? 'Internal server error' : err.message,
   });
 });
 
@@ -105,6 +101,7 @@ app.listen(PORT, () => {
   console.log('  ║     Valtura API Server               ║');
   console.log(`  ║     Port: ${PORT}                        ║`);
   console.log(`  ║     Env:  ${config.server.env.padEnd(24)}║`);
+  console.log('  ║     Storage: In-Memory               ║');
   console.log(`  ║     Chain: ${(config.polygon.chainId === 137 ? 'Polygon Mainnet' : 'Polygon Amoy').padEnd(23)}║`);
   console.log('  ╚══════════════════════════════════════╝');
   console.log('');

@@ -14,7 +14,6 @@ const ACCESS_CONTROL_ABI = [
   'function claimLocked(address) view returns (bool)',
   'function lockClaims(address user)',
   'function unlockClaims(address user)',
-  'function isSuperWallet(address) pure returns (bool)',
 ];
 
 const VAULT_ABI = [
@@ -34,7 +33,6 @@ const ROI_DISTRIBUTOR_ABI = [
   'function claimROI()',
   'function getPendingROI(address user) view returns (uint256)',
   'function totalDistributed() view returns (uint256)',
-  'function distributedEpochs(uint256) view returns (bool)',
 ];
 
 const COMMISSION_PAYOUT_ABI = [
@@ -43,21 +41,14 @@ const COMMISSION_PAYOUT_ABI = [
   'function setVIPInvestment(address user, uint256 amount)',
   'function getUnclaimedEarnings(address user) view returns (uint256[5] unclaimed, uint256 total)',
   'function getEarningsCapStatus(address user) view returns (uint256 investment, uint256 capLimit, uint256 totalEarned, uint256 remaining)',
-  'function earned(address, uint8) view returns (uint256)',
-  'function claimed(address, uint8) view returns (uint256)',
   'function vipInvestment(address) view returns (uint256)',
-  'function earningsCapMultiplier() view returns (uint256)',
 ];
 
 const REDEMPTION_MANAGER_ABI = [
   'function createOrder(address user, uint256 posId, uint256 amount)',
   'function approveRedemption(uint256 orderId)',
   'function rejectRedemption(uint256 orderId, uint8 reason)',
-  'function batchApproveRedemptions(uint256[] orderIds)',
   'function getOrder(uint256 orderId) view returns (address user, uint256 posId, uint256 amount, uint256 createdAt, uint8 status)',
-  'function totalOrders() view returns (uint256)',
-  'function getPendingOrderCount() view returns (uint256)',
-  'function redemptionFeeBps() view returns (uint256)',
 ];
 
 const ERC20_ABI = [
@@ -133,34 +124,22 @@ function getUSDT(write = false) {
   return getContract('usdt', config.polygon.usdtAddress, ERC20_ABI, write);
 }
 
-// ── Helper functions ──
+// ── Helpers ──
 
-/**
- * Convert human-readable dollar amount to USDT on-chain value (6 decimals).
- */
 function toUSDT(amount) {
   return ethers.parseUnits(String(amount), config.USDT_DECIMALS);
 }
 
-/**
- * Convert on-chain USDT value (6 decimals) to human-readable dollar amount.
- */
 function fromUSDT(amount) {
   return parseFloat(ethers.formatUnits(amount, config.USDT_DECIMALS));
 }
 
-/**
- * Get USDT balance of an address.
- */
 async function getUSDTBalance(address) {
   const usdt = getUSDT();
   const balance = await usdt.balanceOf(address);
   return fromUSDT(balance);
 }
 
-/**
- * Get user positions from on-chain vault.
- */
 async function getOnChainPositions(userAddress) {
   const vault = getVault();
   const count = await vault.getUserPositionCount(userAddress);
@@ -181,9 +160,6 @@ async function getOnChainPositions(userAddress) {
   return positions;
 }
 
-/**
- * Get Earnings Cap status from on-chain CommissionPayout.
- */
 async function getEarningsCapStatus(userAddress) {
   const cp = getCommissionPayout();
   const result = await cp.getEarningsCapStatus(userAddress);
@@ -195,9 +171,6 @@ async function getEarningsCapStatus(userAddress) {
   };
 }
 
-/**
- * Get unclaimed earnings from on-chain CommissionPayout.
- */
 async function getUnclaimedEarnings(userAddress) {
   const cp = getCommissionPayout();
   const result = await cp.getUnclaimedEarnings(userAddress);
@@ -212,81 +185,48 @@ async function getUnclaimedEarnings(userAddress) {
   return { breakdown, total };
 }
 
-/**
- * Distribute daily ROI on-chain (batch).
- */
 async function distributeROI(users, amounts, epoch) {
   const roi = getROIDistributor(true);
-  const tx = await roi.distributeROI(
-    users,
-    amounts.map((a) => toUSDT(a)),
-    epoch
-  );
+  const tx = await roi.distributeROI(users, amounts.map((a) => toUSDT(a)), epoch);
   return tx.wait();
 }
 
-/**
- * Distribute commissions on-chain (batch).
- */
 async function distributeCommissions(users, types, amounts, epoch) {
   const cp = getCommissionPayout(true);
-  const tx = await cp.distributeCommissions(
-    users,
-    types,
-    amounts.map((a) => toUSDT(a)),
-    epoch
-  );
+  const tx = await cp.distributeCommissions(users, types, amounts.map((a) => toUSDT(a)), epoch);
   return tx.wait();
 }
 
-/**
- * Set VIP investment for Earnings Cap on-chain.
- */
 async function setVIPInvestment(userAddress, amount) {
   const cp = getCommissionPayout(true);
   const tx = await cp.setVIPInvestment(userAddress, toUSDT(amount));
   return tx.wait();
 }
 
-/**
- * Grant leader package on-chain.
- */
 async function grantLeaderPackage(userAddress, amount, hidden = false) {
   const vault = getVault(true);
   const tx = await vault.grantLeaderPackage(userAddress, toUSDT(amount), hidden);
   return tx.wait();
 }
 
-/**
- * Create redemption order on-chain.
- */
 async function createRedemptionOrder(userAddress, posId, amount) {
   const rm = getRedemptionManager(true);
   const tx = await rm.createOrder(userAddress, posId, toUSDT(amount));
   return tx.wait();
 }
 
-/**
- * Approve redemption on-chain.
- */
 async function approveRedemption(orderId) {
   const rm = getRedemptionManager(true);
   const tx = await rm.approveRedemption(orderId);
   return tx.wait();
 }
 
-/**
- * Reject redemption on-chain.
- */
 async function rejectRedemption(orderId, reason = 4) {
   const rm = getRedemptionManager(true);
   const tx = await rm.rejectRedemption(orderId, reason);
   return tx.wait();
 }
 
-/**
- * Lock/unlock claims on-chain via AccessControl.
- */
 async function lockClaims(userAddress) {
   const ac = getAccessControl(true);
   const tx = await ac.lockClaims(userAddress);
@@ -299,25 +239,16 @@ async function unlockClaims(userAddress) {
   return tx.wait();
 }
 
-/**
- * Check if claims are locked for a user.
- */
 async function isClaimLocked(userAddress) {
   const ac = getAccessControl();
   return ac.claimLocked(userAddress);
 }
 
-/**
- * Check if a position is hidden.
- */
 async function isPositionHidden(userAddress, posId) {
   const ac = getAccessControl();
   return ac.isHidden(userAddress, posId);
 }
 
-/**
- * Get total value locked from vault.
- */
 async function getTotalValueLocked() {
   const vault = getVault();
   const tvl = await vault.totalValueLocked();

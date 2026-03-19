@@ -1,5 +1,5 @@
 // ══════════════════════════════════════
-// Valtura — ROI Calculation Service
+// Valtura — ROI Calculation Service (In-Memory)
 // ══════════════════════════════════════
 
 const db = require('../config/db');
@@ -7,53 +7,34 @@ const config = require('../config');
 
 /**
  * Calculate daily ROI for all active positions.
- * Checks Earnings Cap and forfeiture rules before including.
- *
- * @returns {Array<{userId: number, wallet: string, amount: number, positionId: number}>}
  */
-async function calculateDailyROI() {
-  // Get all active positions with user info
-  const { rows: positions } = await db.query(
-    `SELECT p.id as position_id, p.user_id, p.package_id, p.amount, p.daily_rate, p.tier,
-            u.wallet
-     FROM positions p
-     JOIN users u ON u.id = p.user_id
-     WHERE p.status = 'active'
-     ORDER BY p.user_id`
-  );
-
-  if (positions.length === 0) return [];
-
-  // Get unique user IDs to check eligibility
-  const userIds = [...new Set(positions.map((p) => p.user_id))];
-
-  // Check which users have active Exclusive packages (for forfeiture check on commissions,
-  // but daily profit is always earned regardless of Exclusive status)
+function calculateDailyROI() {
+  const activePositions = db.store.positions.filter((p) => p.status === 'active');
   const results = [];
 
-  for (const pos of positions) {
-    const dailyRate = parseFloat(pos.daily_rate);
-    const amount = parseFloat(pos.amount);
-    const dailyROI = (amount * dailyRate) / 100;
+  for (const pos of activePositions) {
+    const user = db.findUser((u) => u.id === pos.user_id);
+    if (!user) continue;
 
+    const dailyRate = pos.daily_rate;
+    const amount = pos.amount;
+    const dailyROI = (amount * dailyRate) / 100;
     if (dailyROI <= 0) continue;
 
-    // Check Earnings Cap for users with Exclusive packages
-    const capStatus = await getEarningsCapStatus(pos.user_id);
-    if (capStatus.hasExclusive && capStatus.remaining <= 0) {
-      continue; // Earnings Cap reached
-    }
+    // Check Earnings Cap
+    const capStatus = getEarningsCapStatus(pos.user_id);
+    if (capStatus.hasExclusive && capStatus.remaining <= 0) continue;
 
     let finalAmount = dailyROI;
     if (capStatus.hasExclusive && capStatus.remaining < dailyROI) {
-      finalAmount = capStatus.remaining; // Partial amount to cap
+      finalAmount = capStatus.remaining;
     }
 
     results.push({
       userId: pos.user_id,
-      wallet: pos.wallet,
-      amount: Math.round(finalAmount * 100) / 100, // round to 2 decimals
-      positionId: pos.position_id,
+      wallet: user.wallet,
+      amount: Math.round(finalAmount * 100) / 100,
+      positionId: pos.id,
     });
   }
 
@@ -61,37 +42,28 @@ async function calculateDailyROI() {
 }
 
 /**
- * Get Earnings Cap status for a user from DB.
+ * Get Earnings Cap status for a user.
  */
-async function getEarningsCapStatus(userId) {
-  // Get total Exclusive investment
-  const { rows: vipRows } = await db.query(
-    `SELECT COALESCE(SUM(amount), 0) as vip_total
-     FROM positions
-     WHERE user_id = $1 AND status = 'active'
-       AND package_id IN ('exclusive360', 'exclusive360_leader')`,
-    [userId]
+function getEarningsCapStatus(userId) {
+  const vipPositions = db.store.positions.filter(
+    (p) =>
+      p.user_id === userId &&
+      p.status === 'active' &&
+      ['exclusive360', 'exclusive360_leader'].includes(p.package_id)
   );
-  const vipTotal = parseFloat(vipRows[0]?.vip_total) || 0;
+  const vipTotal = vipPositions.reduce((s, p) => s + p.amount, 0);
   const hasExclusive = vipTotal > 0;
 
   if (!hasExclusive) {
     return { hasExclusive: false, capLimit: 0, totalEarned: 0, remaining: Infinity };
   }
 
-  // Get earnings cap multiplier from platform_config
-  const { rows: configRows } = await db.query(
-    "SELECT value FROM platform_config WHERE key = 'earnings_cap_multi'"
-  );
-  const multiplier = parseFloat(configRows[0]?.value) || 300;
+  const multiplier = parseFloat(db.getConfigValue('earnings_cap_multi')) || 300;
   const capLimit = (vipTotal * multiplier) / 100;
 
-  // Get total earned across all income types
-  const { rows: earnRows } = await db.query(
-    'SELECT COALESCE(SUM(total_earned), 0) as total FROM earnings WHERE user_id = $1',
-    [userId]
-  );
-  const totalEarned = parseFloat(earnRows[0]?.total) || 0;
+  const totalEarned = db.store.earnings
+    .filter((e) => e.user_id === userId)
+    .reduce((s, e) => s + e.total_earned, 0);
 
   return {
     hasExclusive,
@@ -104,41 +76,51 @@ async function getEarningsCapStatus(userId) {
 }
 
 /**
- * Check if a user has an active Exclusive package (for forfeiture rule).
- * Users without active Exclusive lose pending commissions.
+ * Check if a user has an active Exclusive package.
  */
-async function hasActiveExclusive(userId) {
-  const { rows } = await db.query(
-    `SELECT COUNT(*) as count FROM positions
-     WHERE user_id = $1 AND status = 'active'
-       AND package_id IN ('exclusive360', 'exclusive360_leader')`,
-    [userId]
+function hasActiveExclusive(userId) {
+  return db.store.positions.some(
+    (p) =>
+      p.user_id === userId &&
+      p.status === 'active' &&
+      ['exclusive360', 'exclusive360_leader'].includes(p.package_id)
   );
-  return parseInt(rows[0].count, 10) > 0;
 }
 
 /**
- * Record ROI distribution in the earnings table.
+ * Record ROI distribution in the earnings store.
  */
-async function recordROI(distributions, client) {
-  const q = client || db;
-
+function recordROI(distributions) {
   for (const dist of distributions) {
-    // Upsert into earnings table
-    await q.query(
-      `INSERT INTO earnings (user_id, position_id, income_type, total_earned)
-       VALUES ($1, $2, 'daily_profit', $3)
-       ON CONFLICT (user_id, position_id, income_type)
-       DO UPDATE SET total_earned = earnings.total_earned + $3, updated_at = NOW()`,
-      [dist.userId, dist.positionId, dist.amount]
+    // Find or create earnings record
+    let earning = db.store.earnings.find(
+      (e) => e.user_id === dist.userId && e.position_id === dist.positionId && e.income_type === 'daily_profit'
     );
 
-    // Log in commissions table
-    await q.query(
-      `INSERT INTO commissions (user_id, type, amount, description)
-       VALUES ($1, 'daily_profit', $2, $3)`,
-      [dist.userId, dist.amount, `Daily ROI for position #${dist.positionId}`]
-    );
+    if (earning) {
+      earning.total_earned += dist.amount;
+      earning.updated_at = new Date().toISOString();
+    } else {
+      db.store.earnings.push({
+        user_id: dist.userId,
+        position_id: dist.positionId,
+        income_type: 'daily_profit',
+        total_earned: dist.amount,
+        total_claimed: 0,
+        updated_at: new Date().toISOString(),
+      });
+    }
+
+    // Log commission
+    db.store.commissions.push({
+      id: db.nextCommissionId(),
+      user_id: dist.userId,
+      source_user: null,
+      type: 'daily_profit',
+      amount: dist.amount,
+      description: `Daily ROI for position #${dist.positionId}`,
+      created_at: new Date().toISOString(),
+    });
   }
 }
 

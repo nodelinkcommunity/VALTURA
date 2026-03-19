@@ -776,11 +776,18 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
   <div class="ht-inner" style="animation:tkanim-rev 16s linear infinite;" id="ht-top2"></div>
 </div>
 
-<!-- HERO ANIMATION (GIF — works on all devices, no autoplay issues) -->
-<div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:1px solid rgba(62,221,181,.08);margin:0;background:#000;max-height:220px;" id="hero-vid-wrap">
-  <img src="assets/hero-animation.gif" alt="" style="width:100%;display:block;opacity:.85;object-fit:cover;max-height:220px;pointer-events:none;">
+<!-- HERO VIDEO (no audio track = iOS autoplay OK) -->
+<div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:1px solid rgba(62,221,181,.08);margin:0;background:#000;max-height:240px;" id="hero-vid-wrap">
+  <video autoplay muted loop playsinline webkit-playsinline disableRemotePlayback x-webkit-airplay="deny" preload="auto" style="width:100%;display:block;opacity:.9;object-fit:cover;max-height:240px;pointer-events:none;" id="hero-vid">
+    <source src="assets/hero-video.mp4" type="video/mp4">
+  </video>
 </div>
-<!-- GIF auto-loops, no JS needed -->
+<style>
+#hero-vid::-webkit-media-controls{display:none!important;}
+#hero-vid::-webkit-media-controls-enclosure{display:none!important;}
+#hero-vid::-webkit-media-controls-panel{display:none!important;}
+#hero-vid::-webkit-media-controls-start-playback-button{display:none!important;}
+</style>
 
 <div style="height:8px;"></div>
 

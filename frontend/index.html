@@ -3009,7 +3009,11 @@ invUpdP();
 .th-24h{width:80px;text-align:right;flex-shrink:0;}
 
 /* COIN ROW */
-.coin-list{display:flex;flex-direction:column;gap:0;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-bottom:16px;}
+.coin-list{display:flex;flex-direction:column;gap:0;background:var(--card);border:1px solid var(--border);border-radius:13px;overflow-y:auto;overflow-x:hidden;max-height:440px;margin-bottom:16px;scrollbar-width:thin;scrollbar-color:rgba(62,221,181,.3) transparent;}
+.coin-list::-webkit-scrollbar{width:5px;}
+.coin-list::-webkit-scrollbar-track{background:transparent;}
+.coin-list::-webkit-scrollbar-thumb{background:rgba(62,221,181,.3);border-radius:3px;}
+.coin-list::-webkit-scrollbar-thumb:hover{background:rgba(62,221,181,.5);}
 .coin-row{display:flex;align-items:center;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s;cursor:pointer;gap:0;}
 .coin-row:last-child{border-bottom:none;}
 .coin-row:hover{background:rgba(62,221,181,.04);}

@@ -1,0 +1,16 @@
+{
+  "network": "polygon-amoy",
+  "chainId": 80002,
+  "deployer": "0x21D6DA65981c95B1FF0fA8746Ad81A22b8C0d58B",
+  "superWallet": "0x031eA4bA7E1C5729C352e846549E9B5745f3C66E",
+  "recipient": "0x21D6DA65981c95B1FF0fA8746Ad81A22b8C0d58B",
+  "contracts": {
+    "MockUSDT": "0x72695afc10147b50C404F4FC9bFeab78F3B06f21",
+    "ValturAccessControl": "0xb00eCFbf743CDE003c5C3637608b869550Aa7a67",
+    "ValturVault": "0x690611828a631C3753c675e38244b8E010d8EB44",
+    "ROIDistributor": "0xCC6D035a198799dA150c28eC1e5F1946A6a8fee1",
+    "CommissionPayout": "0xcEaeb03c9DCC954e4A520F0c6B773644ed9ce730",
+    "RedemptionManager": "0x4bc65f438521527972d413812CfAaeabD6ffcd53"
+  },
+  "deployedAt": "2026-03-19T13:04:43.800Z"
+}

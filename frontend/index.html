@@ -3813,7 +3813,8 @@ updP();
 
 /* ═══ refreshDashboard — read on-chain data ═══ */
 async function refreshDashboard(){
-  if(MOCK_MODE||!S.provider||!S.wallet)return;
+  console.log('[Dashboard] refreshDashboard called. MOCK_MODE=',MOCK_MODE,'provider=',!!S.provider,'wallet=',S.wallet);
+  if(MOCK_MODE||!S.provider||!S.wallet){console.warn('[Dashboard] Skipped — mock or no provider/wallet');return;}
   try{
     const usdt=new ethers.Contract(CONFIG.CONTRACTS.USDT,CONFIG.ABI.ERC20,S.provider);
 

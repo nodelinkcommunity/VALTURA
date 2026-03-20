@@ -991,10 +991,43 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
   <div class="ht-inner" style="animation:tkanim-rev 16s linear infinite;" id="ht-top2"></div>
 </div>
 
-<!-- HERO ANIMATION — GIF auto-plays on ALL browsers including in-app (Trust Wallet, MetaMask) -->
+<!-- HERO VIDEO — MP4 for Safari/Chrome, GIF fallback for in-app browsers -->
 <div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:none;margin:0;background:#000;" id="hero-vid-wrap">
-  <img src="assets/hero-anim.gif?v=1" alt="Trading Animation" style="width:100%;display:block;opacity:.9;object-fit:cover;pointer-events:none;" id="hero-vid"/>
+  <video autoplay muted loop playsinline webkit-playsinline disableRemotePlayback x-webkit-airplay="deny" preload="auto" style="width:100%;display:block;opacity:.9;object-fit:cover;pointer-events:none;" id="hero-vid">
+    <source src="assets/hero-video.mp4?v=20260320d" type="video/mp4">
+  </video>
+  <img src="" alt="" style="width:100%;display:none;opacity:.9;object-fit:cover;pointer-events:none;" id="hero-gif"/>
 </div>
+<style>
+#hero-vid::-webkit-media-controls{display:none!important;}
+#hero-vid::-webkit-media-controls-enclosure{display:none!important;}
+#hero-vid::-webkit-media-controls-panel{display:none!important;}
+#hero-vid::-webkit-media-controls-start-playback-button{display:none!important;}
+</style>
+<script>
+// Try video autoplay → if fails, swap to GIF (works everywhere)
+(function(){
+  var v=document.getElementById('hero-vid');
+  var g=document.getElementById('hero-gif');
+  if(!v||!g)return;
+  v.muted=true;v.playsInline=true;v.loop=true;v.controls=false;
+  v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.setAttribute('muted','');
+
+  var ok=false;
+  function videoOK(){if(ok)return;ok=true;v.controls=false;v.style.display='block';g.style.display='none';}
+  function useGIF(){if(ok)return;v.pause();v.style.display='none';g.src='assets/hero-anim.gif?v=2';g.style.display='block';}
+
+  v.addEventListener('playing',videoOK);
+  v.addEventListener('timeupdate',function(){if(v.currentTime>0.1)videoOK();});
+
+  var p=v.play();
+  if(p&&p.then){
+    p.then(function(){setTimeout(function(){if(!ok&&(v.paused||v.currentTime<0.05))useGIF();else videoOK();},800);})
+     .catch(function(){useGIF();});
+  }else{setTimeout(function(){if(!ok)useGIF();},1500);}
+  setTimeout(function(){if(!ok)useGIF();},2500);
+})();
+</script>
 
 <!-- TICKER STRIP 3 (right-to-left) — directly below video -->
 <div class="home-ticker" style="border-top:none;">

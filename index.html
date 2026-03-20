@@ -777,7 +777,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 </div>
 
 <!-- HERO VIDEO (no audio track = iOS autoplay OK) -->
-<div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:1px solid rgba(62,221,181,.08);margin:0;background:#000;max-height:240px;" id="hero-vid-wrap">
+<div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:none;margin:0;background:#000;max-height:240px;" id="hero-vid-wrap">
   <video autoplay muted loop playsinline webkit-playsinline disableRemotePlayback x-webkit-airplay="deny" preload="auto" style="width:100%;display:block;opacity:.9;object-fit:cover;max-height:240px;pointer-events:none;" id="hero-vid">
     <source src="assets/hero-video.mp4" type="video/mp4">
   </video>
@@ -789,7 +789,16 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 #hero-vid::-webkit-media-controls-start-playback-button{display:none!important;}
 </style>
 
-<div style="height:8px;"></div>
+<!-- TICKER STRIP 3 (right-to-left) — directly below video -->
+<div class="home-ticker" style="border-top:none;">
+  <div class="ht-inner" style="animation:tkanim-rev 20s linear infinite;" id="ht-main2"></div>
+</div>
+<!-- TICKER STRIP 4 (left-to-right, faster) -->
+<div class="home-ticker" style="border-top:none;margin-top:-2px;">
+  <div class="ht-inner" style="animation:tkanim 16s linear infinite;" id="ht-bot2"></div>
+</div>
+
+<div style="height:14px;"></div>
 
 <div style="position:relative;z-index:2;">
   <!-- VISUAL: animated protocol stats card -->
@@ -885,14 +894,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
   </div>
 </div>
 
-<!-- TICKER STRIP 3 (right-to-left) — below Protocol Live -->
-<div class="home-ticker">
-  <div class="ht-inner" style="animation:tkanim-rev 20s linear infinite;" id="ht-main2"></div>
-</div>
-<!-- TICKER STRIP 4 (left-to-right, faster) -->
-<div class="home-ticker" style="border-top:none;margin-top:-2px;">
-  <div class="ht-inner" style="animation:tkanim 16s linear infinite;" id="ht-bot2"></div>
-</div>
+<!-- (Ticker strips 3+4 moved to directly below video) -->
 
 <!-- 3 FEATURE CARDS — always 3 col, never orphan -->
 <div style="position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 14px 18px;overflow:hidden;box-sizing:border-box;width:100%;">
@@ -3976,8 +3978,14 @@ async function loadActivePackages(){
       const endDate=new Date(startDate.getTime()+lock*86400000);
       const now=Date.now();
       const remainDays=Math.max(0,Math.ceil((endDate.getTime()-now)/86400000));
-      const remainText=lock<=1?'Anytime':remainDays+' days';
-      const canRedeem=lock<=1||(now>=endDate.getTime());
+      // Essential (pkg=1) = flexible, but still respect 1-day lock
+      // For all packages: check actual time expiry
+      const isEssential=(pkg===1);
+      const expectedLock={1:1,2:30,3:90,4:180,5:360}[pkg]||lock;
+      const realEndDate=new Date(startDate.getTime()+expectedLock*86400000);
+      const realRemainDays=Math.max(0,Math.ceil((realEndDate.getTime()-now)/86400000));
+      const canRedeem=(now>=realEndDate.getTime());
+      const remainText=isEssential?(canRedeem?'Anytime':remainDays+' days'):(realRemainDays>0?realRemainDays+' days':'Ready');
       const borderColor=pkg>=4?'var(--grad2)':'var(--cyan)';
       html+='<div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:8px;position:relative;overflow:hidden;">';
       html+='<div style="position:absolute;top:0;left:0;right:0;height:2px;background:'+borderColor+';"></div>';
@@ -3986,7 +3994,7 @@ async function loadActivePackages(){
       if(granted)html+='<span class="bdg" style="background:rgba(251,191,36,.15);color:#fbbf24;font-size:9px;">Granted</span>';
       html+='</div>';
       html+='<div class="frow"><span class="fk">Daily ROI (Tier '+tier+')</span><span class="fv" style="color:var(--cyan)">$'+dailyROI+'/day</span></div>';
-      html+='<div class="frow"><span class="fk">Lock Period</span><span class="fv">'+(lock<=1?'No lock':lock+' days')+'</span></div>';
+      html+='<div class="frow"><span class="fk">Lock Period</span><span class="fv">'+(isEssential?'Flexible (1 day)':expectedLock+' days')+'</span></div>';
       html+='<div class="frow"><span class="fk">Remaining</span><span class="fv" style="color:'+(canRedeem?'var(--green)':'var(--dim)')+'">'+remainText+'</span></div>';
       html+='<div class="frow"><span class="fk">Started</span><span class="fv">'+startDate.toLocaleDateString()+'</span></div>';
       html+='<div class="frow" style="border:none;"><span class="fk">Commission / Rewards</span><span class="bdg '+(isCom?'bc':'br')+'">'+(isCom?'Eligible':'Not eligible')+'</span></div>';
@@ -3994,7 +4002,7 @@ async function loadActivePackages(){
       if(canRedeem){
         html+='<button class="clm-btn" onclick="showCancelModal(\''+name+'\','+amt+',2.5,'+i+')">Redeem Funds</button>';
       }else{
-        html+='<button class="clm-btn" style="opacity:.35;cursor:not-allowed;" disabled title="Available after '+remainDays+' days">Redeem Funds</button>';
+        html+='<button class="clm-btn" style="opacity:.35;cursor:not-allowed;" disabled title="Available after '+realRemainDays+' days">🔒 Locked · '+realRemainDays+' days left</button>';
       }
       html+='</div></div>';
     }
@@ -4200,4 +4208,4 @@ async function confirmCancel() {
 }
 </script>
 
->
+><!-- cache-bust: 1773976320 -->

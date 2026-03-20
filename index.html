@@ -733,8 +733,223 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
   .logo-ring{width:140px;height:140px;}
   .logo-ring img{width:120px;height:120px;}
 }
-</style>
 
+/* ═══════════════════════════════════════════════ */
+/*       RESPONSIVE: TABLET & LAPTOP & DESKTOP     */
+/* ═══════════════════════════════════════════════ */
+
+/* ── Tablet (768px+) ── */
+@media(min-width:768px){
+  /* Inner pages centred */
+  #pg-conn,#pg-home-reg,#pg-finance,#pg-network,#pg-infos,#pg-spotlight,#pg-community{max-width:720px;margin-left:auto;margin-right:auto;}
+  /* Header */
+  .hdr{padding:14px 32px;}
+  /* Bottom nav — full-width but taller, bigger text */
+  .bnav{padding:10px 0 max(12px,env(safe-area-inset-bottom));}
+  .ni{font-size:11px;gap:3px;padding:6px 10px;}
+  .ni svg{width:24px;height:24px;}
+  /* Hero */
+  .hero{padding:40px 32px;}
+  .hero-body{padding:48px 32px 32px;}
+  .hero-sub{max-width:580px;font-size:15px;}
+  .hero-quote{max-width:580px;font-size:13px;}
+  /* Proto card — wider on tablet */
+  .proto-card{max-width:620px;}
+  .pc-m-val{font-size:24px;}
+  .pc-m-lbl{font-size:10px;}
+  .pc-metrics{padding:16px 12px;}
+  .pc-tx{padding:9px 14px;}
+  .pc-tx-addr{font-size:12px;}.pc-tx-action{font-size:12px;}.pc-tx-amount{font-size:14px;}
+  .pc-cta{font-size:16px;padding:15px;}
+  /* Feature cards */
+  .feat-card{padding:18px 14px;}
+  .feat-title{font-size:14px;}
+  .feat-desc{font-size:11px;line-height:1.6;}
+  .feat-icon{width:44px;height:44px;font-size:20px;}
+  /* Stats */
+  .srow{margin:0 32px 20px;}
+  .sv{font-size:22px;}.sl{font-size:11px;}
+  /* Cards */
+  .wcard{margin:20px 32px;padding:22px;}
+  .regcard{margin:0 32px 20px;padding:22px;}
+  .home-reg{padding:22px 32px;}
+  /* Dashboard */
+  .dash-grid{gap:12px;margin-bottom:16px;}
+  .dg-val{font-size:20px;}
+  /* Finance */
+  .fin-wrap{padding:22px 32px;}
+  /* Packages */
+  .pkg-sec{padding:0 32px 24px;}
+  .pkg-strip{padding:0 32px 24px;}
+  .pkg-row{grid-template-columns:repeat(4,1fr);}
+  /* Video */
+  #hero-vid-wrap{max-height:360px;}
+  #hero-vid{max-height:360px;}
+  /* Ticker items */
+  .ht-item{font-size:13px;padding:0 20px;}
+  /* Wallet items bigger */
+  .ipkg-wallet-item{font-size:13px;gap:6px;}
+  .ipkg-connect-btn{font-size:17px;padding:17px;}
+}
+
+/* ── Laptop (1024px+) ── */
+@media(min-width:1024px){
+  /* Inner pages wider */
+  #pg-conn,#pg-home-reg,#pg-finance,#pg-network,#pg-infos,#pg-spotlight,#pg-community{max-width:880px;}
+  /* Header */
+  .hdr{padding:14px 48px;}
+  /* Bottom nav — still full width, even bigger */
+  .bnav{padding:12px 24px max(14px,env(safe-area-inset-bottom));}
+  .ni{font-size:12px;gap:4px;padding:8px 16px;}
+  .ni svg{width:26px;height:26px;}
+  /* Hero */
+  .hero{padding:48px 40px;}
+  .hero-body{padding:56px 40px 36px;}
+  .logo-ring{width:150px;height:150px;}
+  .logo-ring img{width:130px;height:130px;}
+  .hero-h1{font-size:clamp(36px,4.5vw,56px);}
+  .hero-sub{max-width:640px;font-size:17px;}
+  .hero-quote{font-size:14px;max-width:640px;}
+  /* Proto card — 70% of viewport, proportional */
+  .proto-card{max-width:720px;}
+  .proto-card-inner{padding:24px 22px;border-radius:22px;}
+  .pc-m-val{font-size:28px;}
+  .pc-m-lbl{font-size:11px;letter-spacing:.8px;}
+  .pc-metrics{padding:18px 14px;border-radius:14px;}
+  .pc-tx{padding:10px 16px;border-radius:10px;}
+  .pc-tx-addr{font-size:13px;}.pc-tx-action{font-size:13px;}.pc-tx-amount{font-size:15px;font-weight:700;}
+  .pc-cta{font-size:17px;padding:16px;border-radius:14px;}
+  .pc-toprow{margin-bottom:18px;}
+  .pc-live{font-size:13px;}.pc-network{font-size:13px;}
+  .pc-chain{margin-bottom:18px;}
+  .pc-block{font-size:10px;}
+  .pc-sep{height:36px;}
+  /* Feature cards */
+  .feat-card{padding:22px 18px;}
+  .feat-title{font-size:16px;}
+  .feat-desc{font-size:13px;line-height:1.7;}
+  .feat-icon{width:52px;height:52px;font-size:24px;border-radius:14px;margin-bottom:12px;}
+  /* Home feat grid */
+  .home-feat-grid{gap:14px!important;padding:0 32px 24px!important;}
+  /* Cards */
+  .wcard{margin:24px auto;padding:28px;max-width:760px;}
+  .regcard{margin:0 auto 24px;padding:28px;max-width:760px;}
+  .home-reg{padding:28px;max-width:760px;margin:0 auto;}
+  /* Dashboard */
+  .dash-grid{grid-template-columns:repeat(4,1fr);gap:14px;}
+  .dg-val{font-size:24px;}
+  .dg-label{font-size:11px;}
+  /* Finance */
+  .fin-wrap{padding:28px;max-width:820px;margin:0 auto;}
+  /* Packages */
+  .pgrid{grid-template-columns:repeat(3,1fr);gap:12px;}
+  .pkg-sec{padding:0 28px 28px;max-width:820px;margin:0 auto;}
+  .pkg-strip{padding:0 28px 28px;max-width:820px;margin:0 auto;}
+  .pkg-row{grid-template-columns:repeat(4,1fr);gap:12px;}
+  /* Stats */
+  .srow{max-width:760px;margin:0 auto 24px;}
+  .sv{font-size:26px;}
+  .sl{font-size:12px;}
+  .sc{padding:16px 18px;border-radius:14px;}
+  /* Live counter */
+  .lc-wrap{max-width:760px;margin:0 auto 24px;padding:18px;}
+  .lc-num{font-size:20px;}
+  .lc-sub{font-size:11px;}
+  /* Ticker wrap */
+  .ticker-wrap{max-width:760px;margin:0 auto 24px;}
+  /* Video */
+  #hero-vid-wrap{max-height:420px;}
+  #hero-vid{max-height:420px;}
+  /* Network */
+  .tgrid{max-width:820px;margin:0 auto;}
+  /* Toast */
+  .toast{bottom:100px;font-size:13px;padding:13px 22px;}
+  /* Wallet items */
+  .ipkg-wallet-item{font-size:14px;gap:8px;}
+  .ipkg-connect-btn{font-size:18px;padding:18px;}
+  /* Section titles */
+  .st{font-size:18px;}
+  .st::before{width:4px;height:20px;}
+  /* Badges */
+  .bdg{font-size:11px;padding:3px 10px;}
+  /* Modals wider */
+  .mod{max-width:480px;padding:28px;}
+}
+
+/* ── Desktop (1280px+) ── */
+@media(min-width:1280px){
+  #pg-conn,#pg-home-reg,#pg-finance,#pg-network,#pg-infos,#pg-spotlight,#pg-community{max-width:960px;}
+  .hdr{padding:16px 64px;}
+  /* Bottom nav */
+  .ni{font-size:13px;gap:4px;padding:8px 20px;}
+  .ni svg{width:28px;height:28px;}
+  /* Hero */
+  .hero-body{padding:64px 48px 40px;}
+  .logo-ring{width:170px;height:170px;}
+  .logo-ring img{width:148px;height:148px;}
+  .hero-h1{font-size:56px;}
+  .hero-sub{max-width:700px;font-size:18px;}
+  .hero-quote{font-size:15px;max-width:700px;}
+  /* Proto card — dominant on page */
+  .proto-card{max-width:800px;}
+  .proto-card-inner{padding:28px 26px;}
+  .pc-m-val{font-size:32px;}
+  .pc-m-lbl{font-size:12px;}
+  .pc-metrics{padding:22px 18px;}
+  .pc-tx{padding:12px 18px;}
+  .pc-tx-addr{font-size:14px;}.pc-tx-action{font-size:14px;}.pc-tx-amount{font-size:16px;}
+  .pc-cta{font-size:18px;padding:18px;}
+  .pc-live{font-size:14px;}.pc-network{font-size:14px;}
+  .pc-node{width:12px;height:12px;}
+  .pc-block{font-size:11px;}
+  /* Video */
+  #hero-vid-wrap{max-height:480px;}
+  #hero-vid{max-height:480px;}
+  /* Dashboard */
+  .dg-val{font-size:26px;}
+  .dg-label{font-size:12px;}
+  /* Finance */
+  .fin-wrap{max-width:940px;padding:32px;}
+  /* Cards */
+  .wcard{max-width:840px;padding:32px;}
+  .regcard{max-width:840px;padding:32px;}
+  /* Feature cards */
+  .feat-card{padding:26px 22px;}
+  .feat-title{font-size:17px;}
+  .feat-desc{font-size:14px;}
+  .feat-icon{width:56px;height:56px;font-size:26px;}
+  .home-feat-grid{gap:18px!important;padding:0 40px 28px!important;}
+  /* Packages */
+  .pgrid{grid-template-columns:repeat(3,1fr);gap:16px;}
+  .pkg-row{grid-template-columns:repeat(4,1fr);gap:14px;}
+  /* Stats */
+  .sv{font-size:28px;}
+  .sl{font-size:13px;}
+  /* Section titles */
+  .st{font-size:20px;}
+  /* Modals */
+  .mod{max-width:520px;padding:32px;}
+}
+
+/* ── Ultra-wide (1440px+) ── */
+@media(min-width:1440px){
+  #pg-conn,#pg-home-reg,#pg-finance,#pg-network,#pg-infos,#pg-spotlight,#pg-community{max-width:1080px;}
+  .hdr{padding:16px 80px;}
+  .hero-h1{font-size:64px;}
+  .hero-sub{font-size:19px;max-width:760px;}
+  .proto-card{max-width:880px;}
+  .proto-card-inner{padding:32px 30px;}
+  .pc-m-val{font-size:36px;}
+  #hero-vid-wrap{max-height:520px;}
+  #hero-vid{max-height:520px;}
+  .fin-wrap{max-width:1020px;}
+  .wcard{max-width:920px;}
+  .home-feat-grid{max-width:1080px!important;gap:22px!important;}
+  .feat-card{padding:30px 24px;}
+  .feat-title{font-size:18px;}
+  .feat-desc{font-size:15px;}
+}
+</style>
 <!-- Animated BG -->
 <div class="hero-canvas"></div>
 <div class="hex-field" id="hex-field"></div>
@@ -777,8 +992,8 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 </div>
 
 <!-- HERO VIDEO (no audio track = iOS autoplay OK) -->
-<div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:none;margin:0;background:#000;max-height:240px;" id="hero-vid-wrap">
-  <video autoplay muted loop playsinline webkit-playsinline disableRemotePlayback x-webkit-airplay="deny" preload="auto" style="width:100%;display:block;opacity:.9;object-fit:cover;max-height:240px;pointer-events:none;" id="hero-vid">
+<div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:none;margin:0;background:#000;" id="hero-vid-wrap">
+  <video autoplay muted loop playsinline webkit-playsinline disableRemotePlayback x-webkit-airplay="deny" preload="auto" poster="assets/hero-animation.gif" style="width:100%;display:block;opacity:.9;object-fit:cover;pointer-events:none;" id="hero-vid">
     <source src="assets/hero-video.mp4" type="video/mp4">
   </video>
 </div>
@@ -788,6 +1003,20 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 #hero-vid::-webkit-media-controls-panel{display:none!important;}
 #hero-vid::-webkit-media-controls-start-playback-button{display:none!important;}
 </style>
+<script>
+// Force video autoplay on mobile (iOS sometimes needs explicit play call)
+(function(){
+  var v=document.getElementById('hero-vid');
+  if(!v)return;
+  function tryPlay(){v.muted=true;var p=v.play();if(p&&p.catch)p.catch(function(){});}
+  tryPlay();
+  document.addEventListener('touchstart',function once(){tryPlay();document.removeEventListener('touchstart',once);},{passive:true});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)tryPlay();});
+  v.addEventListener('loadeddata',tryPlay);
+  setTimeout(tryPlay,1000);
+  setTimeout(tryPlay,3000);
+})();
+</script>
 
 <!-- TICKER STRIP 3 (right-to-left) — directly below video -->
 <div class="home-ticker" style="border-top:none;">
@@ -897,7 +1126,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 <!-- (Ticker strips 3+4 moved to directly below video) -->
 
 <!-- 3 FEATURE CARDS — always 3 col, never orphan -->
-<div style="position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 14px 18px;overflow:hidden;box-sizing:border-box;width:100%;">
+<div class="home-feat-grid" style="position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 14px 18px;overflow:hidden;box-sizing:border-box;width:100%;max-width:960px;margin:0 auto;">
   <div class="feat-card">
     <div class="feat-icon" style="background:rgba(62,221,181,.1);">🔗</div>
     <div class="feat-title">On-Chain Transparency</div>

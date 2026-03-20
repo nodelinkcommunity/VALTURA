@@ -38,6 +38,8 @@ h1,h2,h3,h4,h5{font-family:'Montserrat',sans-serif;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
 .cbtn{background:var(--grad);border:none;color:#000;font-weight:700;font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:'Montserrat',sans-serif;box-shadow:0 0 18px rgba(62,221,181,.25);transition:all .3s;white-space:nowrap;}
 .cbtn:hover{transform:translateY(-2px);box-shadow:0 0 28px rgba(62,221,181,.5);}
+.dbtn{background:none;border:1px solid rgba(255,75,75,.5);color:#FF4B4B;font-weight:600;font-size:11px;padding:5px 10px;border-radius:8px;cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .3s;white-space:nowrap;}
+.dbtn:hover{background:rgba(255,75,75,.15);border-color:#FF4B4B;transform:translateY(-1px);}
 
 /* BOTTOM NAV */
 .bnav{
@@ -392,6 +394,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
     <div class="netbdg"><div class="netdot"></div>Polygon</div>
     <div class="wb" id="wb"><div class="wd"></div><span id="ws">0x...0000</span><span id="ws-uname" style="display:none;margin-left:4px;color:var(--cyan);font-weight:600;font-size:10px;"></span></div>
     <button class="cbtn" id="cbtn" onclick="openCM()">Connect Wallet</button>
+    <button class="dbtn" id="dbtn" style="display:none;" onclick="disconnectWallet()">Disconnect</button>
   </div>
 </div>
 
@@ -3825,7 +3828,7 @@ async function conW(name){
       /* Fallback mock mode — no MetaMask */
       S.conn=true;S.wallet=ADDR;
       const wb=document.getElementById('wb');if(wb)wb.style.display='flex';
-      const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';
+      const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';const dbtn=document.getElementById('dbtn');if(dbtn)dbtn.style.display='';
       const ws=document.getElementById('ws');if(ws)ws.textContent=ADDR.slice(0,6)+'...'+ADDR.slice(-4);
       const wf=document.getElementById('wa-full');if(wf)wf.textContent=ADDR;
       const ref=new URLSearchParams(location.search).get('ref');const ri=document.getElementById('ref-in');if(ref&&ri)ri.value=ref;
@@ -3858,7 +3861,7 @@ async function conW(name){
     /* Update UI */
     S.conn=true;
     const wb=document.getElementById('wb');if(wb)wb.style.display='flex';
-    const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';
+    const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';const dbtn=document.getElementById('dbtn');if(dbtn)dbtn.style.display='';
     const ws=document.getElementById('ws');if(ws)ws.textContent=S.wallet.slice(0,6)+'...'+S.wallet.slice(-4);
     const wf=document.getElementById('wa-full');if(wf)wf.textContent=S.wallet;
     const ref=new URLSearchParams(location.search).get('ref');const ri=document.getElementById('ref-in');if(ref&&ri)ri.value=ref;
@@ -4148,7 +4151,7 @@ async function refreshDashboard(){
     /* Restore mock session */
     S.wallet=savedWallet;S.jwt=savedJWT;S.conn=true;
     const wb=document.getElementById('wb');if(wb)wb.style.display='flex';
-    const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';
+    const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';const dbtn=document.getElementById('dbtn');if(dbtn)dbtn.style.display='';
     const ws=document.getElementById('ws');if(ws)ws.textContent=savedWallet.slice(0,6)+'...'+savedWallet.slice(-4);
     const wf=document.getElementById('wa-full');if(wf)wf.textContent=savedWallet;
     spg('conn');
@@ -4164,7 +4167,7 @@ async function refreshDashboard(){
     S.wallet=accounts[0];S.jwt=savedJWT;S.conn=true;
 
     const wb=document.getElementById('wb');if(wb)wb.style.display='flex';
-    const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';
+    const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='none';const dbtn=document.getElementById('dbtn');if(dbtn)dbtn.style.display='';
     const ws=document.getElementById('ws');if(ws)ws.textContent=S.wallet.slice(0,6)+'...'+S.wallet.slice(-4);
     const wf=document.getElementById('wa-full');if(wf)wf.textContent=S.wallet;
     spg('conn');
@@ -4182,6 +4185,7 @@ function disconnectWallet(){
   localStorage.removeItem('valtura_jwt');localStorage.removeItem('valtura_wallet');
   const wb=document.getElementById('wb');if(wb)wb.style.display='none';
   const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='';
+  const dbtn=document.getElementById('dbtn');if(dbtn)dbtn.style.display='none';
   document.getElementById('nav-unr').style.display='flex';
   document.getElementById('nav-reg').style.display='none';
   spg('home');sNI(0);

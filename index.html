@@ -2609,6 +2609,13 @@ invUpdP();
 .ll{font-size:10px;padding:2px 8px;border-radius:4px;margin-bottom:5px;font-family:'Montserrat',sans-serif;font-weight:600;}
 .lft{background:rgba(62,221,181,.1);color:var(--cyan);}
 .rgt{background:rgba(25,118,210,.1);color:#42A5F5;}
+/* Right leg: all accent colors → blue #42A5F5 */
+.right-leg .tbox{border-color:rgba(66,165,245,.25);}
+.right-leg .tbox:hover{border-color:#42A5F5;box-shadow:0 0 12px rgba(66,165,245,.2);}
+.right-leg .tbox-user{color:#42A5F5;}
+.right-leg .tbox-personal span{color:#42A5F5;}
+.right-leg .tbox-vip span{color:#42A5F5;}
+.right-leg .tbox-roi span{color:#42A5F5;}
 
 /* downlines btn */
 .nw-dl-btn{
@@ -2811,7 +2818,7 @@ invUpdP();
               </div>
             </div>
           </div>
-          <div class="tbranch">
+          <div class="tbranch right-leg">
             <div class="ll rgt">RIGHT ▶</div>
             <div class="tbox" onclick="toast('Right F1: 0xD7e8...','ok')">
               <div class="tbox-user">BobTrades</div>

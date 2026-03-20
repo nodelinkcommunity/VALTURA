@@ -1541,8 +1541,8 @@ function selectPkg(el, pkgName){
   async function fetchRealTx(){
     try{
       // Polygonscan public API - get latest transactions (free tier, limited)
-      const CONTRACT='0x0000000000000000000000000000000000000000'; // placeholder - replace with real contract
-      const url='https://api.polygonscan.com/api?module=account&action=txlist&address='+CONTRACT+'&page=1&offset=10&sort=desc';
+      const CONTRACT='0x690611828a631C3753c675e38244b8E010d8EB44'; // ValturVault on Amoy
+      const url='https://api-amoy.polygonscan.com/api?module=account&action=txlist&address='+CONTRACT+'&page=1&offset=10&sort=desc';
       const res=await fetch(url);
       if(!res.ok) throw new Error('Polygonscan '+res.status);
       const data=await res.json();
@@ -3715,7 +3715,7 @@ setInterval(function(){
 <script>
 /* ═══ Web3 CONFIG ═══ */
 const CONFIG={
-  API_BASE:'',
+  API_BASE:'http://localhost:3001',
   CHAIN_ID:80002,
   CHAIN_NAME:'Polygon Amoy Testnet',
   RPC:'https://rpc-amoy.polygon.technology',
@@ -3754,7 +3754,7 @@ const CONFIG={
     ],
     COMMISSION_PAYOUT:[
       'function claimAllEarnings()',
-      'function getUnclaimedEarnings(address user) view returns (uint256[5] unclaimed, uint256 total)',
+      'function getUnclaimedEarnings(address user) view returns (uint256[5] unclaimed_, uint256 total)',
       'function getEarningsCapStatus(address user) view returns (uint256 investment, uint256 capLimit, uint256 totalEarned, uint256 remaining)',
       'function earned(address, uint8) view returns (uint256)',
       'function claimed(address, uint8) view returns (uint256)',
@@ -4351,14 +4351,14 @@ async function confirmClaim() {
 
 /* ═══ Earnings & Claim Data & Functions ═══ */
 var earningsData = {
-  maxOutLimit: 15000,
+  maxOutLimit: 0,
   feePercent: 2.5,
   breakdown: [
-    { type: 'Daily Profit',         total: 1920, unclaimed: 180,  color: 'var(--cyan)'   },
-    { type: 'Binary Bonus',         total: 1200, unclaimed: 620,  color: '#42A5F5'       },
-    { type: 'Referral Commission',  total: 840,  unclaimed: 480,  color: 'var(--green)'  },
-    { type: 'Binary Commission',    total: 960,  unclaimed: 400,  color: 'var(--purple)' },
-    { type: 'Momentum Rewards',     total: 250,  unclaimed: 250,  color: '#FFD700'       }
+    { type: 'Daily Profit',         total: 0, unclaimed: 0,  color: 'var(--cyan)'   },
+    { type: 'Binary Bonus',         total: 0, unclaimed: 0,  color: '#42A5F5'       },
+    { type: 'Referral Commission',  total: 0, unclaimed: 0,  color: 'var(--green)'  },
+    { type: 'Binary Commission',    total: 0, unclaimed: 0,  color: 'var(--purple)' },
+    { type: 'Momentum Rewards',     total: 0, unclaimed: 0,  color: '#FFD700'       }
   ]
 };
 

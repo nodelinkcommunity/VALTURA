@@ -3657,14 +3657,26 @@ setInterval(function(){
     </div>
 
     <div class="div"></div>
-    <div class="st" style="font-size:14px;">My Referral Link</div>
+    <div class="st" style="font-size:14px;">My Referral Links</div>
     <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px;">
-      <div style="font-size:11px;color:var(--muted);margin-bottom:7px;">Share your link to earn Referral Commission (10% on daily profit of directly sponsored members)</div>
-      <div style="background:var(--bg3);border-radius:8px;padding:9px 12px;font-size:11px;color:var(--cyan);font-family:Montserrat,sans-serif;word-break:break-all;margin-bottom:5px;" id="ref-link-wallet">https://valtura.io?ref=0x742d35Cc6634C0532925a3b8D4C9Ed7C8e2fc42b</div>
-      <div style="background:var(--bg3);border-radius:8px;padding:9px 12px;font-size:11px;color:var(--green);font-family:Montserrat,sans-serif;word-break:break-all;margin-bottom:9px;" id="ref-link-uname">https://valtura.io?ref=<span id="ref-uname-val">username</span></div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn2" style="margin-top:0;flex:1;" onclick="toast('Wallet referral link copied!','ok')">📋 Copy Wallet Link</button>
-        <button class="btn2" style="margin-top:0;flex:1;" onclick="toast('Username referral link copied!','ok')">📋 Copy Username Link</button>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;">Share your link to earn Referral Commission (10% on daily profit of directly sponsored members). New members will be placed in your LEFT or RIGHT leg accordingly.</div>
+
+      <!-- LEFT Link -->
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+          <span style="font-size:11px;font-weight:700;color:var(--cyan);font-family:Montserrat,sans-serif;">◀ LEFT</span>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:9px 12px;font-size:11px;color:var(--cyan);font-family:Montserrat,sans-serif;word-break:break-all;border-left:3px solid var(--cyan);" id="ref-link-left">https://nodelinkcommunity.github.io/VALTURA/?ref=<span id="ref-uname-left">username</span>&leg=left</div>
+        <button class="btn2" style="margin-top:6px;width:100%;" onclick="copyRefLink('left')">📋 Copy LEFT Link</button>
+      </div>
+
+      <!-- RIGHT Link -->
+      <div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px;">
+          <span style="font-size:11px;font-weight:700;color:#42A5F5;font-family:Montserrat,sans-serif;">RIGHT ▶</span>
+        </div>
+        <div style="background:var(--bg3);border-radius:8px;padding:9px 12px;font-size:11px;color:#42A5F5;font-family:Montserrat,sans-serif;word-break:break-all;border-left:3px solid #42A5F5;" id="ref-link-right">https://nodelinkcommunity.github.io/VALTURA/?ref=<span id="ref-uname-right">username</span>&leg=right</div>
+        <button class="btn2" style="margin-top:6px;width:100%;" onclick="copyRefLink('right')">📋 Copy RIGHT Link</button>
       </div>
     </div>
   </div>
@@ -3947,7 +3959,7 @@ async function doReg(){
     const dbU=document.getElementById('db-uname');if(dbU)dbU.textContent='@'+S.username;
     const wsU=document.getElementById('ws-uname');if(wsU){wsU.textContent='@'+S.username;wsU.style.display='inline';}
     const treeU=document.getElementById('tree-me-uname');if(treeU)treeU.textContent='@'+S.username;
-    const refU=document.getElementById('ref-uname-val');if(refU)refU.textContent=S.username;
+    ['ref-uname-left','ref-uname-right'].forEach(function(id){const el=document.getElementById(id);if(el)el.textContent=S.username;});
     spg('home-reg');sNR(0);toast('Registration successful! Welcome to VALTURA Labs','ok');
   }catch(err){
     console.error('Registration failed:',err);
@@ -4071,6 +4083,22 @@ function goInfoTab(tab){_infBackPage=document.querySelector('.page.active')?docu
 function goBackFromInfos(){var bb=document.getElementById('infos-back-btn');if(bb)bb.style.display='none';if(_infBackPage){spg(_infBackPage);_infBackPage=null;}else{spg('conn');}}
 function doClaim(type){if(type)toast('Claiming '+type+' on-chain (Polygon)...','ok');setTimeout(()=>toast(type+' claimed successfully! 💰','ok'),1800);}
 function toast(msg,type){const el=document.getElementById('toast-el');if(!el)return;el.textContent=msg;el.className='toast '+type+' show';setTimeout(()=>el.className='toast',3500);}
+
+function copyRefLink(leg){
+  var uname=S.username||'username';
+  var base='https://nodelinkcommunity.github.io/VALTURA/';
+  var link=base+'?ref='+uname+'&leg='+leg;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(link).then(function(){
+      toast((leg==='left'?'◀ LEFT':'RIGHT ▶')+' referral link copied!','ok');
+    }).catch(function(){fallbackCopy(link,leg);});
+  }else{fallbackCopy(link,leg);}
+}
+function fallbackCopy(text,leg){
+  var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.left='-9999px';
+  document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  toast((leg==='left'?'◀ LEFT':'RIGHT ▶')+' referral link copied!','ok');
+}
 (()=>{const ref=new URLSearchParams(location.search).get('ref');if(ref){const e=document.getElementById('ref-in');if(e)e.value=ref;}})();
 updP();
 

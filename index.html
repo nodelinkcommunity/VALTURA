@@ -991,65 +991,88 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
   <div class="ht-inner" style="animation:tkanim-rev 16s linear infinite;" id="ht-top2"></div>
 </div>
 
-<!-- HERO VIDEO (no audio track = iOS autoplay OK) -->
+<!-- HERO VISUAL — video with CSS animation fallback for in-app browsers -->
 <div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:none;margin:0;background:#000;" id="hero-vid-wrap">
+  <!-- Video (shown when autoplay works: Safari, Chrome) -->
   <video autoplay muted loop playsinline webkit-playsinline disableRemotePlayback x-webkit-airplay="deny" preload="auto" style="width:100%;display:block;opacity:.9;object-fit:cover;pointer-events:none;" id="hero-vid">
-    <source src="assets/hero-video.mp4?v=20260320b" type="video/mp4">
+    <source src="assets/hero-video.mp4?v=20260320c" type="video/mp4">
   </video>
+  <!-- CSS Animation fallback (shown when video can't autoplay: Trust Wallet, MetaMask, in-app browsers) -->
+  <div id="hero-vid-fallback" style="display:none;position:absolute;inset:0;">
+    <div class="trading-anim-wrap" style="height:100%;margin:0;border:none;">
+      <div class="trading-anim">
+        <div class="ta-floor"></div>
+        <div class="ta-waves">
+          <svg viewBox="0 0 2400 200" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="ta-wg1b" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#3EDDB5" stop-opacity=".2"/><stop offset="50%" stop-color="#3EDDB5"/><stop offset="100%" stop-color="#3EDDB5" stop-opacity=".2"/></linearGradient>
+              <linearGradient id="ta-wg2b" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#1976D2" stop-opacity=".2"/><stop offset="50%" stop-color="#1976D2"/><stop offset="100%" stop-color="#1976D2" stop-opacity=".2"/></linearGradient>
+            </defs>
+            <path class="ta-wave1" style="stroke:url(#ta-wg1b);" d="M0,120 Q100,80 200,100 T400,90 T600,110 T800,85 T1000,105 T1200,95 T1400,115 T1600,80 T1800,100 T2000,90 T2200,110 T2400,95"/>
+            <path class="ta-wave2" style="stroke:url(#ta-wg2b);" d="M0,140 Q100,110 200,130 T400,120 T600,135 T800,115 T1000,130 T1200,125 T1400,140 T1600,110 T1800,125 T2000,120 T2200,135 T2400,125"/>
+            <path class="ta-wave3" d="M0,160 Q100,140 200,155 T400,145 T600,158 T800,142 T1000,155 T1200,150 T1400,160 T1600,140 T1800,152 T2000,148 T2200,158 T2400,150"/>
+          </svg>
+        </div>
+        <!-- Floating price labels -->
+        <div style="position:absolute;top:18%;left:12%;font-size:11px;color:#3EDDB5;font-family:Montserrat,sans-serif;font-weight:600;opacity:.7;animation:float-label 4s ease-in-out infinite;">$84,205</div>
+        <div style="position:absolute;top:30%;right:15%;font-size:10px;color:#1976D2;font-family:Montserrat,sans-serif;font-weight:600;opacity:.5;animation:float-label 5s ease-in-out infinite 1s;">$1,985</div>
+        <div style="position:absolute;bottom:25%;left:25%;font-size:9px;color:#fbbf24;font-family:Montserrat,sans-serif;font-weight:600;opacity:.4;animation:float-label 6s ease-in-out infinite 2s;">$0.498</div>
+        <!-- Glowing particles -->
+        <div style="position:absolute;width:4px;height:4px;border-radius:50%;background:#3EDDB5;box-shadow:0 0 12px #3EDDB5;top:20%;left:30%;animation:particle-float 7s ease-in-out infinite;"></div>
+        <div style="position:absolute;width:3px;height:3px;border-radius:50%;background:#1976D2;box-shadow:0 0 10px #1976D2;top:50%;left:60%;animation:particle-float 9s ease-in-out infinite 2s;"></div>
+        <div style="position:absolute;width:3px;height:3px;border-radius:50%;background:#fbbf24;box-shadow:0 0 8px #fbbf24;top:35%;left:80%;animation:particle-float 8s ease-in-out infinite 4s;"></div>
+      </div>
+    </div>
+  </div>
 </div>
 <style>
 #hero-vid::-webkit-media-controls{display:none!important;}
 #hero-vid::-webkit-media-controls-enclosure{display:none!important;}
 #hero-vid::-webkit-media-controls-panel{display:none!important;}
 #hero-vid::-webkit-media-controls-start-playback-button{display:none!important;}
+@keyframes float-label{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+@keyframes particle-float{0%,100%{transform:translate(0,0);opacity:.6;}25%{transform:translate(15px,-20px);opacity:1;}50%{transform:translate(-10px,-10px);opacity:.4;}75%{transform:translate(20px,5px);opacity:.8;}}
 </style>
 <script>
-// Force video autoplay on mobile — aggressive iOS/in-app browser handling
+// Smart video handler: autoplay if possible, CSS animation fallback if not
 (function(){
   var v=document.getElementById('hero-vid');
-  if(!v)return;
-  // Ensure attributes are set via JS (some in-app browsers ignore HTML attrs)
-  v.muted=true;
-  v.playsInline=true;
-  v.setAttribute('playsinline','');
-  v.setAttribute('webkit-playsinline','');
-  v.setAttribute('muted','');
-  v.loop=true;
-  v.autoplay=true;
-  // Remove controls if browser added them
-  v.controls=false;
-  v.removeAttribute('controls');
+  var fb=document.getElementById('hero-vid-fallback');
+  if(!v||!fb)return;
 
+  v.muted=true;v.playsInline=true;v.loop=true;v.autoplay=true;
+  v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.setAttribute('muted','');
+  v.controls=false;v.removeAttribute('controls');
+
+  var playing=false;
   function tryPlay(){
-    v.muted=true;
-    v.controls=false;
+    if(playing)return;
+    v.muted=true;v.controls=false;
     var p=v.play();
-    if(p&&p.then)p.then(function(){v.controls=false;}).catch(function(){});
+    if(p&&p.then){
+      p.then(function(){playing=true;v.controls=false;v.style.display='block';fb.style.display='none';})
+       .catch(function(){});
+    }
   }
-  // Try immediately + after load
+  function showFallback(){
+    if(!playing){
+      v.style.display='none';
+      fb.style.display='block';
+    }
+  }
   tryPlay();
-  v.addEventListener('loadedmetadata',tryPlay);
   v.addEventListener('loadeddata',tryPlay);
   v.addEventListener('canplay',tryPlay);
-  // iOS unlock on first user interaction
-  ['touchstart','touchend','click','scroll'].forEach(function(evt){
+  v.addEventListener('playing',function(){playing=true;v.controls=false;v.style.display='block';fb.style.display='none';});
+  ['touchstart','touchend','click'].forEach(function(evt){
     document.addEventListener(evt,function once(){tryPlay();document.removeEventListener(evt,once);},{passive:true,once:true});
   });
-  // Visibility change (tab switch back)
   document.addEventListener('visibilitychange',function(){if(!document.hidden)tryPlay();});
-  // Retry at intervals
-  setTimeout(tryPlay,500);
-  setTimeout(tryPlay,1500);
-  setTimeout(tryPlay,3000);
-  setTimeout(tryPlay,6000);
-  // If video is paused after 2s, hide it and show a static fallback
-  setTimeout(function(){
-    if(v.paused){
-      // In-app browser can't autoplay — hide controls overlay
-      v.style.pointerEvents='none';
-      v.controls=false;
-    }
-  },4000);
+  setTimeout(tryPlay,500);setTimeout(tryPlay,1500);setTimeout(tryPlay,3000);
+  // After 2s if still not playing → show CSS animation fallback
+  setTimeout(showFallback,2000);
+  // Keep trying a bit longer
+  setTimeout(function(){if(!playing)showFallback();},5000);
 })();
 </script>
 

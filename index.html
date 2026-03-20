@@ -1034,45 +1034,67 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 @keyframes particle-float{0%,100%{transform:translate(0,0);opacity:.6;}25%{transform:translate(15px,-20px);opacity:1;}50%{transform:translate(-10px,-10px);opacity:.4;}75%{transform:translate(20px,5px);opacity:.8;}}
 </style>
 <script>
-// Smart video handler: autoplay if possible, CSS animation fallback if not
+// Smart video handler: detect in-app browser immediately, skip video entirely
 (function(){
   var v=document.getElementById('hero-vid');
   var fb=document.getElementById('hero-vid-fallback');
   if(!v||!fb)return;
 
+  // Detect in-app browsers (Trust Wallet, MetaMask, Telegram, etc.)
+  var ua=navigator.userAgent||'';
+  var isInApp=(/Trust|MetaMask|TokenPocket|imToken|DApp|Telegram|FBAN|FBAV|Instagram|Line\/|KakaoTalk|Zalo/i).test(ua);
+  // Also detect generic iOS in-app: has iPhone but NOT Safari standalone
+  var isIOS=/iPhone|iPad|iPod/.test(ua);
+  var isSafari=/Safari/.test(ua)&&!/CriOS|FxiOS|OPiOS|EdgiOS/.test(ua);
+  var isStandaloneSafari=isIOS&&isSafari&&!(/FBAN|FBAV|Instagram|Line\/|Telegram/i.test(ua));
+  // If iOS but not standalone Safari/Chrome → likely in-app browser
+  if(isIOS&&!isStandaloneSafari&&!(/CriOS/.test(ua))){isInApp=true;}
+
+  if(isInApp){
+    // In-app browser detected → show CSS animation immediately, remove video
+    v.pause();v.removeAttribute('src');v.load();
+    v.style.display='none';
+    fb.style.display='block';
+    return;
+  }
+
+  // Normal browser — try autoplay
   v.muted=true;v.playsInline=true;v.loop=true;v.autoplay=true;
   v.setAttribute('playsinline','');v.setAttribute('webkit-playsinline','');v.setAttribute('muted','');
   v.controls=false;v.removeAttribute('controls');
 
-  var playing=false;
-  function tryPlay(){
-    if(playing)return;
-    v.muted=true;v.controls=false;
-    var p=v.play();
-    if(p&&p.then){
-      p.then(function(){playing=true;v.controls=false;v.style.display='block';fb.style.display='none';})
-       .catch(function(){});
-    }
+  var confirmed=false;
+  function onPlaying(){
+    if(confirmed)return;confirmed=true;
+    v.controls=false;v.style.display='block';fb.style.display='none';
   }
   function showFallback(){
-    if(!playing){
-      v.style.display='none';
+    if(!confirmed&&v.paused){
+      v.pause();v.style.display='none';
       fb.style.display='block';
     }
   }
+  function tryPlay(){
+    if(confirmed)return;
+    v.muted=true;v.controls=false;
+    var p=v.play();
+    if(p&&p.then){
+      p.then(function(){
+        // play() resolved — but check if actually rendering frames
+        setTimeout(function(){
+          if(!v.paused&&v.currentTime>0){onPlaying();}
+          else{showFallback();}
+        },300);
+      }).catch(function(){showFallback();});
+    }
+  }
+  v.addEventListener('playing',onPlaying);
+  v.addEventListener('timeupdate',function(){if(v.currentTime>0.1)onPlaying();});
   tryPlay();
   v.addEventListener('loadeddata',tryPlay);
-  v.addEventListener('canplay',tryPlay);
-  v.addEventListener('playing',function(){playing=true;v.controls=false;v.style.display='block';fb.style.display='none';});
-  ['touchstart','touchend','click'].forEach(function(evt){
-    document.addEventListener(evt,function once(){tryPlay();document.removeEventListener(evt,once);},{passive:true,once:true});
-  });
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)tryPlay();});
-  setTimeout(tryPlay,500);setTimeout(tryPlay,1500);setTimeout(tryPlay,3000);
-  // After 2s if still not playing → show CSS animation fallback
-  setTimeout(showFallback,2000);
-  // Keep trying a bit longer
-  setTimeout(function(){if(!playing)showFallback();},5000);
+  setTimeout(tryPlay,500);setTimeout(tryPlay,1500);
+  // Final check: if after 2.5s still no confirmed playback → fallback
+  setTimeout(function(){if(!confirmed)showFallback();},2500);
 })();
 </script>
 

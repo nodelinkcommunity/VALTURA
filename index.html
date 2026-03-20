@@ -993,8 +993,8 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 
 <!-- HERO VIDEO (no audio track = iOS autoplay OK) -->
 <div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:none;margin:0;background:#000;" id="hero-vid-wrap">
-  <video autoplay muted loop playsinline webkit-playsinline disableRemotePlayback x-webkit-airplay="deny" preload="auto" poster="assets/hero-animation.gif" style="width:100%;display:block;opacity:.9;object-fit:cover;pointer-events:none;" id="hero-vid">
-    <source src="assets/hero-video.mp4" type="video/mp4">
+  <video autoplay muted loop playsinline webkit-playsinline disableRemotePlayback x-webkit-airplay="deny" preload="auto" style="width:100%;display:block;opacity:.9;object-fit:cover;pointer-events:none;" id="hero-vid">
+    <source src="assets/hero-video.mp4?v=20260320b" type="video/mp4">
   </video>
 </div>
 <style>
@@ -1004,17 +1004,52 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 #hero-vid::-webkit-media-controls-start-playback-button{display:none!important;}
 </style>
 <script>
-// Force video autoplay on mobile (iOS sometimes needs explicit play call)
+// Force video autoplay on mobile — aggressive iOS/in-app browser handling
 (function(){
   var v=document.getElementById('hero-vid');
   if(!v)return;
-  function tryPlay(){v.muted=true;var p=v.play();if(p&&p.catch)p.catch(function(){});}
+  // Ensure attributes are set via JS (some in-app browsers ignore HTML attrs)
+  v.muted=true;
+  v.playsInline=true;
+  v.setAttribute('playsinline','');
+  v.setAttribute('webkit-playsinline','');
+  v.setAttribute('muted','');
+  v.loop=true;
+  v.autoplay=true;
+  // Remove controls if browser added them
+  v.controls=false;
+  v.removeAttribute('controls');
+
+  function tryPlay(){
+    v.muted=true;
+    v.controls=false;
+    var p=v.play();
+    if(p&&p.then)p.then(function(){v.controls=false;}).catch(function(){});
+  }
+  // Try immediately + after load
   tryPlay();
-  document.addEventListener('touchstart',function once(){tryPlay();document.removeEventListener('touchstart',once);},{passive:true});
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)tryPlay();});
+  v.addEventListener('loadedmetadata',tryPlay);
   v.addEventListener('loadeddata',tryPlay);
-  setTimeout(tryPlay,1000);
+  v.addEventListener('canplay',tryPlay);
+  // iOS unlock on first user interaction
+  ['touchstart','touchend','click','scroll'].forEach(function(evt){
+    document.addEventListener(evt,function once(){tryPlay();document.removeEventListener(evt,once);},{passive:true,once:true});
+  });
+  // Visibility change (tab switch back)
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)tryPlay();});
+  // Retry at intervals
+  setTimeout(tryPlay,500);
+  setTimeout(tryPlay,1500);
   setTimeout(tryPlay,3000);
+  setTimeout(tryPlay,6000);
+  // If video is paused after 2s, hide it and show a static fallback
+  setTimeout(function(){
+    if(v.paused){
+      // In-app browser can't autoplay — hide controls overlay
+      v.style.pointerEvents='none';
+      v.controls=false;
+    }
+  },4000);
 })();
 </script>
 

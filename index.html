@@ -3876,6 +3876,21 @@ async function conW(name){
     if(authRes&&authRes.token){S.jwt=authRes.token;localStorage.setItem('valtura_jwt',S.jwt);}
     localStorage.setItem('valtura_wallet',S.wallet);
 
+    /* Check if already registered — backend response OR localStorage */
+    var isRegistered=false;
+    var savedUsername=null;
+    if(authRes&&authRes.registered&&authRes.user){
+      isRegistered=true;savedUsername=authRes.user.username;
+    }else{
+      /* Backend offline or fresh — check localStorage */
+      var lsWallet=localStorage.getItem('valtura_wallet');
+      var lsReg=localStorage.getItem('valtura_registered');
+      var lsUser=localStorage.getItem('valtura_username');
+      if(lsReg==='true'&&lsUser&&lsWallet&&lsWallet.toLowerCase()===S.wallet.toLowerCase()){
+        isRegistered=true;savedUsername=lsUser;
+      }
+    }
+
     /* Update UI */
     S.conn=true;
     const wb=document.getElementById('wb');if(wb)wb.style.display='flex';
@@ -3883,7 +3898,20 @@ async function conW(name){
     const ws=document.getElementById('ws');if(ws)ws.textContent=S.wallet.slice(0,6)+'...'+S.wallet.slice(-4);
     const wf=document.getElementById('wa-full');if(wf)wf.textContent=S.wallet;
     const ref=new URLSearchParams(location.search).get('ref');const ri=document.getElementById('ref-in');if(ref&&ri)ri.value=ref;
-    spg('conn');toast('Connected '+name+' · Polygon Network','ok');
+
+    if(isRegistered){
+      /* Skip registration — go straight to dashboard */
+      S.reg=true;S.username=savedUsername;
+      document.getElementById('nav-unr').style.display='none';
+      document.getElementById('nav-reg').style.display='flex';
+      const dbU=document.getElementById('db-uname');if(dbU)dbU.textContent='@'+S.username;
+      const wsU=document.getElementById('ws-uname');if(wsU){wsU.textContent='@'+S.username;wsU.style.display='inline';}
+      const treeU=document.getElementById('tree-me-uname');if(treeU)treeU.textContent='@'+S.username;
+      ['ref-uname-left','ref-uname-right'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=S.username;});
+      spg('home-reg');sNR(0);toast('Welcome back @'+S.username+' · Polygon Network','ok');
+    }else{
+      spg('conn');toast('Connected '+name+' · Polygon Network','ok');
+    }
 
     /* Start dashboard refresh */
     refreshDashboard();
@@ -3954,6 +3982,9 @@ async function doReg(){
     }else{regSuccess=true;/* Mock mode */}
 
     S.reg=true;
+    // Persist registration to localStorage
+    localStorage.setItem('valtura_username',S.username);
+    localStorage.setItem('valtura_registered','true');
     document.getElementById('nav-unr').style.display='none';
     document.getElementById('nav-reg').style.display='flex';
     const dbU=document.getElementById('db-uname');if(dbU)dbU.textContent='@'+S.username;
@@ -4215,8 +4246,9 @@ async function refreshDashboard(){
 
 /* ═══ Disconnect wallet ═══ */
 function disconnectWallet(){
-  S.conn=false;S.reg=false;S.provider=null;S.signer=null;S.jwt=null;S.wallet=null;
+  S.conn=false;S.reg=false;S.provider=null;S.signer=null;S.jwt=null;S.wallet=null;S.username=null;
   localStorage.removeItem('valtura_jwt');localStorage.removeItem('valtura_wallet');
+  localStorage.removeItem('valtura_username');localStorage.removeItem('valtura_registered');
   const wb=document.getElementById('wb');if(wb)wb.style.display='none';
   const cbtn=document.getElementById('cbtn');if(cbtn)cbtn.style.display='';
   const dbtn=document.getElementById('dbtn');if(dbtn)dbtn.style.display='none';

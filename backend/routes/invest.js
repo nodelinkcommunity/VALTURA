@@ -108,6 +108,7 @@ router.post('/deposit', (req, res) => {
       tx_hash: txHash,
     };
     db.store.positions.push(position);
+    db.persist();
 
     // Update binary tree volumes
     const isVip = ['signature180', 'exclusive360'].includes(pkgId);

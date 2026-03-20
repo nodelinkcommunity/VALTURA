@@ -177,6 +177,7 @@ router.post('/grant-leader', (req, res) => {
     });
 
     treeService.updateVolumes(user.id, amountNum, true);
+    db.persist();
 
     // Non-blocking on-chain grant
     blockchain.grantLeaderPackage(wallet, amountNum, !!hidden).catch((err) => {

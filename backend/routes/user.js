@@ -118,6 +118,7 @@ router.post('/claim', (req, res) => {
       tx_hash: null,
       created_at: new Date().toISOString(),
     });
+    db.persist();
 
     res.json({
       success: true,

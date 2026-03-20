@@ -149,6 +149,9 @@ router.post('/register', (req, res) => {
     // Place in binary tree
     treeService.placeMember(userId, referrerId, placement);
 
+    // Persist to disk
+    db.persist();
+
     // Issue JWT
     const token = jwt.sign(
       { wallet: user.wallet, userId: user.id },

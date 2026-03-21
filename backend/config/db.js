@@ -22,6 +22,7 @@ const DEFAULT_STORE = {
     { key: 'comm_binary_bonus', value: '5', description: 'Binary bonus rate (%)' },
     { key: 'comm_referral', value: '10', description: 'Referral commission rate (%)' },
     { key: 'comm_binary', value: '15', description: 'Binary commission rate (%)' },
+    { key: 'comm_momentum', value: '10', description: 'Momentum rewards rate (%)' },
     { key: 'fee_claim', value: '2.5', description: 'Claim fee (%)' },
     { key: 'fee_redeem', value: '5', description: 'Redemption fee (%)' },
   ],

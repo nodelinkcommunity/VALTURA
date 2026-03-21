@@ -197,4 +197,59 @@ router.post('/grant-leader', (req, res) => {
   }
 });
 
+// ── GET /api/admin/config ── read all commission/fee settings
+router.get('/config', (req, res) => {
+  try {
+    const keys = ['comm_binary_bonus', 'comm_referral', 'comm_binary', 'comm_momentum', 'earnings_cap_multi', 'fee_claim', 'fee_redeem'];
+    const config = {};
+    keys.forEach(k => {
+      config[k] = parseFloat(db.getConfigValue(k)) || 0;
+    });
+    res.json(config);
+  } catch (err) {
+    console.error('[Admin] Config read error:', err.message);
+    res.status(500).json({ error: 'Failed to load config' });
+  }
+});
+
+// ── POST /api/admin/config ── update commission/fee settings
+router.post('/config', (req, res) => {
+  try {
+    const allowed = {
+      comm_binary_bonus:  { min: 0, max: 20, label: 'Binary Bonus' },
+      comm_referral:      { min: 0, max: 30, label: 'Referral Commission' },
+      comm_binary:        { min: 0, max: 30, label: 'Binary Commission' },
+      comm_momentum:      { min: 0, max: 20, label: 'Momentum Rewards' },
+      earnings_cap_multi: { min: 100, max: 1000, label: 'Earnings Cap' },
+      fee_claim:          { min: 0, max: 10, label: 'Claim Fee' },
+      fee_redeem:         { min: 0, max: 10, label: 'Redemption Fee' },
+    };
+
+    const updates = {};
+    for (const [key, val] of Object.entries(req.body)) {
+      if (!allowed[key]) continue;
+      const num = parseFloat(val);
+      if (isNaN(num)) return res.status(400).json({ error: `Invalid value for ${allowed[key].label}` });
+      if (num < allowed[key].min || num > allowed[key].max) {
+        return res.status(400).json({ error: `${allowed[key].label} must be ${allowed[key].min}-${allowed[key].max}%` });
+      }
+      updates[key] = num;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: 'No valid config keys provided' });
+    }
+
+    for (const [key, val] of Object.entries(updates)) {
+      db.setConfigValue(key, val);
+    }
+
+    console.log('[Admin] Config updated by', req.user.wallet, ':', updates);
+    res.json({ success: true, updated: updates });
+  } catch (err) {
+    console.error('[Admin] Config update error:', err.message);
+    res.status(500).json({ error: 'Failed to update config' });
+  }
+});
+
 module.exports = router;

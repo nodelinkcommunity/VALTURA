@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VALTURA Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0B1426;--cyan:#3EDDB5;--purple:#1976D2;--bg2:#0E1A30;--bg3:#122240;--border:rgba(62,221,181,.12);--muted:rgba(255,255,255,.45);--white:#fff;--danger:#FF4757;--warn:#FFA502;--green:#2DD4BF;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Montserrat',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;}
+.container{max-width:800px;margin:0 auto;padding:20px;}
+h1{font-size:24px;font-weight:800;margin-bottom:6px;}
+.subtitle{font-size:12px;color:var(--muted);margin-bottom:24px;}
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px;}
+.card-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-title span{font-size:20px;}
+
+/* Status bar */
+.status{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;margin-bottom:20px;font-size:12px;font-weight:600;}
+.status.connected{background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);color:var(--green);}
+.status.disconnected{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.3);color:var(--danger);}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.status.connected .status-dot{background:var(--green);box-shadow:0 0 6px var(--green);}
+.status.disconnected .status-dot{background:var(--danger);}
+
+/* Slider rows */
+.config-row{margin-bottom:20px;}
+.config-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.config-label .name{font-size:13px;font-weight:600;color:var(--white);}
+.config-label .value{font-size:14px;font-weight:700;color:var(--cyan);min-width:50px;text-align:right;}
+.config-desc{font-size:10px;color:var(--muted);margin-bottom:6px;}
+input[type="range"]{-webkit-appearance:none;width:100%;height:6px;border-radius:3px;background:var(--bg2);outline:none;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--cyan);cursor:pointer;box-shadow:0 0 8px rgba(62,221,181,.4);}
+input[type="range"]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--cyan);cursor:pointer;border:none;}
+
+/* Buttons */
+.btn-row{display:flex;gap:10px;margin-top:24px;}
+.btn{padding:14px 28px;border:none;border-radius:12px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;transition:all .3s;}
+.btn-save{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff;flex:1;}
+.btn-save:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(62,221,181,.3);}
+.btn-save:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-reset{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border);}
+.btn-reset:hover{color:var(--white);border-color:var(--muted);}
+.btn-connect{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#fff;width:100%;padding:16px;border-radius:14px;font-size:16px;}
+
+/* Toast */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;}
+.toast.show{opacity:1;}
+.toast.ok{background:rgba(45,212,191,.9);color:#000;}
+.toast.err{background:rgba(255,71,87,.9);color:#fff;}
+
+/* Table */
+.info-table{width:100%;border-collapse:collapse;}
+.info-table td{padding:8px 0;font-size:12px;border-bottom:1px solid rgba(255,255,255,.05);}
+.info-table td:first-child{color:var(--muted);}
+.info-table td:last-child{text-align:right;font-weight:600;}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>VALTURA Admin Panel</h1>
+  <p class="subtitle">Commission & Fee Configuration — Polygon Amoy Testnet</p>
+
+  <!-- Connection Status -->
+  <div class="status disconnected" id="conn-status">
+    <div class="status-dot"></div>
+    <span id="conn-text">Not connected — Connect admin wallet to manage settings</span>
+  </div>
+
+  <!-- Connect Button (shown when not connected) -->
+  <div id="connect-section">
+    <button class="btn btn-connect" onclick="connectAdmin()">Connect Admin Wallet</button>
+  </div>
+
+  <!-- Admin Content (hidden until connected) -->
+  <div id="admin-content" style="display:none;">
+
+    <!-- Commission Rates -->
+    <div class="card">
+      <div class="card-title"><span>💰</span> Commission Rates</div>
+
+      <div class="config-row">
+        <div class="config-label">
+          <span class="name">Binary Bonus</span>
+          <span class="value" id="val-bb">5%</span>
+        </div>
+        <div class="config-desc">% of weak-leg matched volume (Signature + Exclusive investors)</div>
+        <input type="range" min="0" max="20" step="0.5" value="5" id="sl-bb" oninput="updateSlider('bb',this.value)">
+      </div>
+
+      <div class="config-row">
+        <div class="config-label">
+          <span class="name">Referral Commission</span>
+          <span class="value" id="val-ref">10%</span>
+        </div>
+        <div class="config-desc">% of F1 (direct referral) daily profit</div>
+        <input type="range" min="0" max="30" step="0.5" value="10" id="sl-ref" oninput="updateSlider('ref',this.value)">
+      </div>
+
+      <div class="config-row">
+        <div class="config-label">
+          <span class="name">Binary Commission</span>
+          <span class="value" id="val-bc">15%</span>
+        </div>
+        <div class="config-desc">% of weak-leg daily profit (network commission)</div>
+        <input type="range" min="0" max="30" step="0.5" value="15" id="sl-bc" oninput="updateSlider('bc',this.value)">
+      </div>
+
+      <div class="config-row">
+        <div class="config-label">
+          <span class="name">Momentum Rewards</span>
+          <span class="value" id="val-mom">10%</span>
+        </div>
+        <div class="config-desc">% bonus from momentum milestones</div>
+        <input type="range" min="0" max="20" step="0.5" value="10" id="sl-mom" oninput="updateSlider('mom',this.value)">
+      </div>
+    </div>
+
+    <!-- Fees & Caps -->
+    <div class="card">
+      <div class="card-title"><span>⚙️</span> Fees & Earnings Cap</div>
+
+      <div class="config-row">
+        <div class="config-label">
+          <span class="name">Earnings Cap (MaxOut)</span>
+          <span class="value" id="val-cap">300%</span>
+        </div>
+        <div class="config-desc">Maximum earnings as % of VIP investment</div>
+        <input type="range" min="100" max="1000" step="10" value="300" id="sl-cap" oninput="updateSlider('cap',this.value)">
+      </div>
+
+      <div class="config-row">
+        <div class="config-label">
+          <span class="name">Claim Fee</span>
+          <span class="value" id="val-cf">2.5%</span>
+        </div>
+        <div class="config-desc">Fee deducted when user claims earnings</div>
+        <input type="range" min="0" max="10" step="0.1" value="2.5" id="sl-cf" oninput="updateSlider('cf',this.value)">
+      </div>
+
+      <div class="config-row">
+        <div class="config-label">
+          <span class="name">Redemption Fee</span>
+          <span class="value" id="val-rf">5%</span>
+        </div>
+        <div class="config-desc">Fee deducted when user redeems investment capital</div>
+        <input type="range" min="0" max="10" step="0.1" value="5" id="sl-rf" oninput="updateSlider('rf',this.value)">
+      </div>
+    </div>
+
+    <!-- Current Values (from server) -->
+    <div class="card">
+      <div class="card-title"><span>📊</span> Current Server Values</div>
+      <table class="info-table" id="server-values">
+        <tr><td>Loading...</td><td></td></tr>
+      </table>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="btn-row">
+      <button class="btn btn-reset" onclick="resetDefaults()">Reset Defaults</button>
+      <button class="btn btn-save" id="save-btn" onclick="saveConfig()">Save Configuration</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.0/ethers.umd.min.js"></script>
+<script>
+const API_BASE = 'http://localhost:3000';
+const ADMIN_WALLETS = [
+  '0x21D6DA65981c95B1ff0fA8746Ad81A22b8C0d58B', // deploy wallet
+  '0x031eA4bA7E1C5729C352e846549E9B5745f3C66E', // super wallet
+];
+
+let jwt = null;
+let wallet = null;
+
+// Slider mapping
+const SLIDER_MAP = {
+  bb:  { key: 'comm_binary_bonus', el: 'sl-bb',  vEl: 'val-bb',  suffix: '%' },
+  ref: { key: 'comm_referral',     el: 'sl-ref', vEl: 'val-ref', suffix: '%' },
+  bc:  { key: 'comm_binary',       el: 'sl-bc',  vEl: 'val-bc',  suffix: '%' },
+  mom: { key: 'comm_momentum',     el: 'sl-mom', vEl: 'val-mom', suffix: '%' },
+  cap: { key: 'earnings_cap_multi',el: 'sl-cap', vEl: 'val-cap', suffix: '%' },
+  cf:  { key: 'fee_claim',         el: 'sl-cf',  vEl: 'val-cf',  suffix: '%' },
+  rf:  { key: 'fee_redeem',        el: 'sl-rf',  vEl: 'val-rf',  suffix: '%' },
+};
+
+function updateSlider(id, val) {
+  document.getElementById(SLIDER_MAP[id].vEl).textContent = val + SLIDER_MAP[id].suffix;
+}
+
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+async function apiCall(method, path, body) {
+  const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  if (jwt) opts.headers['Authorization'] = 'Bearer ' + jwt;
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API_BASE + path, opts);
+  return res.json();
+}
+
+async function connectAdmin() {
+  try {
+    if (!window.ethereum) { toast('No wallet detected', 'err'); return; }
+
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    await provider.send('eth_requestAccounts', []);
+    const signer = await provider.getSigner();
+    wallet = await signer.getAddress();
+
+    // Check if admin wallet
+    const isAdmin = ADMIN_WALLETS.some(w => w.toLowerCase() === wallet.toLowerCase());
+    if (!isAdmin) {
+      toast('Not an admin wallet: ' + wallet.slice(0, 10) + '...', 'err');
+      return;
+    }
+
+    // Sign message for auth
+    const msg = 'VALTURA Admin Login: ' + wallet;
+    const sig = await signer.signMessage(msg);
+
+    // Auth with backend
+    const auth = await apiCall('POST', '/api/auth/connect', { wallet, message: msg, signature: sig });
+    if (auth.token) {
+      jwt = auth.token;
+    } else if (auth.error) {
+      toast('Auth failed: ' + auth.error, 'err');
+      return;
+    }
+
+    // Update UI
+    document.getElementById('conn-status').className = 'status connected';
+    document.getElementById('conn-text').textContent = 'Admin: ' + wallet.slice(0, 6) + '...' + wallet.slice(-4);
+    document.getElementById('connect-section').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+
+    toast('Connected as admin', 'ok');
+    loadConfig();
+  } catch (err) {
+    toast('Connection failed: ' + err.message, 'err');
+  }
+}
+
+async function loadConfig() {
+  try {
+    const data = await apiCall('GET', '/api/admin/config');
+    if (data.error) { toast('Failed to load: ' + data.error, 'err'); return; }
+
+    // Update sliders
+    const keyMap = {
+      comm_binary_bonus: 'bb',
+      comm_referral: 'ref',
+      comm_binary: 'bc',
+      comm_momentum: 'mom',
+      earnings_cap_multi: 'cap',
+      fee_claim: 'cf',
+      fee_redeem: 'rf',
+    };
+
+    for (const [key, val] of Object.entries(data)) {
+      const id = keyMap[key];
+      if (!id) continue;
+      const sl = document.getElementById(SLIDER_MAP[id].el);
+      if (sl) { sl.value = val; updateSlider(id, val); }
+    }
+
+    // Update server values table
+    const labels = {
+      comm_binary_bonus: 'Binary Bonus',
+      comm_referral: 'Referral Commission',
+      comm_binary: 'Binary Commission',
+      comm_momentum: 'Momentum Rewards',
+      earnings_cap_multi: 'Earnings Cap',
+      fee_claim: 'Claim Fee',
+      fee_redeem: 'Redemption Fee',
+    };
+
+    let html = '';
+    for (const [key, val] of Object.entries(data)) {
+      html += '<tr><td>' + (labels[key] || key) + '</td><td>' + val + '%</td></tr>';
+    }
+    document.getElementById('server-values').innerHTML = html;
+
+  } catch (err) {
+    toast('Load config error: ' + err.message, 'err');
+  }
+}
+
+async function saveConfig() {
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    const body = {};
+    for (const [id, cfg] of Object.entries(SLIDER_MAP)) {
+      const sl = document.getElementById(cfg.el);
+      body[cfg.key] = parseFloat(sl.value);
+    }
+
+    const res = await apiCall('POST', '/api/admin/config', body);
+    if (res.error) {
+      toast('Save failed: ' + res.error, 'err');
+    } else {
+      toast('Configuration saved successfully!', 'ok');
+      loadConfig(); // reload to confirm
+    }
+  } catch (err) {
+    toast('Save error: ' + err.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save Configuration';
+  }
+}
+
+function resetDefaults() {
+  const defaults = { bb: 5, ref: 10, bc: 15, mom: 10, cap: 300, cf: 2.5, rf: 5 };
+  for (const [id, val] of Object.entries(defaults)) {
+    const sl = document.getElementById(SLIDER_MAP[id].el);
+    sl.value = val;
+    updateSlider(id, val);
+  }
+  toast('Reset to defaults (not saved yet)', 'ok');
+}
+</script>
+</body>
+</html>

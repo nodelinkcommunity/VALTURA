@@ -996,7 +996,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 <!-- HERO VIDEO — MP4 for Safari/Chrome, GIF fallback for in-app browsers -->
 <div style="position:relative;z-index:2;width:100%;overflow:hidden;border-top:1px solid rgba(62,221,181,.08);border-bottom:none;margin:0;background:#000;" id="hero-vid-wrap">
   <video autoplay muted loop playsinline webkit-playsinline disableRemotePlayback x-webkit-airplay="deny" preload="auto" style="width:100%;display:block;opacity:.9;object-fit:cover;pointer-events:none;" id="hero-vid">
-    <source src="assets/hero-video.mp4?v=20260321" type="video/mp4">
+    <source src="assets/hero-video.mp4?v=20260322" type="video/mp4">
   </video>
   <img src="" alt="" style="width:100%;display:none;opacity:.9;object-fit:cover;pointer-events:none;" id="hero-gif"/>
 </div>
@@ -1017,7 +1017,7 @@ input[type=range]{width:100%;accent-color:var(--cyan);cursor:pointer;margin-bott
 
   var ok=false;
   function videoOK(){if(ok)return;ok=true;v.controls=false;v.style.display='block';g.style.display='none';}
-  function useGIF(){if(ok)return;v.pause();v.style.display='none';g.src='assets/hero-anim.gif?v=3';g.style.display='block';}
+  function useGIF(){if(ok)return;v.pause();v.style.display='none';g.src='assets/hero-anim.gif?v=4';g.style.display='block';}
 
   v.addEventListener('playing',videoOK);
   v.addEventListener('timeupdate',function(){if(v.currentTime>0.1)videoOK();});

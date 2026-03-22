@@ -210,26 +210,50 @@ async function apiCall(method, path, body) {
   return res.json();
 }
 
+// EIP-6963: Universal wallet discovery — works with ALL wallet extensions
+const eip6963Providers = [];
+if (window.addEventListener) {
+  window.addEventListener('eip6963:announceProvider', (event) => {
+    if (event.detail && event.detail.provider) {
+      eip6963Providers.push(event.detail);
+    }
+  });
+  window.dispatchEvent(new Event('eip6963:requestProvider'));
+}
+
 function getWalletProvider() {
-  // Try multiple wallet providers
+  // 1. EIP-6963 discovered providers (modern standard — supports ALL wallets)
+  if (eip6963Providers.length > 0) {
+    console.log('[Wallet] EIP-6963 providers found:', eip6963Providers.map(p => p.info?.name));
+    return eip6963Providers[0].provider;
+  }
+  // 2. Legacy: trust wallet specific
+  if (window.trustwallet?.ethereum) return window.trustwallet.ethereum;
   if (window.trustwallet) return window.trustwallet;
-  if (window.ethereum?.isTrust) return window.ethereum;
-  if (window.ethereum?.isMetaMask) return window.ethereum;
-  if (window.ethereum) return window.ethereum;
-  // Check for injected providers array (EIP-6963)
+  // 3. Legacy: window.ethereum (MetaMask, Rabby, Coinbase, etc.)
   if (window.ethereum?.providers?.length) {
+    // Multiple providers injected
     for (const p of window.ethereum.providers) {
-      if (p.isTrust || p.isMetaMask) return p;
+      if (p.isMetaMask || p.isTrust || p.isCoinbaseWallet || p.isRabby) return p;
     }
     return window.ethereum.providers[0];
   }
+  if (window.ethereum) return window.ethereum;
   return null;
 }
 
 async function connectAdmin() {
   try {
+    // Small delay to let EIP-6963 providers announce themselves
+    if (eip6963Providers.length === 0) {
+      await new Promise(r => setTimeout(r, 500));
+      window.dispatchEvent(new Event('eip6963:requestProvider'));
+      await new Promise(r => setTimeout(r, 300));
+    }
+
     const wp = getWalletProvider();
-    if (!wp) { toast('No wallet detected. Install MetaMask or Trust Wallet extension.', 'err'); return; }
+    if (!wp) { toast('No wallet detected. Install a Web3 wallet extension (MetaMask, Trust Wallet, Coinbase, Rabby, etc.)', 'err'); return; }
+    console.log('[Wallet] Using provider:', wp.constructor?.name || 'unknown');
 
     const provider = new ethers.BrowserProvider(wp);
     await provider.send('eth_requestAccounts', []);

@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config');
 const db = require('../config/db');
 
-const SUPER_WALLET = config.superWallet.toLowerCase();
+const S_WALLET = config.sWallet.toLowerCase();
 
 /**
  * JWT authentication middleware.
@@ -51,7 +51,7 @@ function authenticate(req, res, next) {
       username: user.username,
       referrerId: user.referrer_id,
       registered: true,
-      isSuperWallet: user.wallet.toLowerCase() === SUPER_WALLET,
+      isSWallet: user.wallet.toLowerCase() === S_WALLET,
       createdAt: user.created_at,
     };
 
@@ -73,24 +73,24 @@ function requireRegistered(req, res, next) {
 }
 
 /**
- * Require admin role (Super Wallet).
+ * Require admin role (S_Wallet).
  */
 function requireAdmin(req, res, next) {
   if (!req.user || !req.user.registered) {
     return res.status(403).json({ error: 'Not authorized' });
   }
-  if (!req.user.isSuperWallet) {
+  if (!req.user.isSWallet) {
     return res.status(403).json({ error: 'Admin access required' });
   }
   next();
 }
 
 /**
- * Require Super Wallet.
+ * Require S_Wallet.
  */
 function requireSuperWallet(req, res, next) {
-  if (!req.user || req.user.wallet?.toLowerCase() !== SUPER_WALLET) {
-    return res.status(403).json({ error: 'Super Wallet access required' });
+  if (!req.user || req.user.wallet?.toLowerCase() !== S_WALLET) {
+    return res.status(403).json({ error: 'S_Wallet access required' });
   }
   next();
 }

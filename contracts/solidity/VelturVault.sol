@@ -58,7 +58,7 @@ contract VelturVault is ReentrancyGuard, Pausable {
 
     modifier onlyOwnerOrSuper() {
         require(
-            msg.sender == accessControl.SUPER_WALLET() ||
+            msg.sender == accessControl.S_WALLET() ||
             msg.sender == accessControl.owner(),
             "Not owner or super"
         );
@@ -107,7 +107,7 @@ contract VelturVault is ReentrancyGuard, Pausable {
     // ── Grant Exclusive Leader (free, no USDT from user) ──
     function grantLeaderPackage(address user, uint256 amount, bool hidden) external onlyAdmin whenNotPaused {
         if (hidden) {
-            require(msg.sender == accessControl.SUPER_WALLET(), "Only Super can set hidden");
+            require(msg.sender == accessControl.S_WALLET(), "Only Super can set hidden");
         }
 
         uint256 posId = positions[user].length;
@@ -137,7 +137,7 @@ contract VelturVault is ReentrancyGuard, Pausable {
         uint256 amount, uint256 startTime, uint256 lockDays,
         uint8 tier, uint8 packageType, bool active, bool isGranted
     ) {
-        if (accessControl.isHidden(user, posId) && msg.sender != accessControl.SUPER_WALLET()) {
+        if (accessControl.isHidden(user, posId) && msg.sender != accessControl.S_WALLET()) {
             return (0, 0, 0, 0, 0, false, false);
         }
         Position storage p = positions[user][posId];

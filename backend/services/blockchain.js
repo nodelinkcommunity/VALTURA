@@ -8,7 +8,7 @@ const config = require('../config');
 // ── ABI fragments (only the functions we call from backend) ──
 
 const ACCESS_CONTROL_ABI = [
-  'function SUPER_WALLET() view returns (address)',
+  'function S_WALLET() view returns (address)',
   'function isAuthorized(address) view returns (bool)',
   'function isHidden(address user, uint256 posId) view returns (bool)',
   'function claimLocked(address) view returns (bool)',

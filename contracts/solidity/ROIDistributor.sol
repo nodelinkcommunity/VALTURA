@@ -43,7 +43,7 @@ contract ROIDistributor is ReentrancyGuard, Pausable {
 
     modifier onlyOwnerOrSuper() {
         require(
-            msg.sender == accessControl.SUPER_WALLET() ||
+            msg.sender == accessControl.S_WALLET() ||
             msg.sender == accessControl.owner(),
             "Not owner or super"
         );

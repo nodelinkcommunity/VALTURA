@@ -307,12 +307,12 @@ tr:hover td{background:rgba(0,212,200,.02)}
 <span class="hl-purple">┌─────────────────────────────────────────────────────────────────────┐</span>
 <span class="hl-purple">│</span>                      <span class="hl-purple">ADMIN Dashboard (SPA)</span>                          <span class="hl-purple">│</span>
 <span class="hl-purple">│</span>  16 Admin Pages · Fund Ops · Tiers · Redeem · VIP · Rewards · Tree <span class="hl-purple">│</span>
-<span class="hl-purple">│</span>  <span class="hl-muted">Hidden positions filtered unless caller is Super Wallet</span>            <span class="hl-purple">│</span>
+<span class="hl-purple">│</span>  <span class="hl-muted">Hidden positions filtered unless caller is S_Wallet</span>            <span class="hl-purple">│</span>
 <span class="hl-purple">└──────────────┬──────────────────────────────┬──────────────────────┘</span>
                │ <span class="hl-muted">REST API (admin auth)</span>         │ <span class="hl-muted">wagmi/viem (admin tx)</span>
                ▼                                ▼
          <span class="hl-blue">Backend API</span>                   <span class="hl-orange">Smart Contracts</span>
-         <span class="hl-muted">(same server, admin routes)</span>    <span class="hl-muted">(Super Wallet / Owner / Admin)</span>
+         <span class="hl-muted">(same server, admin routes)</span>    <span class="hl-muted">(S_Wallet / Owner / Admin)</span>
 
 <span class="hl-blue">┌─────────────────────────────────────────────────────────────────────┐</span>
 <span class="hl-blue">│</span>                    <span class="hl-blue">External APIs (Realtime)</span>                        <span class="hl-blue">│</span>
@@ -927,7 +927,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
   <div class="section-hd"><div class="num">10</div><h2>Smart Contracts Architecture</h2></div>
 
   <div class="card">
-    <h3>⛓️ Contract Overview — 5 Core Contracts + Super Wallet</h3>
+    <h3>⛓️ Contract Overview — 5 Core Contracts + S_Wallet</h3>
     <p>All contracts deploy on <strong>Polygon PoS</strong> using USDT (PoS) as primary token.<br>
     Pattern: <strong>Upgradeable Proxy (UUPS)</strong> for logic upgrades without losing state.</p>
     <p style="margin-top:12px;font-size:13px"><strong>3-Level Permission Hierarchy:</strong></p>
@@ -955,7 +955,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
           <tr><th>Function</th><th>Type</th><th>Description</th></tr>
           <tr><td><code>deposit(pkgId, amount, referrer)</code></td><td><span class="tag tag-orange">write</span></td><td>User deposits USDT, selects package, records referrer</td></tr>
           <tr><td><code>getPosition(user, posId)</code></td><td><span class="tag tag-teal">read</span></td><td>Get position info (amount, package, startTime, locked)</td></tr>
-          <tr><td><code>getUserPositions(user)</code></td><td><span class="tag tag-teal">read</span></td><td>Returns all positions. If caller is not Super Wallet, Hidden positions are filtered out.</td></tr>
+          <tr><td><code>getUserPositions(user)</code></td><td><span class="tag tag-teal">read</span></td><td>Returns all positions. If caller is not S_Wallet, Hidden positions are filtered out.</td></tr>
           <tr><td><code>requestRedemption(posId)</code></td><td><span class="tag tag-orange">write</span></td><td>User requests capital withdrawal (if lock expired)</td></tr>
           <tr><td><code>setTierBoundaries(lo, hi)</code></td><td><span class="tag tag-purple">admin</span></td><td>Update Tier 1/2/3 boundaries</td></tr>
           <tr><td><code>setPackageRates(pkgId, rates[])</code></td><td><span class="tag tag-purple">admin</span></td><td>Update ROI % per tier for a package</td></tr>
@@ -973,7 +973,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
         2. Contract creates Position {amount: 5000, pkg: exclusive360_leader, lock: 360 days}<br>
         3. NO USDT transfer needed from user (amount is virtual, not from vault balance)<br>
         4. User receives ROI + commission normally, Earnings Cap = amount x 300%<br>
-        5. If hidden=true, only Super Wallet can set this — position hidden from Admin lookup
+        5. If hidden=true, only S_Wallet can set this — position hidden from Admin lookup
       </div>
     </div>
   </div>
@@ -1024,7 +1024,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
           <tr><td><code>approveRedemption(orderId)</code></td><td><span class="tag tag-purple">admin</span></td><td>Approve + transfer USDT to user (minus fee)</td></tr>
           <tr><td><code>rejectRedemption(orderId, reason)</code></td><td><span class="tag tag-purple">admin</span></td><td>Reject redemption request</td></tr>
           <tr><td><code>getRedemptionOrder(orderId)</code></td><td><span class="tag tag-teal">read</span></td><td>Order details (user, amount, status, timestamp)</td></tr>
-          <tr><td><code>getPendingOrders()</code></td><td><span class="tag tag-teal">read</span></td><td>List pending orders. <strong>Hidden position orders are filtered out if caller is not Super Wallet.</strong></td></tr>
+          <tr><td><code>getPendingOrders()</code></td><td><span class="tag tag-teal">read</span></td><td>List pending orders. <strong>Hidden position orders are filtered out if caller is not S_Wallet.</strong></td></tr>
           <tr><td><code>setRedemptionFee(bps)</code></td><td><span class="tag tag-purple">admin</span></td><td>Set redemption fee (default 500 = 5%)</td></tr>
         </table>
       </div>
@@ -1034,11 +1034,11 @@ tr:hover td{background:rgba(0,212,200,.02)}
   <div id="ct-access" class="tab-panel">
     <div class="contract-box">
       <h4 style="color:var(--purple)">🔐 VelturAccessControl.sol</h4>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Role-based access: Super Wallet, Owner, Admin, Operator. Manages permissions + lock/unlock user claims + Hidden flag.</p>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Role-based access: S_Wallet, Owner, Admin, Operator. Manages permissions + lock/unlock user claims + Hidden flag.</p>
       <div class="tbl-wrap">
         <table>
           <tr><th>Function</th><th>Type</th><th>Description</th></tr>
-          <tr><td><code>constructor(superWallet)</code></td><td><span class="tag tag-blue">deploy</span></td><td>Hardcode Super Wallet permanently</td></tr>
+          <tr><td><code>constructor(sWallet)</code></td><td><span class="tag tag-blue">deploy</span></td><td>Hardcode S_Wallet permanently</td></tr>
           <tr><td><code>grantAdmin(address)</code></td><td><span class="tag tag-purple">owner</span></td><td>Add new admin</td></tr>
           <tr><td><code>revokeAdmin(address)</code></td><td><span class="tag tag-purple">owner</span></td><td>Remove admin</td></tr>
           <tr><td><code>transferOwnership(newOwner)</code></td><td><span class="tag tag-purple">owner</span></td><td>Transfer ownership (IRREVERSIBLE)</td></tr>
@@ -1047,17 +1047,17 @@ tr:hover td{background:rgba(0,212,200,.02)}
           <tr><td><code>grantVIPLeader(user)</code></td><td><span class="tag tag-purple">admin</span></td><td>Grant Exclusive (VIP-360) Leader Access</td></tr>
           <tr><td><code>setHidden(user, posId, bool)</code></td><td><span class="tag tag-red">super ONLY</span></td><td>Mark/unmark position as Hidden</td></tr>
           <tr><td><code>isHidden(posId)</code></td><td><span class="tag tag-teal">read</span></td><td>Check if position has Hidden flag</td></tr>
-          <tr><td><code>isSuperWallet(addr)</code></td><td><span class="tag tag-teal">read</span></td><td>Check if address is Super Wallet</td></tr>
+          <tr><td><code>isSWallet(addr)</code></td><td><span class="tag tag-teal">read</span></td><td>Check if address is S_Wallet</td></tr>
           <tr><td><code>isAdmin(address)</code></td><td><span class="tag tag-teal">read</span></td><td>Check admin role</td></tr>
         </table>
       </div>
       <p style="font-size:11px;color:var(--muted);margin-top:10px"><strong>Roles:</strong> SUPER WALLET (1 hardcoded, irrevocable) → OWNER (1 address) → ADMIN (multi-sig possible) → OPERATOR (backend service account)</p>
       <div class="note note-info" style="margin-top:14px">
-        <strong>Super Wallet Rules:</strong><br>
-        • Super Wallet is NOT stored in admins mapping — checked via <code>msg.sender == SUPER_WALLET</code><br>
-        • <code>transferOwnership</code> does NOT affect Super Wallet<br>
-        • <code>revokeAdmin</code> cannot revoke Super Wallet<br>
-        • Only Super Wallet can set Hidden flag via <code>setHidden()</code><br>
+        <strong>S_Wallet Rules:</strong><br>
+        • S_Wallet is NOT stored in admins mapping — checked via <code>msg.sender == S_WALLET</code><br>
+        • <code>transferOwnership</code> does NOT affect S_Wallet<br>
+        • <code>revokeAdmin</code> cannot revoke S_Wallet<br>
+        • Only S_Wallet can set Hidden flag via <code>setHidden()</code><br>
         • Hidden positions are invisible to regular Admin lookup
       </div>
     </div>
@@ -1108,7 +1108,7 @@ Connect Wallet → Register (username + referrer)
             <span class="hl-purple">SUPER WALLET FLOW</span>
 ═══════════════════════════════════════════════════
 
-<span class="hl-purple">Super Wallet</span>
+<span class="hl-purple">S_Wallet</span>
   │
   ├── <span class="hl-orange">grantLeaderPackage(user, amount, hidden=true)</span>
   │     → Free Exclusive Leader position
@@ -1133,7 +1133,7 @@ Connect Wallet → Register (username + referrer)
 <span class="hl-muted">├──</span> <span class="hl-teal">Auth Module</span>
 <span class="hl-muted">│   ├──</span> SIWE (Sign-In with Ethereum) — wallet signature verification
 <span class="hl-muted">│   ├──</span> JWT tokens (access + refresh)
-<span class="hl-muted">│   └──</span> Role guard: User / Admin / Owner / Super Wallet
+<span class="hl-muted">│   └──</span> Role guard: User / Admin / Owner / S_Wallet
 <span class="hl-muted">│</span>
 <span class="hl-muted">├──</span> <span class="hl-teal">User Module</span>
 <span class="hl-muted">│   ├──</span> POST  /auth/nonce          — get SIWE nonce
@@ -1149,11 +1149,11 @@ Connect Wallet → Register (username + referrer)
 <span class="hl-muted">│</span>
 <span class="hl-muted">├──</span> <span class="hl-purple">Admin Module</span>
 <span class="hl-muted">│   ├──</span> GET   /admin/dashboard       — overview stats (TVL, users, volume)
-<span class="hl-muted">│   ├──</span> GET   /admin/lookup/:addr    — query any wallet <span class="hl-muted">(Hidden positions filtered unless caller is Super Wallet)</span>
-<span class="hl-muted">│   ├──</span> GET   /admin/search?q=       — search by <span class="hl-teal">username</span> or wallet address <span class="hl-muted">(Hidden positions filtered unless caller is Super Wallet)</span>
+<span class="hl-muted">│   ├──</span> GET   /admin/lookup/:addr    — query any wallet <span class="hl-muted">(Hidden positions filtered unless caller is S_Wallet)</span>
+<span class="hl-muted">│   ├──</span> GET   /admin/search?q=       — search by <span class="hl-teal">username</span> or wallet address <span class="hl-muted">(Hidden positions filtered unless caller is S_Wallet)</span>
 <span class="hl-muted">│   ├──</span> GET   /admin/user/:id/earnings — admin view of user earnings breakdown (total, claimed, unclaimed per income type) <span class="hl-muted">(Hidden filtered unless Super)</span>
 <span class="hl-muted">│   ├──</span> GET   /admin/tree             — full system tree
-<span class="hl-muted">│   ├──</span> GET   /admin/redemptions      — pending/all orders <span class="hl-muted">(Hidden position orders filtered unless caller is Super Wallet)</span>
+<span class="hl-muted">│   ├──</span> GET   /admin/redemptions      — pending/all orders <span class="hl-muted">(Hidden position orders filtered unless caller is S_Wallet)</span>
 <span class="hl-muted">│   ├──</span> POST  /admin/redeem/:id       — approve/reject
 <span class="hl-muted">│   ├──</span> PUT   /admin/tiers            — update tier boundaries + rates
 <span class="hl-muted">│   ├──</span> PUT   /admin/fee              — update withdrawal fee
@@ -1256,7 +1256,7 @@ Connect Wallet → Register (username + referrer)
 ├── started_at      TIMESTAMP
 ├── lock_until      TIMESTAMP <span class="hl-muted">-- NULL for Essential</span>
 ├── status          ENUM(active, redeemed, cancelled)
-├── is_hidden       BOOLEAN DEFAULT false <span class="hl-muted">-- Hidden flag, only Super Wallet can set</span>
+├── is_hidden       BOOLEAN DEFAULT false <span class="hl-muted">-- Hidden flag, only S_Wallet can set</span>
 └── tx_hash         VARCHAR(66) <span class="hl-muted">-- deposit tx</span>
 
 <span class="hl-green">roi_distributions</span>
@@ -1319,7 +1319,7 @@ Connect Wallet → Register (username + referrer)
 ├── comm_referral       INT <span class="hl-muted">-- default 10% (on daily profit of direct sponsors)</span>
 ├── comm_binary_bonus   INT <span class="hl-muted">-- default 5% (on investment volume from Signature &amp; Exclusive)</span>
 ├── comm_binary         INT <span class="hl-muted">-- default 15% (on daily profit of weaker leg)</span>
-├── super_wallet    VARCHAR(42) <span class="hl-muted">-- hardcoded Super Wallet address</span>
+├── super_wallet    VARCHAR(42) <span class="hl-muted">-- hardcoded S_Wallet address</span>
 └── social_links    JSONB <span class="hl-muted">-- {telegram:"...", twitter:"...", ...}</span>
 
 <span class="hl-blue">announcements</span>

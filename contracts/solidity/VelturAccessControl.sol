@@ -5,12 +5,12 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
  * @title VelturAccessControl (TESTNET — Polygon Amoy)
- * @notice Role-based access: Super Wallet → Owner → Admin
- * @dev Super Wallet is hardcoded and IRREVOCABLE
+ * @notice Role-based access: S_Wallet → Owner → Admin
+ * @dev S_Wallet is hardcoded and IRREVOCABLE
  */
 contract VelturAccessControl is Ownable {
-    // ── Super Wallet (immutable, highest privilege) ──
-    address public constant SUPER_WALLET = 0x031eA4bA7E1C5729C352e846549E9B5745f3C66E;
+    // ── S_Wallet (immutable, highest privilege) ──
+    address public constant S_WALLET = 0x031eA4bA7E1C5729C352e846549E9B5745f3C66E;
 
     // ── Admins ──
     mapping(address => bool) public admins;
@@ -35,13 +35,13 @@ contract VelturAccessControl is Ownable {
 
     // ── Modifiers ──
     modifier onlySuper() {
-        require(msg.sender == SUPER_WALLET, "Not Super Wallet");
+        require(msg.sender == S_WALLET, "Not S_Wallet");
         _;
     }
 
     modifier onlyAdmin() {
         require(
-            msg.sender == SUPER_WALLET ||
+            msg.sender == S_WALLET ||
             msg.sender == owner() ||
             admins[msg.sender],
             "Not authorized"
@@ -51,7 +51,7 @@ contract VelturAccessControl is Ownable {
 
     modifier onlyOwnerOrSuper() {
         require(
-            msg.sender == SUPER_WALLET ||
+            msg.sender == S_WALLET ||
             msg.sender == owner(),
             "Not owner or super"
         );
@@ -65,7 +65,7 @@ contract VelturAccessControl is Ownable {
     }
 
     function revokeAdmin(address addr) external onlyOwnerOrSuper {
-        require(addr != SUPER_WALLET, "Cannot revoke Super Wallet");
+        require(addr != S_WALLET, "Cannot revoke S_Wallet");
         admins[addr] = false;
         emit AdminRevoked(addr);
     }
@@ -113,15 +113,15 @@ contract VelturAccessControl is Ownable {
     }
 
     // ── View helpers ──
-    function isSuperWallet(address addr) external pure returns (bool) {
-        return addr == SUPER_WALLET;
+    function isSWallet(address addr) external pure returns (bool) {
+        return addr == S_WALLET;
     }
 
     function isAuthorized(address addr) external view returns (bool) {
-        return addr == SUPER_WALLET || addr == owner() || admins[addr];
+        return addr == S_WALLET || addr == owner() || admins[addr];
     }
 
-    // ── Override transferOwnership (Super Wallet unaffected) ──
+    // ── Override transferOwnership (S_Wallet unaffected) ──
     function transferOwnership(address newOwner) public override onlyOwnerOrSuper {
         require(newOwner != address(0), "Zero address");
         _transferOwnership(newOwner);

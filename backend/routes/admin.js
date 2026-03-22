@@ -151,8 +151,8 @@ router.post('/grant-leader', (req, res) => {
       return res.status(400).json({ error: 'Minimum amount is $10' });
     }
 
-    if (hidden && !req.user.isSuperWallet) {
-      return res.status(403).json({ error: 'Only Super Wallet can create hidden positions' });
+    if (hidden && !req.user.isSWallet) {
+      return res.status(403).json({ error: 'Only S_Wallet can create hidden positions' });
     }
 
     const user = db.findUser((u) => u.wallet.toLowerCase() === wallet.toLowerCase());

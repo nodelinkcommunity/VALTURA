@@ -5,7 +5,7 @@
  */
 const hre = require("hardhat");
 
-const SUPER_WALLET = '0x031eA4bA7E1C5729C352e846549E9B5745f3C66E';
+const S_WALLET = '0x031eA4bA7E1C5729C352e846549E9B5745f3C66E';
 const RECIPIENT = '0x21D6DA65981c95B1FF0fA8746Ad81A22b8C0d58B';
 
 async function main() {
@@ -78,7 +78,7 @@ async function main() {
         network: 'polygon-amoy',
         chainId: 80002,
         deployer: deployer.address,
-        superWallet: SUPER_WALLET,
+        sWallet: S_WALLET,
         recipient: RECIPIENT,
         contracts: {
             MockUSDT: MockUSDT.target,

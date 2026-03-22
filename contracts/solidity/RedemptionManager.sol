@@ -51,7 +51,7 @@ contract RedemptionManager is ReentrancyGuard, Pausable {
 
     modifier onlyOwnerOrSuper() {
         require(
-            msg.sender == accessControl.SUPER_WALLET() ||
+            msg.sender == accessControl.S_WALLET() ||
             msg.sender == accessControl.owner(),
             "Not owner or super"
         );
@@ -138,7 +138,7 @@ contract RedemptionManager is ReentrancyGuard, Pausable {
             if (orders[i].status == 0) {
                 // Filter hidden positions for non-Super callers
                 if (accessControl.isHidden(orders[i].user, orders[i].posId) &&
-                    msg.sender != accessControl.SUPER_WALLET()) {
+                    msg.sender != accessControl.S_WALLET()) {
                     continue;
                 }
                 count++;
@@ -153,7 +153,7 @@ contract RedemptionManager is ReentrancyGuard, Pausable {
         Order storage o = orders[orderId];
         // Filter hidden
         if (accessControl.isHidden(o.user, o.posId) &&
-            msg.sender != accessControl.SUPER_WALLET()) {
+            msg.sender != accessControl.S_WALLET()) {
             return (address(0), 0, 0, 0, 0);
         }
         return (o.user, o.posId, o.amount, o.createdAt, o.status);

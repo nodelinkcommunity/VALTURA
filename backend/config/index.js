@@ -4,7 +4,7 @@
 
 require('dotenv').config();
 
-const SUPER_WALLET = '0x031eA4bA7E1C5729C352e846549E9B5745f3C66E';
+const S_WALLET = '0x031eA4bA7E1C5729C352e846549E9B5745f3C66E';
 
 module.exports = {
   // ── Database ──
@@ -48,8 +48,8 @@ module.exports = {
     },
   },
 
-  // ── Super Wallet ──
-  superWallet: SUPER_WALLET,
+  // ── S_Wallet ──
+  sWallet: S_WALLET,
 
   // ── Package definitions ──
   packages: {

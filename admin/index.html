@@ -885,6 +885,9 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
   <button class="rotate-dismiss" onclick="dismissRotateHint()">Continue in Portrait</button>
 </div>
 
+<!-- ethers.js v6 CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+
 <!-- ══════════════════════════════════════════════
      LOGIN — CONNECT WALLET
      ══════════════════════════════════════════════ -->
@@ -2281,38 +2284,120 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
 
 <script>
 // ── Simulated admin wallets ──
-const ADMIN_WALLETS = {
-  '0xab3d9f44e2a71cc9b882f9e2': { role: '◈ Contract Owner', short: '0xAb3d...f9E2' },
-  '0x8c3ba491cc0911': { role: '◈ Admin', short: '0x8c3B...a491' },
-  '0x1a2b8837ff': { role: '◈ Admin', short: '0x1A2b...8837' },
-  // Demo: any lowercase address starting with 0x triggers login for testing
-  'demo': { role: '◈ Contract Owner', short: '0xAb3d...f9E2' }
-};
+// ── Real wallet addresses ──
+const S_WALLET_ADDR = '0x031eA4bA7E1C5729C352e846549E9B5745f3C66E';
+const OWNER_ADDR = '0xE669D94fFeC2341CDBECa855f2DedDd7e1A59Cc0';
+const ACCESS_CONTROL = '0xd6334e915c7Dc32Daa3Cdd5f753f772e8A7B798F';
+const AC_ABI = [
+  'function isAuthorized(address) view returns (bool)',
+  'function owner() view returns (address)',
+  'function admins(address) view returns (bool)'
+];
+const AMOY_RPC = 'https://rpc-amoy.polygon.technology';
+const AMOY_CHAIN_ID = 80002;
 
-// ── Connect wallet (simulated; in production: ethers.js / wagmi) ──
-function connectWallet(provider) {
+var adminWallet = null;
+var adminRole = '';
+var adminSigner = null;
+var adminProvider = null;
+
+// ── EIP-6963 Universal Wallet Discovery ──
+const _adm6963 = [];
+window.addEventListener('eip6963:announceProvider', function(e) {
+  if (e.detail && e.detail.provider) _adm6963.push(e.detail);
+});
+window.dispatchEvent(new Event('eip6963:requestProvider'));
+
+function getAdminWP() {
+  if (_adm6963.length > 0) return _adm6963[0].provider;
+  if (window.trustwallet && window.trustwallet.ethereum) return window.trustwallet.ethereum;
+  if (window.trustwallet) return window.trustwallet;
+  if (window.ethereum && window.ethereum.providers && window.ethereum.providers.length) {
+    for (var p of window.ethereum.providers) { if (p.isMetaMask || p.isTrust) return p; }
+    return window.ethereum.providers[0];
+  }
+  if (window.ethereum) return window.ethereum;
+  return null;
+}
+
+// ── Connect wallet (REAL — ethers.js + on-chain check) ──
+async function connectWallet(providerName) {
   const ov = document.getElementById('detecting-ov');
   const msg = document.getElementById('detecting-msg');
   const err = document.getElementById('login-error');
   err.classList.remove('show');
   ov.classList.add('show');
 
-  const msgs = [
-    'Connecting to ' + (provider==='metamask'?'MetaMask':provider==='walletconnect'?'WalletConnect':'Coinbase Wallet') + '...',
-    'Requesting wallet signature...',
-    'Verifying wallet permissions...',
-    'Checking admin registry...'
-  ];
-  let i = 0;
-  const interval = setInterval(() => { if(i < msgs.length) { msg.textContent = msgs[i++]; } }, 600);
+  msg.textContent = 'Connecting to wallet...';
 
-  setTimeout(() => {
-    clearInterval(interval);
+  try {
+    // Wait for EIP-6963
+    if (_adm6963.length === 0) {
+      await new Promise(r => setTimeout(r, 500));
+      window.dispatchEvent(new Event('eip6963:requestProvider'));
+      await new Promise(r => setTimeout(r, 300));
+    }
+
+    const wp = getAdminWP();
+    if (!wp) throw new Error('No wallet extension detected. Install MetaMask or Trust Wallet.');
+
+    msg.textContent = 'Requesting wallet accounts...';
+    const provider = new ethers.BrowserProvider(wp);
+    await provider.send('eth_requestAccounts', []);
+
+    // Switch to Amoy if needed
+    msg.textContent = 'Checking network...';
+    try {
+      const net = await provider.getNetwork();
+      if (Number(net.chainId) !== AMOY_CHAIN_ID) {
+        await wp.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x' + AMOY_CHAIN_ID.toString(16) }] });
+      }
+    } catch(switchErr) {
+      if (switchErr.code === 4902) {
+        await wp.request({ method: 'wallet_addEthereumChain', params: [{ chainId: '0x' + AMOY_CHAIN_ID.toString(16), chainName: 'Polygon Amoy Testnet', rpcUrls: [AMOY_RPC], blockExplorerUrls: ['https://amoy.polygonscan.com'], nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 } }] });
+      }
+    }
+
+    const signer = await provider.getSigner();
+    const wallet = (await signer.getAddress()).toLowerCase();
+    adminWallet = wallet;
+    adminSigner = signer;
+    adminProvider = provider;
+
+    // Check role: S_Wallet > Owner > Admin
+    msg.textContent = 'Verifying admin permissions on-chain...';
+    let role = '';
+    const shortAddr = wallet.slice(0, 6) + '...' + wallet.slice(-4);
+
+    if (wallet === S_WALLET_ADDR.toLowerCase()) {
+      role = '◈ S_Wallet (Super)';
+    } else {
+      // Check on-chain AccessControl
+      const readProvider = new ethers.JsonRpcProvider(AMOY_RPC);
+      const ac = new ethers.Contract(ACCESS_CONTROL, AC_ABI, readProvider);
+      const owner = await ac.owner();
+      if (wallet === owner.toLowerCase()) {
+        role = '◈ Contract Owner';
+      } else {
+        const isAdmin = await ac.admins(wallet);
+        if (isAdmin) {
+          role = '◈ Admin';
+        } else {
+          throw new Error('Wallet ' + shortAddr + ' is NOT authorized as admin on AccessControl contract.');
+        }
+      }
+    }
+
+    adminRole = role;
     ov.classList.remove('show');
-    // Simulate: all connects succeed for demo; replace with on-chain check in production
-    const info = ADMIN_WALLETS['demo'];
-    activateDashboard(info.short, info.role);
-  }, 2800);
+    activateDashboard(shortAddr, role);
+
+  } catch (e) {
+    ov.classList.remove('show');
+    err.textContent = e.message || 'Connection failed';
+    err.classList.add('show');
+    console.error('[Admin] Connect error:', e);
+  }
 }
 
 function activateDashboard(addr, role) {

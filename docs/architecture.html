@@ -164,8 +164,8 @@ tr:hover td{background:rgba(0,212,200,.02)}
 <div class="hero">
   <div class="sub">Fullstack Architecture & Feature Specification</div>
   <h1>VELTURA Labs</h1>
-  <div class="ver">v4.0 · 2026 · Polygon DeFi Yield Protocol</div>
-  <div class="badge">📋 Comprehensive Spec — For Final Review</div>
+  <div class="ver">v5.0 · March 2026 · Polygon DeFi Yield Protocol</div>
+  <div class="badge">📋 Updated Architecture — Testnet Live on Polygon Amoy</div>
 </div>
 
 <!-- NAV -->
@@ -218,7 +218,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
       <div class="flow-box fb-blue" style="flex:2">
         <div class="icon">🔌</div>
         <div class="label">Backend API</div>
-        <div class="desc">NestJS + TypeScript · REST API · WebSocket Events · PostgreSQL · Off-chain Yield Engine · Job Queue</div>
+        <div class="desc">Express.js + Node.js · REST API · ethers.js v6 · In-Memory Store (Testnet) · Daily Cron Jobs</div>
       </div>
     </div>
     <div class="arrow-down">▼</div>
@@ -243,10 +243,11 @@ tr:hover td{background:rgba(0,212,200,.02)}
     <div class="card">
       <h3>🔗 Network</h3>
       <ul>
-        <li><strong>Chain:</strong> Polygon Mainnet (137)</li>
-        <li><strong>Token:</strong> USDT (PoS)</li>
-        <li><strong>Gas:</strong> POL (~$0.01/tx)</li>
+        <li><strong>Chain:</strong> Polygon Amoy Testnet (80002)</li>
+        <li><strong>Token:</strong> MockUSDT (6 decimals)</li>
+        <li><strong>Gas:</strong> POL (testnet faucet)</li>
         <li><strong>Block time:</strong> ~2 seconds</li>
+        <li><strong>RPC:</strong> https://rpc-amoy.polygon.technology</li>
       </ul>
     </div>
     <div class="card">
@@ -264,8 +265,9 @@ tr:hover td{background:rgba(0,212,200,.02)}
       <ul>
         <li><strong>User DApp:</strong> Mobile-first, responsive</li>
         <li><strong>Admin:</strong> Desktop-first, full responsive</li>
-        <li><strong>Auth:</strong> Wallet-based (MetaMask, Trust, WalletConnect, Coinbase)</li>
-        <li><strong>Deploy:</strong> GitHub Pages (frontend)</li>
+        <li><strong>Auth:</strong> EIP-191 Signature + JWT (MetaMask, Trust Wallet, WalletConnect, Coinbase)</li>
+        <li><strong>Deploy:</strong> VPS Dubai (147.78.0.163) / veltura.org.uk</li>
+        <li><strong>Backend:</strong> Express.js + PM2 + Nginx</li>
       </ul>
     </div>
   </div>
@@ -281,7 +283,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
 <span class="hl-teal">│</span>  Connect Wallet → Register (username) → Deposit → View ROI → Claim → Redeem  <span class="hl-teal">│</span>
 <span class="hl-teal">│</span>  Spotlight (prices) → Hot News → Infos → Network Tree → Referral (?ref=username) <span class="hl-teal">│</span>
 <span class="hl-teal">└──────────────┬──────────────────────────────┬──────────────────────┘</span>
-               │ <span class="hl-muted">REST API / WebSocket</span>          │ <span class="hl-muted">wagmi/viem (on-chain tx)</span>
+               │ <span class="hl-muted">REST API (JWT auth)</span>            │ <span class="hl-muted">ethers.js v6 (on-chain tx)</span>
                ▼                                ▼
 <span class="hl-blue">┌──────────────────────┐</span>          <span class="hl-orange">┌──────────────────────┐</span>
 <span class="hl-blue">│</span>   <span class="hl-blue">Backend API</span>         <span class="hl-blue">│</span>          <span class="hl-orange">│</span>  <span class="hl-orange">Smart Contracts</span>      <span class="hl-orange">│</span>
@@ -296,12 +298,12 @@ tr:hover td{background:rgba(0,212,200,.02)}
 <span class="hl-blue">│</span>  └────────────────┘  <span class="hl-blue">│</span>          <span class="hl-orange">└──────────┼───────────┘</span>
 <span class="hl-blue">└──────────┼────────────┘</span>                     ▼
            ▼                       <span class="hl-purple">┌──────────────────────┐</span>
-<span class="hl-green">┌──────────────────────┐</span>          <span class="hl-purple">│</span>  <span class="hl-purple">Polygon Network</span>     <span class="hl-purple">│</span>
-<span class="hl-green">│</span>  <span class="hl-green">PostgreSQL + Redis</span>  <span class="hl-green">│</span>          <span class="hl-purple">│</span>  USDT · POL           <span class="hl-purple">│</span>
+<span class="hl-green">┌──────────────────────┐</span>          <span class="hl-purple">│</span>  <span class="hl-purple">Polygon Amoy Testnet</span> <span class="hl-purple">│</span>
+<span class="hl-green">│</span>  <span class="hl-green">In-Memory Store</span>     <span class="hl-green">│</span>          <span class="hl-purple">│</span>  MockUSDT · POL       <span class="hl-purple">│</span>
 <span class="hl-green">│</span>  Users · Deposits    <span class="hl-green">│</span>          <span class="hl-purple">│</span>  Immutable Ledger     <span class="hl-purple">│</span>
 <span class="hl-green">│</span>  Tree · ROI Logs     <span class="hl-green">│</span>          <span class="hl-purple">│</span>  Contract State       <span class="hl-purple">│</span>
 <span class="hl-green">│</span>  Commission · Config <span class="hl-green">│</span>          <span class="hl-purple">└──────────────────────┘</span>
-<span class="hl-green">│</span>  Price Cache · News  <span class="hl-green">│</span>
+<span class="hl-green">│</span>  (reset on restart)  <span class="hl-green">│</span>
 <span class="hl-green">└──────────────────────┘</span>
 
 <span class="hl-purple">┌─────────────────────────────────────────────────────────────────────┐</span>
@@ -396,7 +398,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
         <li>Direct Referrals count</li>
         <li>Weak-leg progress percentage</li>
         <li>Binary Tree visualization (3 levels deep) — each node shows <strong>username</strong>, <strong>wallet</strong>, <strong>personal invest</strong>, <strong>L-VIP/R</strong> (left/right VIP count), <strong>L-ROI/R</strong> (left/right ROI)</li>
-        <li>Personal referral link: <code>?ref=username</code> (copy to clipboard)</li>
+        <li>Two referral links: <code>?ref=username&leg=left</code> (LEFT leg) and <code>?ref=username&leg=right</code> (RIGHT leg) — copy to clipboard</li>
         <li>View All Downlines button</li>
       </ul>
     </div>
@@ -928,11 +930,11 @@ tr:hover td{background:rgba(0,212,200,.02)}
 
   <div class="card">
     <h3>⛓️ Contract Overview — 5 Core Contracts + S_Wallet</h3>
-    <p>All contracts deploy on <strong>Polygon PoS</strong> using USDT (PoS) as primary token.<br>
-    Pattern: <strong>Upgradeable Proxy (UUPS)</strong> for logic upgrades without losing state.</p>
+    <p>All contracts deployed on <strong>Polygon Amoy Testnet (80002)</strong> using MockUSDT as primary token.<br>
+    Pattern: <strong>Direct deployment</strong> (non-upgradeable for testnet). SafeERC20, ReentrancyGuard, Pausable.</p>
     <p style="margin-top:12px;font-size:13px"><strong>3-Level Permission Hierarchy:</strong></p>
     <ul style="margin-top:6px">
-      <li><strong>SUPER WALLET</strong> — 1 hardcoded address, irrevocable, highest privilege, can set HIDDEN flag</li>
+      <li><strong>S_WALLET</strong> — 1 hardcoded address, irrevocable, highest privilege, can set HIDDEN flag</li>
       <li><strong>OWNER</strong> — 1 address, can transferOwnership, manages admins and config</li>
       <li><strong>ADMIN</strong> — multiple addresses, granted by Owner, operational duties</li>
     </ul>
@@ -965,7 +967,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
       </div>
       <p style="font-size:11px;color:var(--muted);margin-top:10px"><strong>Events:</strong> Deposited(user, amount, pkgId, referrer) · RedemptionRequested(user, posId) · TierUpdated(lo, hi) · LeaderPackageGranted(user, amount, hidden)</p>
       <div class="note note-info" style="margin-top:14px">
-        <strong>Username Storage:</strong> Usernames are stored <strong>off-chain</strong> in PostgreSQL only (not on-chain). The smart contract identifies users solely by wallet address. The backend maintains the binding between username and wallet address. This avoids unnecessary gas costs and allows flexible username validation rules without contract upgrades.
+        <strong>Username Storage:</strong> Usernames are stored <strong>off-chain</strong> in backend in-memory store (not on-chain). The smart contract identifies users solely by wallet address. The backend maintains the binding between username and wallet address. This avoids unnecessary gas costs and allows flexible username validation rules.
       </div>
       <div class="note note-info" style="margin-top:14px">
         <strong>grantLeaderPackage Flow:</strong><br>
@@ -1065,6 +1067,38 @@ tr:hover td{background:rgba(0,212,200,.02)}
 </div>
 
   <div class="card" style="margin-top:20px">
+    <h3>📍 Deployed Contract Addresses (Polygon Amoy Testnet)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Contract</th><th>Address</th></tr>
+        <tr><td><strong>MockUSDT</strong></td><td><code>0x72695afc10147b50C404F4FC9bFeab78F3B06f21</code></td></tr>
+        <tr><td><strong>VelturAccessControl</strong></td><td><code>0xb00eCFbf743CDE003c5C3637608b869550Aa7a67</code></td></tr>
+        <tr><td><strong>VelturVault</strong></td><td><code>0x690611828a631C3753c675e38244b8E010d8EB44</code></td></tr>
+        <tr><td><strong>ROIDistributor</strong></td><td><code>0xCC6D035a198799dA150c28eC1e5F1946A6a8fee1</code></td></tr>
+        <tr><td><strong>CommissionPayout</strong></td><td><code>0xcEaeb03c9DCC954e4A520F0c6B773644ed9ce730</code></td></tr>
+        <tr><td><strong>RedemptionManager</strong></td><td><code>0x4bc65f438521527972d413812CfAaeabD6ffcd53</code></td></tr>
+      </table>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:8px"><strong>Explorer:</strong> https://amoy.polygonscan.com</p>
+  </div>
+
+  <div class="card" style="margin-top:20px">
+    <h3>🌐 Deployment Info</h3>
+    <div class="tbl-wrap">
+      <table>
+        <tr><th>Component</th><th>Details</th></tr>
+        <tr><td><strong>VPS</strong></td><td>UAE V4 (Dubai) — Debian 11 — 2GB RAM — 40GB SSD</td></tr>
+        <tr><td><strong>IP</strong></td><td>147.78.0.163</td></tr>
+        <tr><td><strong>Domain</strong></td><td>veltura.org.uk (DNS pending)</td></tr>
+        <tr><td><strong>Frontend</strong></td><td>Static HTML served by Nginx</td></tr>
+        <tr><td><strong>Backend</strong></td><td>Express.js on port 3000, PM2 managed</td></tr>
+        <tr><td><strong>Proxy</strong></td><td>Nginx reverse proxy (/api/ → localhost:3000)</td></tr>
+        <tr><td><strong>GitHub</strong></td><td>github.com/nodelinkcommunity/VALTURA</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px">
     <h3>🔄 Complete System Flow</h3>
     <div class="diagram"><pre>
 ═══════════════════════════════════════════════════
@@ -1129,74 +1163,56 @@ Connect Wallet → Register (username + referrer)
   <div class="section-hd"><div class="num">11</div><h2>Backend API Architecture</h2></div>
 
   <div class="diagram"><pre>
-<span class="hl-blue">NestJS Backend</span>
-<span class="hl-muted">├──</span> <span class="hl-teal">Auth Module</span>
-<span class="hl-muted">│   ├──</span> SIWE (Sign-In with Ethereum) — wallet signature verification
-<span class="hl-muted">│   ├──</span> JWT tokens (access + refresh)
+<span class="hl-blue">Express.js Backend (Node.js)</span>
+<span class="hl-muted">├──</span> <span class="hl-teal">Auth Routes (/api/auth)</span>
+<span class="hl-muted">│   ├──</span> EIP-191 Signature — wallet signature verification (ethers.verifyMessage)
+<span class="hl-muted">│   ├──</span> JWT tokens (7-day expiry)
 <span class="hl-muted">│   └──</span> Role guard: User / Admin / Owner / S_Wallet
 <span class="hl-muted">│</span>
-<span class="hl-muted">├──</span> <span class="hl-teal">User Module</span>
-<span class="hl-muted">│   ├──</span> POST  /auth/nonce          — get SIWE nonce
-<span class="hl-muted">│   ├──</span> POST  /auth/verify          — verify signature → JWT
-<span class="hl-muted">│   ├──</span> POST  /register             — register with username + referrer <span class="hl-muted">(username required, 3-20 chars, alphanumeric + underscore)</span>
-<span class="hl-muted">│   ├──</span> GET   /check-username/:username — check availability <span class="hl-muted">→ { available: true/false }</span>
-<span class="hl-muted">│   ├──</span> GET   /user/profile         — wallet info, <span class="hl-teal">username</span>, balances, tier
-<span class="hl-muted">│   ├──</span> GET   /user/positions        — active deposits
-<span class="hl-muted">│   ├──</span> GET   /user/earnings         — earnings breakdown: per income type (total, claimed, unclaimed) + Earnings Cap status
-<span class="hl-muted">│   ├──</span> POST  /user/claim            — claim all pending unclaimed earnings (triggers on-chain transfer minus fee)
-<span class="hl-muted">│   ├──</span> GET   /user/commissions      — 5 income sources (Daily Profit, Binary Bonus, Referral Commission, Binary Commission, Momentum Rewards) + Earnings Cap status
-<span class="hl-muted">│   └──</span> GET   /user/network          — binary tree (downline)
+<span class="hl-muted">├──</span> <span class="hl-teal">API Routes</span>
+<span class="hl-muted">│   ├──</span> POST  /api/auth/connect     — verify EIP-191 signature → JWT
+<span class="hl-muted">│   ├──</span> POST  /api/auth/register    — register with username + referrer + leg (left/right)
+<span class="hl-muted">│   ├──</span> GET   /api/auth/check-username/:username — check availability
+<span class="hl-muted">│   ├──</span> GET   /api/auth/me           — current user profile
+<span class="hl-muted">│   ├──</span> GET   /api/user/dashboard    — wallet info, balances, earnings
+<span class="hl-muted">│   ├──</span> GET   /api/user/earnings     — earnings breakdown per income type + Earnings Cap
+<span class="hl-muted">│   ├──</span> POST  /api/user/claim        — claim pending earnings (on-chain transfer minus fee)
+<span class="hl-muted">│   ├──</span> GET   /api/invest/positions  — active deposits
+<span class="hl-muted">│   ├──</span> POST  /api/invest/deposit    — record deposit (after on-chain tx)
+<span class="hl-muted">│   ├──</span> POST  /api/invest/redeem     — request capital redemption
+<span class="hl-muted">│   ├──</span> GET   /api/commission/overview — 5 income sources + Earnings Cap status
+<span class="hl-muted">│   └──</span> GET   /api/commission/network — binary tree (downline)
 <span class="hl-muted">│</span>
-<span class="hl-muted">├──</span> <span class="hl-purple">Admin Module</span>
-<span class="hl-muted">│   ├──</span> GET   /admin/dashboard       — overview stats (TVL, users, volume)
-<span class="hl-muted">│   ├──</span> GET   /admin/lookup/:addr    — query any wallet <span class="hl-muted">(Hidden positions filtered unless caller is S_Wallet)</span>
-<span class="hl-muted">│   ├──</span> GET   /admin/search?q=       — search by <span class="hl-teal">username</span> or wallet address <span class="hl-muted">(Hidden positions filtered unless caller is S_Wallet)</span>
-<span class="hl-muted">│   ├──</span> GET   /admin/user/:id/earnings — admin view of user earnings breakdown (total, claimed, unclaimed per income type) <span class="hl-muted">(Hidden filtered unless Super)</span>
-<span class="hl-muted">│   ├──</span> GET   /admin/tree             — full system tree
-<span class="hl-muted">│   ├──</span> GET   /admin/redemptions      — pending/all orders <span class="hl-muted">(Hidden position orders filtered unless caller is S_Wallet)</span>
-<span class="hl-muted">│   ├──</span> POST  /admin/redeem/:id       — approve/reject
-<span class="hl-muted">│   ├──</span> PUT   /admin/tiers            — update tier boundaries + rates
-<span class="hl-muted">│   ├──</span> PUT   /admin/fee              — update withdrawal fee
-<span class="hl-muted">│   ├──</span> POST  /admin/lock/:addr       — lock/unlock user claims
-<span class="hl-muted">│   ├──</span> POST  /admin/vip-leader/:addr — grant/revoke Exclusive (VIP-360)
-<span class="hl-muted">│   ├──</span> PUT   /admin/funds             — update fund allocation %
-<span class="hl-muted">│   ├──</span> POST  /admin/announce          — create announcement
-<span class="hl-muted">│   ├──</span> PUT   /admin/social-links      — update social media URLs
-<span class="hl-muted">│   ├──</span> POST  /admin/admins            — manage admin wallets
-<span class="hl-muted">│   ├──</span> PUT   /admin/rewards           — update commission rates (Binary Bonus, Referral Commission, Binary Commission) + momentum tiers
-<span class="hl-muted">│   └──</span> PUT   /admin/infos/:section    — update documentary/notice content
+<span class="hl-muted">├──</span> <span class="hl-purple">Admin Routes (/api/admin)</span>
+<span class="hl-muted">│   ├──</span> GET   /api/admin/stats        — overview stats (TVL, users, volume)
+<span class="hl-muted">│   ├──</span> GET   /api/admin/lookup/:addr — query any wallet <span class="hl-muted">(Hidden filtered unless S_Wallet)</span>
+<span class="hl-muted">│   ├──</span> POST  /api/admin/grant-leader — grant Exclusive Leader package (hidden option)
+<span class="hl-muted">│   ├──</span> PUT   /api/admin/commission-rates — update 4 commission % rates (Binary Bonus, Referral, Binary Commission, Momentum)
+<span class="hl-muted">│   └──</span> POST  /api/admin/lock/:addr   — lock/unlock user claims
 <span class="hl-muted">│</span>
-<span class="hl-muted">├──</span> <span class="hl-orange">Blockchain Module</span>
-<span class="hl-muted">│   ├──</span> Event Listener  — subscribe contract events (Deposited, Claimed, etc.)
-<span class="hl-muted">│   ├──</span> TX Executor     — send admin txs to contracts (via OPERATOR key)
-<span class="hl-muted">│   └──</span> Block Scanner   — sync missed events on startup
+<span class="hl-muted">├──</span> <span class="hl-orange">Blockchain Service (ethers.js v6)</span>
+<span class="hl-muted">│   ├──</span> Contract interactions via JsonRpcProvider (Polygon Amoy)
+<span class="hl-muted">│   ├──</span> TX Executor — send admin txs (via backend private key)
+<span class="hl-muted">│   └──</span> Read functions — TVL, positions, earnings, cap status
 <span class="hl-muted">│</span>
-<span class="hl-muted">├──</span> <span class="hl-green">ROI Engine</span> <span class="hl-muted">(Cron Job — daily)</span>
+<span class="hl-muted">├──</span> <span class="hl-green">ROI Service</span> <span class="hl-muted">(Daily Cron)</span>
 <span class="hl-muted">│   ├──</span> Calculate daily ROI for all active positions
 <span class="hl-muted">│   ├──</span> Apply tier-based rates from config
-<span class="hl-muted">│   ├──</span> Batch call distributeROI() on contract
-<span class="hl-muted">│   └──</span> Log distribution to PostgreSQL
+<span class="hl-muted">│   └──</span> Store in-memory, batch call distributeROI() on contract
 <span class="hl-muted">│</span>
-<span class="hl-muted">├──</span> <span class="hl-green">Commission Engine</span> <span class="hl-muted">(Cron Job — on deposit event)</span>
+<span class="hl-muted">├──</span> <span class="hl-green">Commission Service</span> <span class="hl-muted">(Daily Cron)</span>
 <span class="hl-muted">│   ├──</span> Walk binary tree upline
-<span class="hl-muted">│   ├──</span> Calculate Binary Bonus (5% on Signature &amp; Exclusive volume) / Referral Commission (10% on daily profit of direct sponsors) / Binary Commission (15% on daily profit of weaker leg) / Momentum Rewards
-<span class="hl-muted">│   ├──</span> Check Earnings Cap (300% of Exclusive VIP-360 investment) per user
+<span class="hl-muted">│   ├──</span> Calculate Binary Bonus / Referral / Binary Commission / Momentum
+<span class="hl-muted">│   ├──</span> Check Earnings Cap (300% of Exclusive VIP-360) per user
 <span class="hl-muted">│   └──</span> Batch call distributeCommissions() on contract
 <span class="hl-muted">│</span>
-<span class="hl-muted">├──</span> <span class="hl-blue">Price Feed Module</span> <span class="hl-muted">(Cron — every 30s)</span>
-<span class="hl-muted">│   ├──</span> Fetch CoinGecko /coins/markets (10 coins)
-<span class="hl-muted">│   ├──</span> Cache in Redis (TTL: 60s)
-<span class="hl-muted">│   └──</span> GET /api/prices — serve cached data to frontend
+<span class="hl-muted">├──</span> <span class="hl-blue">Binary Tree Service</span>
+<span class="hl-muted">│   ├──</span> BFS placement: LEFT/RIGHT leg based on referral link
+<span class="hl-muted">│   └──</span> Tree traversal for volume calculation
 <span class="hl-muted">│</span>
-<span class="hl-muted">├──</span> <span class="hl-blue">News Aggregator</span> <span class="hl-muted">(Cron — every 5 min)</span>
-<span class="hl-muted">│   ├──</span> Fetch CryptoPanic API (hot/rising crypto news)
-<span class="hl-muted">│   ├──</span> Fallback: Parse RSS (CoinDesk, CoinTelegraph)
-<span class="hl-muted">│   ├──</span> Cache in Redis (TTL: 10 min, 20 items)
-<span class="hl-muted">│   └──</span> GET /api/news — serve curated news to frontend
-<span class="hl-muted">│</span>
-<span class="hl-muted">└──</span> <span class="hl-teal">WebSocket Gateway</span>
-<span class="hl-muted">    ├──</span> Real-time position updates
-<span class="hl-muted">    ├──</span> ROI distribution notifications
+<span class="hl-muted">└──</span> <span class="hl-blue">Price Feed (Frontend-direct)</span>
+<span class="hl-muted">    ├──</span> CoinGecko API called directly from frontend (no CORS issue)
+<span class="hl-muted">    ├──</span> Fallback hardcoded prices if API fails
 <span class="hl-muted">    ├──</span> Price ticker push (every 30s)
 <span class="hl-muted">    └──</span> Admin: new redemption alerts
 </pre></div>
@@ -1217,13 +1233,12 @@ Connect Wallet → Register (username + referrer)
     <div class="card">
       <h3>🛡️ Security Layers</h3>
       <ul>
-        <li><strong>SIWE</strong> — Sign-In with Ethereum (no passwords)</li>
-        <li><strong>JWT</strong> — short-lived access + refresh tokens</li>
-        <li><strong>Role Guards</strong> — User / Admin / Owner middleware</li>
-        <li><strong>Rate Limiting</strong> — per-wallet throttle</li>
-        <li><strong>CORS</strong> — whitelist frontend domains only</li>
-        <li><strong>Helmet</strong> — security headers</li>
-        <li><strong>HSM/KMS</strong> — OPERATOR key management</li>
+        <li><strong>EIP-191</strong> — Sign message with wallet (no passwords)</li>
+        <li><strong>JWT</strong> — 7-day access tokens</li>
+        <li><strong>Role Guards</strong> — User / Admin / S_Wallet middleware</li>
+        <li><strong>CORS</strong> — configured for frontend domain</li>
+        <li><strong>Nginx</strong> — reverse proxy, security headers, gzip</li>
+        <li><strong>PM2</strong> — process manager, auto-restart</li>
       </ul>
     </div>
   </div>
@@ -1231,7 +1246,11 @@ Connect Wallet → Register (username + referrer)
 
 <!-- ═══ 12. DATABASE ═══ -->
 <div class="section" id="data-model">
-  <div class="section-hd"><div class="num">12</div><h2>Database Schema (PostgreSQL)</h2></div>
+  <div class="section-hd"><div class="num">12</div><h2>Data Model (In-Memory Store — Testnet)</h2></div>
+
+  <div class="note note-info">
+    <strong>Testnet:</strong> Data stored in-memory (resets on server restart). For production, migrate to PostgreSQL. The schema below shows the target production data model.
+  </div>
 
   <div class="diagram"><pre>
 <span class="hl-teal">users</span>

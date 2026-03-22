@@ -37,14 +37,14 @@ module.exports = {
     chainId: parseInt(process.env.CHAIN_ID, 10) || 80002, // Amoy testnet
     privateKey: process.env.BACKEND_PRIVATE_KEY || '', // backend signer for on-chain calls
     // USDT address — testnet uses MockUSDT, mainnet uses real USDT
-    usdtAddress: process.env.USDT_ADDRESS || '0x72695afc10147b50C404F4FC9bFeab78F3B06f21',
+    usdtAddress: process.env.USDT_ADDRESS || '0x96FBA824E3798E59e98fDE8E019a684700F9fF4a',
     // Contract addresses — defaults match Amoy testnet deployment
     contracts: {
-      accessControl: process.env.ACCESS_CONTROL_ADDRESS || '0xb00eCFbf743CDE003c5C3637608b869550Aa7a67',
-      valturVault: process.env.VALTUR_VAULT_ADDRESS || '0x690611828a631C3753c675e38244b8E010d8EB44',
-      roiDistributor: process.env.ROI_DISTRIBUTOR_ADDRESS || '0xCC6D035a198799dA150c28eC1e5F1946A6a8fee1',
-      commissionPayout: process.env.COMMISSION_PAYOUT_ADDRESS || '0xcEaeb03c9DCC954e4A520F0c6B773644ed9ce730',
-      redemptionManager: process.env.REDEMPTION_MANAGER_ADDRESS || '0x4bc65f438521527972d413812CfAaeabD6ffcd53',
+      accessControl: process.env.ACCESS_CONTROL_ADDRESS || '0xd6334e915c7Dc32Daa3Cdd5f753f772e8A7B798F',
+      valturVault: process.env.VALTUR_VAULT_ADDRESS || '0x377F951349B1cE2cE6a9bF78229FBfeE4bD884fE',
+      roiDistributor: process.env.ROI_DISTRIBUTOR_ADDRESS || '0xDE3C753bfBc419c223eEf2226b8756Bf9c6FDA86',
+      commissionPayout: process.env.COMMISSION_PAYOUT_ADDRESS || '0xA0FE3CAB18898d8dd2e3E7e6eB3550cde078675a',
+      redemptionManager: process.env.REDEMPTION_MANAGER_ADDRESS || '0x2D96439da922896528390ad704C2796c83d815Bd',
     },
   },
 

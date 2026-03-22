@@ -1,16 +1,16 @@
 {
   "network": "polygon-amoy",
   "chainId": 80002,
-  "deployer": "0x21D6DA65981c95B1FF0fA8746Ad81A22b8C0d58B",
-  "superWallet": "0x031eA4bA7E1C5729C352e846549E9B5745f3C66E",
-  "recipient": "0x21D6DA65981c95B1FF0fA8746Ad81A22b8C0d58B",
+  "deployer": "0xE669D94fFeC2341CDBECa855f2DedDd7e1A59Cc0",
+  "sWallet": "0x031eA4bA7E1C5729C352e846549E9B5745f3C66E",
+  "recipient": "0xE669D94fFeC2341CDBECa855f2DedDd7e1A59Cc0",
   "contracts": {
-    "MockUSDT": "0x72695afc10147b50C404F4FC9bFeab78F3B06f21",
-    "VelturAccessControl": "0xb00eCFbf743CDE003c5C3637608b869550Aa7a67",
-    "VelturVault": "0x690611828a631C3753c675e38244b8E010d8EB44",
-    "ROIDistributor": "0xCC6D035a198799dA150c28eC1e5F1946A6a8fee1",
-    "CommissionPayout": "0xcEaeb03c9DCC954e4A520F0c6B773644ed9ce730",
-    "RedemptionManager": "0x4bc65f438521527972d413812CfAaeabD6ffcd53"
+    "MockUSDT": "0x96FBA824E3798E59e98fDE8E019a684700F9fF4a",
+    "VelturAccessControl": "0xd6334e915c7Dc32Daa3Cdd5f753f772e8A7B798F",
+    "VelturVault": "0x377F951349B1cE2cE6a9bF78229FBfeE4bD884fE",
+    "ROIDistributor": "0xDE3C753bfBc419c223eEf2226b8756Bf9c6FDA86",
+    "CommissionPayout": "0xA0FE3CAB18898d8dd2e3E7e6eB3550cde078675a",
+    "RedemptionManager": "0x2D96439da922896528390ad704C2796c83d815Bd"
   },
-  "deployedAt": "2026-03-19T13:04:43.800Z"
+  "deployedAt": "2026-03-22T15:00:47.881Z"
 }

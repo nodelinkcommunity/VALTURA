@@ -1541,7 +1541,7 @@ function selectPkg(el, pkgName){
   async function fetchRealTx(){
     try{
       // Polygonscan public API - get latest transactions (free tier, limited)
-      const CONTRACT='0x690611828a631C3753c675e38244b8E010d8EB44'; // VelturVault on Amoy
+      const CONTRACT='0x377F951349B1cE2cE6a9bF78229FBfeE4bD884fE'; // VelturVault on Amoy
       const url='https://api-amoy.polygonscan.com/api?module=account&action=txlist&address='+CONTRACT+'&page=1&offset=10&sort=desc';
       const res=await fetch(url);
       if(!res.ok) throw new Error('Polygonscan '+res.status);
@@ -3733,12 +3733,12 @@ const CONFIG={
   RPC:'https://rpc-amoy.polygon.technology',
   EXPLORER:'https://amoy.polygonscan.com',
   CONTRACTS:{
-    USDT:'0x72695afc10147b50C404F4FC9bFeab78F3B06f21',
-    ACCESS_CONTROL:'0xb00eCFbf743CDE003c5C3637608b869550Aa7a67',
-    VAULT:'0x690611828a631C3753c675e38244b8E010d8EB44',
-    ROI_DISTRIBUTOR:'0xCC6D035a198799dA150c28eC1e5F1946A6a8fee1',
-    COMMISSION_PAYOUT:'0xcEaeb03c9DCC954e4A520F0c6B773644ed9ce730',
-    REDEMPTION_MANAGER:'0x4bc65f438521527972d413812CfAaeabD6ffcd53'
+    USDT:'0x96FBA824E3798E59e98fDE8E019a684700F9fF4a',
+    ACCESS_CONTROL:'0xd6334e915c7Dc32Daa3Cdd5f753f772e8A7B798F',
+    VAULT:'0x377F951349B1cE2cE6a9bF78229FBfeE4bD884fE',
+    ROI_DISTRIBUTOR:'0xDE3C753bfBc419c223eEf2226b8756Bf9c6FDA86',
+    COMMISSION_PAYOUT:'0xA0FE3CAB18898d8dd2e3E7e6eB3550cde078675a',
+    REDEMPTION_MANAGER:'0x2D96439da922896528390ad704C2796c83d815Bd'
   },
   ABI:{
     ERC20:[

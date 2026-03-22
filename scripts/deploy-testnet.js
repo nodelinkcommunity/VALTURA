@@ -17,7 +17,7 @@ const path = require('path');
 // ── Config ──
 const AMOY_RPC = 'https://rpc-amoy.polygon.technology';
 const S_WALLET = '0x031eA4bA7E1C5729C352e846549E9B5745f3C66E';
-const RECIPIENT = '0x21D6DA65981c95B1FF0fA8746Ad81A22b8C0d58B';
+const RECIPIENT = '0xE669D94fFeC2341CDBECa855f2DedDd7e1A59Cc0';
 
 async function main() {
     const provider = new ethers.JsonRpcProvider(AMOY_RPC);

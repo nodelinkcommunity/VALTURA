@@ -12,7 +12,8 @@ module.exports = {
     amoy: {
       url: "https://rpc-amoy.polygon.technology",
       chainId: 80002,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : []
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 30000000000,
     },
     polygon: {
       url: process.env.POLYGON_RPC || "https://polygon-rpc.com",

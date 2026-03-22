@@ -1,5 +1,5 @@
 // ══════════════════════════════════════
-// Valtura — Blockchain Service (ethers.js v6)
+// Veltura — Blockchain Service (ethers.js v6)
 // ══════════════════════════════════════
 
 const { ethers } = require('ethers');

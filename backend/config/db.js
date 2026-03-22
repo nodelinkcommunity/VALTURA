@@ -1,5 +1,5 @@
 // ══════════════════════════════════════
-// Valtura — Persistent JSON Database Store
+// Veltura — Persistent JSON Database Store
 // Saves to data/db.json on every write, restores on startup
 // ══════════════════════════════════════
 

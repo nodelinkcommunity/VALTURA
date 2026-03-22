@@ -1,2 +1,2 @@
-# VALTURA
-Valtura Labs Protocol (Fullstack)
+# VELTURA
+Veltura Labs Protocol (Fullstack)

@@ -1,5 +1,5 @@
 // ══════════════════════════════════════
-// Valtura — ROI Calculation Service (In-Memory)
+// Veltura — ROI Calculation Service (In-Memory)
 // ══════════════════════════════════════
 
 const db = require('../config/db');

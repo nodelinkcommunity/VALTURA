@@ -1,7 +1,7 @@
 {
-  "name": "valtura",
+  "name": "veltura",
   "version": "1.0.0",
-  "description": "Valtura — On-Chain Yield Generation Platform on Polygon",
+  "description": "Veltura — On-Chain Yield Generation Platform on Polygon",
   "main": "backend/server.js",
   "scripts": {
     "dev": "node backend/server.js",

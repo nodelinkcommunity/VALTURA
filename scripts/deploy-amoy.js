@@ -1,5 +1,5 @@
 /**
- * Deploy all Valtura contracts to Polygon Amoy using Hardhat
+ * Deploy all Veltura contracts to Polygon Amoy using Hardhat
  *
  * Run: npx hardhat run scripts/deploy-amoy.js --network amoy
  */
@@ -20,14 +20,14 @@ async function main() {
     console.log('   MockUSDT:', MockUSDT.target);
 
     // 2. AccessControl
-    console.log('2/6 Deploying ValturAccessControl...');
-    const AC = await hre.ethers.deployContract("ValturAccessControl");
+    console.log('2/6 Deploying VelturAccessControl...');
+    const AC = await hre.ethers.deployContract("VelturAccessControl");
     await AC.waitForDeployment();
     console.log('   AccessControl:', AC.target);
 
     // 3. Vault
-    console.log('3/6 Deploying ValturVault...');
-    const Vault = await hre.ethers.deployContract("ValturVault", [MockUSDT.target, AC.target]);
+    console.log('3/6 Deploying VelturVault...');
+    const Vault = await hre.ethers.deployContract("VelturVault", [MockUSDT.target, AC.target]);
     await Vault.waitForDeployment();
     console.log('   Vault:', Vault.target);
 
@@ -82,8 +82,8 @@ async function main() {
         recipient: RECIPIENT,
         contracts: {
             MockUSDT: MockUSDT.target,
-            ValturAccessControl: AC.target,
-            ValturVault: Vault.target,
+            VelturAccessControl: AC.target,
+            VelturVault: Vault.target,
             ROIDistributor: ROI.target,
             CommissionPayout: Comm.target,
             RedemptionManager: Redeem.target

@@ -1,5 +1,5 @@
 /**
- * Deploy all Valtura contracts to Polygon Amoy Testnet
+ * Deploy all Veltura contracts to Polygon Amoy Testnet
  *
  * Prerequisites:
  *   1. Get testnet POL from: https://faucet.polygon.technology/
@@ -34,14 +34,14 @@ async function main() {
     console.log('   MockUSDT:', MockUSDT.target);
 
     // ── Step 2: Deploy AccessControl ──
-    console.log('2/6 Deploying ValturAccessControl...');
-    const AccessControl = await deployContract(wallet, 'ValturAccessControl', []);
+    console.log('2/6 Deploying VelturAccessControl...');
+    const AccessControl = await deployContract(wallet, 'VelturAccessControl', []);
     console.log('   AccessControl:', AccessControl.target);
     console.log('   Super Wallet:', SUPER_WALLET);
 
     // ── Step 3: Deploy Vault ──
-    console.log('3/6 Deploying ValturVault...');
-    const Vault = await deployContract(wallet, 'ValturVault', [MockUSDT.target, AccessControl.target]);
+    console.log('3/6 Deploying VelturVault...');
+    const Vault = await deployContract(wallet, 'VelturVault', [MockUSDT.target, AccessControl.target]);
     console.log('   Vault:', Vault.target);
 
     // ── Step 4: Deploy ROIDistributor ──
@@ -97,8 +97,8 @@ async function main() {
         recipient: RECIPIENT,
         contracts: {
             MockUSDT: MockUSDT.target,
-            ValturAccessControl: AccessControl.target,
-            ValturVault: Vault.target,
+            VelturAccessControl: AccessControl.target,
+            VelturVault: Vault.target,
             ROIDistributor: ROI.target,
             CommissionPayout: Commission.target,
             RedemptionManager: Redeem.target

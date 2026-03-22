@@ -1,5 +1,5 @@
 // ══════════════════════════════════════
-// Valtura — Binary Tree Service (In-Memory)
+// Veltura — Binary Tree Service (In-Memory)
 // ══════════════════════════════════════
 
 const db = require('../config/db');

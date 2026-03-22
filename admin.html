@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VALTURA Admin Panel</title>
+<title>VELTURA Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0B1426;--cyan:#3EDDB5;--purple:#1976D2;--bg2:#0E1A30;--bg3:#122240;--border:rgba(62,221,181,.12);--muted:rgba(255,255,255,.45);--white:#fff;--danger:#FF4757;--warn:#FFA502;--green:#2DD4BF;}
@@ -59,7 +59,7 @@ input[type="range"]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;b
 </head>
 <body>
 <div class="container">
-  <h1>VALTURA Admin Panel</h1>
+  <h1>VELTURA Admin Panel</h1>
   <p class="subtitle">Commission & Fee Configuration — Polygon Amoy Testnet</p>
 
   <!-- Connection Status -->
@@ -227,7 +227,7 @@ async function connectAdmin() {
     }
 
     // Sign message for auth
-    const msg = 'VALTURA Admin Login: ' + wallet;
+    const msg = 'VELTURA Admin Login: ' + wallet;
     const sig = await signer.signMessage(msg);
 
     // Auth with backend

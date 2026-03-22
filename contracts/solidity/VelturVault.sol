@@ -5,17 +5,17 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
-import "./ValturAccessControl.sol";
+import "./VelturAccessControl.sol";
 
 /**
- * @title ValturVault (TESTNET — Polygon Amoy)
+ * @title VelturVault (TESTNET — Polygon Amoy)
  * @notice Core vault: deposits, positions, leader grants, redemption requests
  * @dev Uses test USDT on Amoy testnet
  */
-contract ValturVault is ReentrancyGuard, Pausable {
+contract VelturVault is ReentrancyGuard, Pausable {
     using SafeERC20 for IERC20; // C-1
 
-    ValturAccessControl public immutable accessControl; // L-4: immutable
+    VelturAccessControl public immutable accessControl; // L-4: immutable
     IERC20 public immutable usdt;
 
     struct Position {
@@ -41,7 +41,7 @@ contract ValturVault is ReentrancyGuard, Pausable {
 
     constructor(address _usdt, address _accessControl) {
         usdt = IERC20(_usdt);
-        accessControl = ValturAccessControl(_accessControl);
+        accessControl = VelturAccessControl(_accessControl);
 
         // H-2: Default lock days per package type
         packageLockDays[1] = 90;   // essential

@@ -5,8 +5,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
-import "./ValturAccessControl.sol";
-import "./ValturVault.sol";
+import "./VelturAccessControl.sol";
+import "./VelturVault.sol";
 
 /**
  * @title RedemptionManager (TESTNET — Polygon Amoy)
@@ -15,8 +15,8 @@ import "./ValturVault.sol";
 contract RedemptionManager is ReentrancyGuard, Pausable {
     using SafeERC20 for IERC20; // C-1
 
-    ValturAccessControl public immutable accessControl; // L-4: immutable
-    ValturVault public immutable vault; // L-4: immutable
+    VelturAccessControl public immutable accessControl; // L-4: immutable
+    VelturVault public immutable vault; // L-4: immutable
     IERC20 public immutable usdt;
 
     struct Order {
@@ -40,8 +40,8 @@ contract RedemptionManager is ReentrancyGuard, Pausable {
 
     constructor(address _usdt, address _vault, address _accessControl) {
         usdt = IERC20(_usdt);
-        vault = ValturVault(_vault);
-        accessControl = ValturAccessControl(_accessControl);
+        vault = VelturVault(_vault);
+        accessControl = VelturAccessControl(_accessControl);
     }
 
     modifier onlyAdmin() {

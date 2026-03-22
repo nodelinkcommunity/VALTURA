@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VALTURA Labs · Fullstack Architecture & Feature Specification</title>
+<title>VELTURA Labs · Fullstack Architecture & Feature Specification</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -163,7 +163,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
 <!-- HERO -->
 <div class="hero">
   <div class="sub">Fullstack Architecture & Feature Specification</div>
-  <h1>VALTURA Labs</h1>
+  <h1>VELTURA Labs</h1>
   <div class="ver">v4.0 · 2026 · Polygon DeFi Yield Protocol</div>
   <div class="badge">📋 Comprehensive Spec — For Final Review</div>
 </div>
@@ -197,7 +197,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
 
   <div class="card">
     <h3>🏗️ Architecture Layers</h3>
-    <p>VALTURA Labs is a DeFi Yield Protocol on Polygon with a binary network commission system. The platform consists of 4 primary layers:</p>
+    <p>VELTURA Labs is a DeFi Yield Protocol on Polygon with a binary network commission system. The platform consists of 4 primary layers:</p>
   </div>
 
   <div class="flow-grid">
@@ -252,7 +252,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
     <div class="card">
       <h3>🎨 Branding</h3>
       <ul>
-        <li><strong>Name:</strong> VALTURA</li>
+        <li><strong>Name:</strong> VELTURA</li>
         <li><strong>Logo:</strong> Butterfly (transparent PNG)</li>
         <li><strong>Theme:</strong> Dark (teal/green primary)</li>
         <li><strong>Text:</strong> Pink-to-purple gradient</li>
@@ -948,7 +948,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
 
   <div id="ct-vault" class="tab-panel active">
     <div class="contract-box">
-      <h4 style="color:var(--orange)">📦 ValturVault.sol</h4>
+      <h4 style="color:var(--orange)">📦 VelturVault.sol</h4>
       <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Core vault: receives deposits, manages packages, tracks positions, lock periods.</p>
       <div class="tbl-wrap">
         <table>
@@ -1033,7 +1033,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
 
   <div id="ct-access" class="tab-panel">
     <div class="contract-box">
-      <h4 style="color:var(--purple)">🔐 ValturAccessControl.sol</h4>
+      <h4 style="color:var(--purple)">🔐 VelturAccessControl.sol</h4>
       <p style="font-size:12px;color:var(--muted);margin-bottom:12px">Role-based access: Super Wallet, Owner, Admin, Operator. Manages permissions + lock/unlock user claims + Hidden flag.</p>
       <div class="tbl-wrap">
         <table>
@@ -1074,7 +1074,7 @@ tr:hover td{background:rgba(0,212,200,.02)}
 Connect Wallet → Register (username + referrer)
       │
       ▼
-  <span class="hl-orange">ValturVault.deposit()</span> ← User sends USDT
+  <span class="hl-orange">VelturVault.deposit()</span> ← User sends USDT
   Creates Position
       │
   ╔═══╧═══════════════════════════════════════╗
@@ -1096,7 +1096,7 @@ Connect Wallet → Register (username + referrer)
   ← User clicks "Claim All"
   Deducts 2.5% fee → USDT to wallet
       │
-  <span class="hl-orange">ValturVault.requestRedemption()</span>
+  <span class="hl-orange">VelturVault.requestRedemption()</span>
   ← Lock expired → User requests capital back
       │
   <span class="hl-red">RedemptionManager.approve/reject()</span>
@@ -1518,7 +1518,7 @@ Connect Wallet → Register (username + referrer)
   <div class="section-hd"><div class="num">15</div><h2>Build Order & Monorepo Structure</h2></div>
 
   <div class="diagram"><pre>
-<span class="hl-teal">valtura-labs/</span>
+<span class="hl-teal">veltura-labs/</span>
 ├── <span class="hl-blue">packages/</span>
 │   ├── <span class="hl-teal">web/</span>              <span class="hl-muted">← User DApp (React + Vite + TS)</span>
 │   │   ├── src/
@@ -1546,11 +1546,11 @@ Connect Wallet → Register (username + referrer)
 │   │
 │   ├── <span class="hl-orange">contracts/</span>        <span class="hl-muted">← Smart Contracts (Solidity + Hardhat)</span>
 │   │   ├── contracts/
-│   │   │   ├── ValturVault.sol
+│   │   │   ├── VelturVault.sol
 │   │   │   ├── ROIDistributor.sol
 │   │   │   ├── CommissionPayout.sol
 │   │   │   ├── RedemptionManager.sol
-│   │   │   └── ValturAccessControl.sol
+│   │   │   └── VelturAccessControl.sol
 │   │   ├── test/
 │   │   ├── scripts/
 │   │   │   ├── deploy.ts
@@ -1573,7 +1573,7 @@ Connect Wallet → Register (username + referrer)
   <div class="card">
     <h3>🚀 7-Phase Build Order</h3>
     <ul>
-      <li><strong>Phase 1:</strong> Smart Contracts — ValturVault + AccessControl → deploy Amoy testnet</li>
+      <li><strong>Phase 1:</strong> Smart Contracts — VelturVault + AccessControl → deploy Amoy testnet</li>
       <li><strong>Phase 2:</strong> Backend API — Auth + Blockchain module + basic endpoints</li>
       <li><strong>Phase 3:</strong> ROIDistributor + CommissionPayout contracts → Backend ROI/Commission engines</li>
       <li><strong>Phase 4:</strong> RedemptionManager contract → Admin redemption flow</li>
@@ -1588,7 +1588,7 @@ Connect Wallet → Register (username + referrer)
 
 <!-- FOOTER -->
 <div class="footer">
-  <p><strong>VALTURA Labs</strong> · Fullstack Architecture & Feature Specification · v4.0 · 2026</p>
+  <p><strong>VELTURA Labs</strong> · Fullstack Architecture & Feature Specification · v4.0 · 2026</p>
   <p style="margin-top:6px"><a href="admin.html">Admin Dashboard</a> · <a href="index.html">User DApp</a> · <a href="https://github.com/nodelinkcommunity/INTERTERA">GitHub Repo</a></p>
 </div>
 

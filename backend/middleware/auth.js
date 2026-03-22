@@ -1,5 +1,5 @@
 // ══════════════════════════════════════
-// Valtura — Authentication Middleware
+// Veltura — Authentication Middleware
 // ══════════════════════════════════════
 
 const jwt = require('jsonwebtoken');

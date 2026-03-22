@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
-import "./ValturAccessControl.sol";
+import "./VelturAccessControl.sol";
 
 /**
  * @title CommissionPayout (TESTNET — Polygon Amoy)
@@ -21,7 +21,7 @@ import "./ValturAccessControl.sol";
 contract CommissionPayout is ReentrancyGuard, Pausable {
     using SafeERC20 for IERC20; // C-1
 
-    ValturAccessControl public immutable accessControl; // L-4: immutable
+    VelturAccessControl public immutable accessControl; // L-4: immutable
     IERC20 public immutable usdt;
 
     // Per-user per-type earnings
@@ -46,7 +46,7 @@ contract CommissionPayout is ReentrancyGuard, Pausable {
 
     constructor(address _usdt, address _accessControl) {
         usdt = IERC20(_usdt);
-        accessControl = ValturAccessControl(_accessControl);
+        accessControl = VelturAccessControl(_accessControl);
     }
 
     modifier onlyAdmin() {

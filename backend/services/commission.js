@@ -1,5 +1,5 @@
 // ══════════════════════════════════════
-// Valtura — Commission Calculation Service (In-Memory)
+// Veltura — Commission Calculation Service (In-Memory)
 // ══════════════════════════════════════
 
 const db = require('../config/db');

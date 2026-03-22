@@ -1,7 +1,7 @@
 {
-  "name": "valtura-backend",
+  "name": "veltura-backend",
   "version": "1.0.0",
-  "description": "VALTURA Labs Protocol — Backend API",
+  "description": "VELTURA Labs Protocol — Backend API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

@@ -1,5 +1,5 @@
 // ══════════════════════════════════════
-// Valtura — Express API Server (In-Memory)
+// Veltura — Express API Server (In-Memory)
 // ══════════════════════════════════════
 
 require('dotenv').config();
@@ -98,7 +98,7 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log('');
   console.log('  ╔══════════════════════════════════════╗');
-  console.log('  ║     Valtura API Server               ║');
+  console.log('  ║     Veltura API Server               ║');
   console.log(`  ║     Port: ${PORT}                        ║`);
   console.log(`  ║     Env:  ${config.server.env.padEnd(24)}║`);
   console.log('  ║     Storage: In-Memory               ║');

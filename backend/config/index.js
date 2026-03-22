@@ -1,5 +1,5 @@
 // ══════════════════════════════════════
-// Valtura — Platform Configuration
+// Veltura — Platform Configuration
 // ══════════════════════════════════════
 
 require('dotenv').config();
@@ -11,8 +11,8 @@ module.exports = {
   db: {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT, 10) || 5432,
-    database: process.env.DB_NAME || 'valtura',
-    user: process.env.DB_USER || 'valtura',
+    database: process.env.DB_NAME || 'veltura',
+    user: process.env.DB_USER || 'veltura',
     password: process.env.DB_PASS || '',
     max: parseInt(process.env.DB_POOL_MAX, 10) || 20,
     idleTimeoutMillis: 30000,

@@ -1,4 +1,4 @@
--- Valtura Database Schema
+-- Veltura Database Schema
 -- PostgreSQL 15+
 
 -- ══════════════════════════════════════

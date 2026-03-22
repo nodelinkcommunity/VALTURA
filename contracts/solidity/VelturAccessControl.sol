@@ -4,11 +4,11 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
- * @title ValturAccessControl (TESTNET — Polygon Amoy)
+ * @title VelturAccessControl (TESTNET — Polygon Amoy)
  * @notice Role-based access: Super Wallet → Owner → Admin
  * @dev Super Wallet is hardcoded and IRREVOCABLE
  */
-contract ValturAccessControl is Ownable {
+contract VelturAccessControl is Ownable {
     // ── Super Wallet (immutable, highest privilege) ──
     address public constant SUPER_WALLET = 0x031eA4bA7E1C5729C352e846549E9B5745f3C66E;
 

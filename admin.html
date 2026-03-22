@@ -210,11 +210,28 @@ async function apiCall(method, path, body) {
   return res.json();
 }
 
+function getWalletProvider() {
+  // Try multiple wallet providers
+  if (window.trustwallet) return window.trustwallet;
+  if (window.ethereum?.isTrust) return window.ethereum;
+  if (window.ethereum?.isMetaMask) return window.ethereum;
+  if (window.ethereum) return window.ethereum;
+  // Check for injected providers array (EIP-6963)
+  if (window.ethereum?.providers?.length) {
+    for (const p of window.ethereum.providers) {
+      if (p.isTrust || p.isMetaMask) return p;
+    }
+    return window.ethereum.providers[0];
+  }
+  return null;
+}
+
 async function connectAdmin() {
   try {
-    if (!window.ethereum) { toast('No wallet detected', 'err'); return; }
+    const wp = getWalletProvider();
+    if (!wp) { toast('No wallet detected. Install MetaMask or Trust Wallet extension.', 'err'); return; }
 
-    const provider = new ethers.BrowserProvider(window.ethereum);
+    const provider = new ethers.BrowserProvider(wp);
     await provider.send('eth_requestAccounts', []);
     const signer = await provider.getSigner();
     wallet = await signer.getAddress();

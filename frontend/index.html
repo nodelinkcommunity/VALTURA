@@ -3787,7 +3787,19 @@ const CONFIG={
 };
 
 /* ═══ Helper functions ═══ */
-const MOCK_MODE=typeof window.ethereum==='undefined';
+function getWP(){
+  if(window.trustwallet)return window.trustwallet;
+  if(window.ethereum&&window.ethereum.isTrust)return window.ethereum;
+  if(window.ethereum&&window.ethereum.isMetaMask)return window.ethereum;
+  if(window.ethereum)return window.ethereum;
+  if(window.ethereum&&window.ethereum.providers&&window.ethereum.providers.length){
+    for(var p of window.ethereum.providers){if(p.isTrust||p.isMetaMask)return p;}
+    return window.ethereum.providers[0];
+  }
+  return null;
+}
+const WP=getWP();
+const MOCK_MODE=!WP;
 async function apiCall(method,path,body){
   const opts={method,headers:{'Content-Type':'application/json'}};
   if(S.jwt)opts.headers['Authorization']='Bearer '+S.jwt;
@@ -3854,17 +3866,17 @@ async function conW(name){
       return;
     }
     /* Real Web3 connection */
-    const accounts=await window.ethereum.request({method:'eth_requestAccounts'});
-    S.provider=new ethers.BrowserProvider(window.ethereum);
+    const accounts=await WP.request({method:'eth_requestAccounts'});
+    S.provider=new ethers.BrowserProvider(WP);
     S.signer=await S.provider.getSigner();
     S.wallet=accounts[0];
 
     /* Switch to Amoy if needed */
     try{
-      await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+CONFIG.CHAIN_ID.toString(16)}]});
+      await WP.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+CONFIG.CHAIN_ID.toString(16)}]});
     }catch(switchErr){
       if(switchErr.code===4902){
-        await window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:'0x'+CONFIG.CHAIN_ID.toString(16),chainName:CONFIG.CHAIN_NAME,rpcUrls:[CONFIG.RPC],blockExplorerUrls:[CONFIG.EXPLORER],nativeCurrency:{name:'POL',symbol:'POL',decimals:18}}]});
+        await WP.request({method:'wallet_addEthereumChain',params:[{chainId:'0x'+CONFIG.CHAIN_ID.toString(16),chainName:CONFIG.CHAIN_NAME,rpcUrls:[CONFIG.RPC],blockExplorerUrls:[CONFIG.EXPLORER],nativeCurrency:{name:'POL',symbol:'POL',decimals:18}}]});
       }
     }
 
@@ -3918,8 +3930,8 @@ async function conW(name){
     setInterval(refreshDashboard,30000);
 
     /* Listen for account/chain changes */
-    window.ethereum.on('accountsChanged',()=>location.reload());
-    window.ethereum.on('chainChanged',()=>location.reload());
+    WP.on('accountsChanged',()=>location.reload());
+    WP.on('chainChanged',()=>location.reload());
   }catch(err){
     console.error('Wallet connection failed:',err);
     toast('Connection failed: '+(err.message||err),'err');
@@ -4223,11 +4235,11 @@ async function refreshDashboard(){
     return;
   }
   try{
-    if(!window.ethereum)return;
-    const accounts=await window.ethereum.request({method:'eth_accounts'});
+    if(!WP)return;
+    const accounts=await WP.request({method:'eth_accounts'});
     if(!accounts||accounts.length===0)return;
     if(accounts[0].toLowerCase()!==savedWallet.toLowerCase()){localStorage.removeItem('veltura_wallet');localStorage.removeItem('veltura_jwt');return;}
-    S.provider=new ethers.BrowserProvider(window.ethereum);
+    S.provider=new ethers.BrowserProvider(WP);
     S.signer=await S.provider.getSigner();
     S.wallet=accounts[0];S.jwt=savedJWT;S.conn=true;
 
@@ -4239,8 +4251,8 @@ async function refreshDashboard(){
 
     refreshDashboard();
     setInterval(refreshDashboard,30000);
-    window.ethereum.on('accountsChanged',()=>location.reload());
-    window.ethereum.on('chainChanged',()=>location.reload());
+    WP.on('accountsChanged',()=>location.reload());
+    WP.on('chainChanged',()=>location.reload());
   }catch(e){console.warn('Auto-reconnect failed:',e);}
 })();
 

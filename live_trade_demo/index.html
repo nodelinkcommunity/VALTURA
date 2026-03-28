@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>VELTURA Protocol — CEX Arbitrage Scanner</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1A1A1A;
+    --card-bg: #242424;
+    --card-border: #333;
+    --header-bg: #F5A623;
+    --header-dark: #1A1A1A;
+    --buy-text: #F5A623;
+    --sell-text: #F5A623;
+    --exchange-text: #FFFFFF;
+    --pair-text: #FFFFFF;
+    --liquidity-text: #AAAAAA;
+    --verified-text: #F5A623;
+    --spread-text: #4CAF50;
+    --check-btn: #F5A623;
+    
+    --network-text: #4CAF50;
+    --section-bg: #000000;
+    --nav-bg: #1A1A1A;
+    --nav-active: #F5A623;
+    --nav-inactive: #666;
+    --spread-hero: #F5A623;
+  }
+
+  body {
+    background: #111;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  #app {
+    width: 100%;
+    max-width: 480px;
+    background: var(--bg);
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ========== HEADER ========== */
+  .header {
+    background: var(--header-bg);
+    padding: 14px 16px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 17.6px;
+    font-weight: 800;
+    color: #000;
+    letter-spacing: -0.3px;
+  }
+  
+  .header-back {
+    position: absolute;
+    left: 16px;
+    width: 32px;
+    height: 32px;
+    background: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFF;
+    font-size: 12.8px;
+    cursor: pointer;
+  }
+  .header-eye {
+    position: absolute;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    background: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFF;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* ========== TOOLBAR ========== */
+  .toolbar {
+    background: var(--header-bg);
+    padding: 0 12px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .mode-toggle {
+    display: flex;
+    background: #1A1A1A;
+    border-radius: 20px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .mode-btn {
+    background: transparent;
+    color: #888;
+    border: none;
+    border-radius: 16px;
+    padding: 6px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .mode-btn.active {
+    background: #F5A623;
+    color: #000;
+  }
+  .datetime-display {
+    color: #1A1A1A;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: monospace;
+    text-align: right;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+  .signup-btn {
+    flex: 1;
+    background: #1A1A1A;
+    color: #FFF;
+    border: none;
+    border-radius: 20px;
+    padding: 9px 16px;
+    font-size: 10.4px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    background: #1A1A1A;
+    border: none;
+    border-radius: 50%;
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12.8px;
+  }
+
+  /* ========== SCROLL AREA ========== */
+  .scroll-area {
+    background: var(--bg);
+    padding-top: 10px;
+    padding-bottom: 74px;
+  }
+
+  /* ========== OPPORTUNITY CARD ========== */
+  .opp-card {
+    background: #242424;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 0 12px 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .opp-card:active { opacity: 0.8; }
+  .card-left {
+    min-width: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .buy-sell-labels {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .buy-label {
+    color: #F5A623;
+    font-weight: 700;
+    font-size: 10.4px;
+    min-width: 32px;
+  }
+  .sell-label {
+    color: #F5A623;
+    font-weight: 700;
+    font-size: 10.4px;
+    min-width: 32px;
+  }
+  .exchange-name {
+    color: #FFFFFF;
+    font-size: 10.4px;
+    font-weight: 500;
+  }
+  .card-center { flex: 1; }
+  .coin-pair {
+    color: #FFFFFF;
+    font-size: 14.4px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .liquidity {
+    color: #999;
+    font-size: 9.6px;
+    margin-top: 2px;
+  }
+  .last-verified {
+    color: #F5A623;
+    font-size: 8.8px;
+    margin-top: 2px;
+  }
+  .card-right {
+    min-width: 48px;
+    text-align: right;
+  }
+  .spread-pct {
+    color: #4CAF50;
+    font-size: 17.6px;
+    font-weight: 700;
+  }
+
+  /* ========== DETAIL VIEW ========== */
+  .detail-hero {
+    background: var(--bg);
+    padding: 24px 16px 20px;
+    text-align: center;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .spread-hero {
+    color: #F5A623;
+    font-size: 30.4px;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+  .pair-hero {
+    color: #FFF;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 6px;
+  }
+  .profit-line {
+    color: #F5A623;
+    font-size: 10.4px;
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  .detail-scroll {
+    padding-top: 12px;
+    padding-bottom: 74px;
+    background: var(--bg);
+  }
+
+  .step-card {
+    background: #242424;
+    border-radius: 14px;
+    margin: 0 12px 12px;
+    overflow: hidden;
+  }
+  .step-header {
+    padding: 14px 16px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .step-left {}
+  .step-num {
+    color: #888;
+    font-size: 9.6px;
+    margin-bottom: 2px;
+  }
+  .step-action {
+    color: #FFF;
+    font-size: 11.2px;
+    margin-bottom: 2px;
+  }
+  .step-exchange {
+    color: #FFF;
+    font-size: 17.6px;
+    font-weight: 700;
+  }
+  .price-col { text-align: right; }
+  .price-label {
+    color: #888;
+    font-size: 8.8px;
+    margin-bottom: 2px;
+  }
+  .lowest-ask {
+    color: #FFF;
+    font-size: 11.2px;
+    font-weight: 700;
+  }
+  .volume {
+    color: #4CAF50;
+    font-size: 9.6px;
+    margin-top: 2px;
+  }
+  .liquidity-val {
+    color: #999;
+    font-size: 9.6px;
+    margin-top: 2px;
+  }
+  .network-bar {
+    background: #000;
+    padding: 6px 16px;
+    color: #888;
+    font-size: 8.8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .network-value {
+    color: #4CAF50;
+    font-size: 10.4px;
+    font-weight: 600;
+    padding: 4px 16px 10px;
+  }
+  .step-actions {
+    padding: 0 0 8px;
+  }
+  .check-btn {
+    background: linear-gradient(135deg, #E91E8C, #00BFFF);
+    color: #FFF;
+    border: none;
+    width: calc(100% - 24px);
+    margin: 8px 12px 6px;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 12.8px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .warning-box {
+    margin: 8px 12px;
+    border: 1px dashed #555;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    color: #CCC;
+    font-size: 10.4px;
+    line-height: 1.4;
+  }
+  .warning-icon { font-size: 14.4px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ========== BOTTOM NAV ========== */
+  
+  
+  
+  .nav-icon { font-size: 16px; line-height: 1; }
+
+  /* ========== SCREENS ========== */
+  .screen { display: none; }
+  .screen.active { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* ========== SECTION LABEL ========== */
+  .section-label {
+    color: #666;
+    font-size: 8.8px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 4px 24px 8px;
+  }
+
+  /* ========== DIVIDER ========== */
+  .divider {
+    height: 1px;
+    background: #2e2e2e;
+    margin: 0 16px;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ SCREEN: LIST ============ -->
+  <div id="screen-list" class="screen active">
+    <div class="header">
+      <div class="header-logo">
+        <span>🚀</span><span>VELTURA Protocol</span>
+      </div>
+      
+    </div>
+    <div class="toolbar">
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btn-cex" onclick="setMode('cex')">CEX</button>
+        <button class="mode-btn" id="btn-dex" onclick="setMode('dex')">DEX</button>
+      </div>
+      <div class="datetime-display" id="datetime-display">--/--/-- --:--:--</div>
+    </div>
+    <div class="scroll-area" id="opp-list">
+      <!-- cards injected by JS -->
+    </div>
+    
+  </div>
+
+  <!-- ============ SCREEN: DETAIL ============ -->
+  <div id="screen-detail" class="screen">
+    <div class="header" id="detail-header">
+      <div class="header-back" onclick="showList()">←</div>
+      <div class="header-logo">
+        <span>🚀</span><span>VELTURA Protocol</span>
+      </div>
+      <div class="header-eye">👁</div>
+    </div>
+    <div class="detail-hero">
+      <div class="spread-hero" id="d-spread"></div>
+      <div class="pair-hero" id="d-pair"></div>
+      <div class="profit-line" id="d-profit"></div>
+    </div>
+    <div class="detail-scroll" id="detail-body">
+      <!-- injected by JS -->
+    </div>
+    
+  </div>
+
+</div>
+
+<script>
+/* =====================================================
+   DATA & LOGIC
+===================================================== */
+const BASE_PRICES = {
+  BTC:67500, ETH:3450, BNB:580, SOL:180, XRP:0.62,
+  ADA:0.48, DOGE:0.16, AVAX:38, DOT:7.8, MATIC:0.72,
+  LINK:17.5, UNI:9.2, ATOM:9.5, LTC:85, FIL:6.2
+};
+
+const EXCHANGE_NETWORKS = {
+  Binance: ['BEP20','ERC20','TRC20'],
+  OKX: ['ERC20','TRC20','BEP20'],
+  Bybit: ['ERC20','BEP20','TRC20'],
+  'Gate.io': ['ERC20','BEP20','TRC20'],
+  KuCoin: ['ERC20','BEP20','TRC20'],
+  MEXC: ['ERC20','BEP20','TRC20'],
+  Bitget: ['ERC20','BEP20'],
+  HTX: ['ERC20','BEP20','TRC20'],
+  Kraken: ['ERC20'],
+  Coinbase: ['ERC20']
+};
+
+const NETWORK_FEES = { ERC20:1.16, BEP20:0.50, TRC20:1.00 };
+
+function getNetworkFee(buyEx, sellEx) {
+  const buyNets = EXCHANGE_NETWORKS[buyEx] || ['ERC20'];
+  const sellNets = EXCHANGE_NETWORKS[sellEx] || ['ERC20'];
+  const common = buyNets.filter(n => sellNets.includes(n));
+  const cheapest = common.sort((a,b) => NETWORK_FEES[a] - NETWORK_FEES[b])[0] || 'ERC20';
+  return { name: cheapest, fee: NETWORK_FEES[cheapest] || 1.00 };
+}
+
+const EXCHANGE_URLS = {
+  Binance: sym => `https://www.binance.com/en/trade/${sym}_USDT`,
+  OKX: sym => `https://www.okx.com/trade-spot/${sym.toLowerCase()}-usdt`,
+  Bybit: sym => `https://www.bybit.com/en/trade/spot/${sym}/USDT`,
+  'Gate.io': sym => `https://www.gate.io/trade/${sym}_USDT`,
+  KuCoin: sym => `https://www.kucoin.com/trade/${sym}-USDT`,
+  MEXC: sym => `https://www.mexc.com/exchange/${sym}_USDT`,
+  Bitget: sym => `https://www.bitget.com/spot/${sym}USDT`,
+  HTX: sym => `https://www.htx.com/en-us/trade/${sym.toLowerCase()}_usdt/`,
+  Kraken: sym => `https://www.kraken.com/prices/${sym.toLowerCase()}`,
+  Coinbase: sym => `https://www.coinbase.com/price/${sym.toLowerCase()}`
+};
+
+const CEX_EXCHANGES = ['Binance','OKX','Bybit','Gate.io','KuCoin','MEXC','Bitget','HTX','Kraken','Coinbase'];
+const DEX_EXCHANGES = ['Uniswap','PancakeSwap','Jupiter','Raydium','Curve','dYdX'];
+
+// DEX exchange URLs
+const DEX_URLS = {
+  Uniswap: sym => `https://app.uniswap.org/#/swap?outputCurrency=${sym}`,
+  PancakeSwap: sym => `https://pancakeswap.finance/swap?outputCurrency=${sym}`,
+  Jupiter: sym => `https://jup.ag/swap/USDC-${sym}`,
+  Raydium: sym => `https://raydium.io/swap/?outputMint=${sym}`,
+  Curve: sym => `https://curve.fi/#/ethereum/swap`,
+  dYdX: sym => `https://dydx.exchange/trade/${sym}-USD`
+};
+
+// Merge URL maps
+Object.assign(EXCHANGE_URLS, DEX_URLS);
+
+// DEX network fees (generally lower)
+const DEX_NETWORK_FEES = {
+  Uniswap: {name:'ERC20', fee: 2.50},
+  PancakeSwap: {name:'BEP20', fee: 0.30},
+  Jupiter: {name:'SOL', fee: 0.01},
+  Raydium: {name:'SOL', fee: 0.01},
+  Curve: {name:'ERC20', fee: 2.50},
+  dYdX: {name:'COSMOS', fee: 0.50}
+};
+
+function generateOpportunities() {
+  const opps = [];
+  const exchanges = currentMode === 'dex' ? DEX_EXCHANGES : CEX_EXCHANGES;
+  const coins = Object.keys(BASE_PRICES);
+
+  coins.forEach(coin => {
+    const exPrices = {};
+    exchanges.forEach(ex => {
+      exPrices[ex] = BASE_PRICES[coin] * (1 + (Math.random() - 0.45) * 0.025);
+    });
+
+    let buyEx = null, sellEx = null, buyPrice = Infinity, sellPrice = -Infinity;
+    Object.entries(exPrices).forEach(([ex, price]) => {
+      if (price < buyPrice) { buyPrice = price; buyEx = ex; }
+      if (price > sellPrice) { sellPrice = price; sellEx = ex; }
+    });
+
+    if (buyEx === sellEx) return;
+    const spread = (sellPrice - buyPrice) / buyPrice * 100;
+    if (spread < 0.1) return;
+
+    const capital = 50000 + Math.random() * 750000;
+    const grossProfit = capital * (spread / 100);
+    const tradingFees = capital * 0.002;
+    const netObj = getNetworkFee(buyEx, sellEx);
+    const netProfit = grossProfit - tradingFees - netObj.fee;
+    const liquidity = Math.floor(50 + Math.random() * 5000);
+    const volume24h = Math.floor(10000 + Math.random() * 500000);
+
+    opps.push({
+      coin,
+      buyEx, sellEx,
+      buyPrice, sellPrice,
+      spread,
+      capital, grossProfit, tradingFees,
+      networkName: netObj.name, networkFee: netObj.fee,
+      netProfit, liquidity, volume24h,
+      verifiedAgo: Math.floor(Math.random() * 30)
+    });
+  });
+
+  return opps.sort((a, b) => b.spread - a.spread).slice(0, 20);
+}
+
+/* =====================================================
+   STATE
+===================================================== */
+let opportunities = [];
+let currentOpp = null;
+let tickerInterval = null;
+let refreshInterval = null;
+
+/* =====================================================
+   RENDER LIST
+===================================================== */
+function fmtPrice(p) {
+  if (p >= 1000) return '$' + p.toFixed(2);
+  if (p >= 1) return '$' + p.toFixed(4);
+  return '$' + p.toFixed(6);
+}
+
+function renderList() {
+  const container = document.getElementById('opp-list');
+  container.innerHTML = '';
+
+  if (opportunities.length === 0) {
+    container.innerHTML = '<div style="color:#666;text-align:center;padding:40px 16px;font-size: 11.2px;">No opportunities found. Refreshing...</div>';
+    return;
+  }
+
+  opportunities.forEach((opp, idx) => {
+    const card = document.createElement('div');
+    card.className = 'opp-card';
+    card.dataset.idx = idx;
+    card.innerHTML = `
+      <div class="card-left">
+        <div class="buy-sell-labels">
+          <span class="buy-label">BUY</span>
+          <span class="exchange-name">${opp.buyEx}</span>
+        </div>
+        <div class="buy-sell-labels">
+          <span class="sell-label">SELL</span>
+          <span class="exchange-name">${opp.sellEx}</span>
+        </div>
+      </div>
+      <div class="card-center">
+        <div class="coin-pair">${opp.coin}/USDT</div>
+        <div class="liquidity">Liquidity: $${opp.liquidity.toLocaleString()}</div>
+        <div class="last-verified" data-opp-idx="${idx}">Last Verified ${opp.verifiedAgo}s ago</div>
+      </div>
+      <div class="card-right">
+        <div class="spread-pct">${opp.spread.toFixed(1)}%</div>
+      </div>
+    `;
+    card.addEventListener('click', () => showDetail(idx));
+    container.appendChild(card);
+  });
+}
+
+/* =====================================================
+   SHOW DETAIL
+===================================================== */
+function showDetail(idx) {
+  currentOpp = opportunities[idx];
+  const opp = currentOpp;
+
+  // Hero
+  document.getElementById('d-spread').textContent = opp.spread.toFixed(1) + '% SPREAD';
+  document.getElementById('d-pair').textContent = opp.coin + '-USDT';
+  document.getElementById('d-profit').textContent =
+    `Liquidity: $${opp.liquidity.toLocaleString()} | Est. Profit: $${Math.max(0, opp.netProfit).toFixed(2)}`;
+
+  // Build step cards
+  const body = document.getElementById('detail-body');
+  const buyUrl = (EXCHANGE_URLS[opp.buyEx] || (() => '#'))(opp.coin);
+  const sellUrl = (EXCHANGE_URLS[opp.sellEx] || (() => '#'))(opp.coin);
+  const buyLiq = Math.floor(opp.liquidity * 0.55);
+  const sellLiq = opp.liquidity - buyLiq;
+
+  body.innerHTML = `
+    <!-- Step 1: Buy -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-left">
+          <div class="step-num">Step 1.</div>
+          <div class="step-action">Buy at Lowest Ask</div>
+          <div class="step-exchange">${opp.buyEx}</div>
+        </div>
+        <div class="price-col">
+          <div class="price-label">Lowest Ask</div>
+          <div class="lowest-ask">${fmtPrice(opp.buyPrice)}</div>
+          <div class="volume">Vol: $${opp.volume24h.toLocaleString()}</div>
+          <div class="liquidity-val">Buy Liq: $${buyLiq.toLocaleString()}</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="network-bar">
+        <span>⚡</span>
+        <span>Active Withdrawal</span>
+      </div>
+      <div class="network-value">${opp.coin} ($${opp.networkFee.toFixed(2)}) via ${opp.networkName}</div>
+      <div class="step-actions">
+        <a href="${buyUrl}" target="_blank" class="check-btn">
+          ● CHECK ON ${opp.buyEx.toUpperCase()}
+        </a>
+        
+      </div>
+    </div>
+
+    <!-- Step 2: Sell -->
+    <div class="step-card">
+      <div class="step-header">
+        <div class="step-left">
+          <div class="step-num">Step 2.</div>
+          <div class="step-action">Sell on Highest Bid</div>
+          <div class="step-exchange">${opp.sellEx}</div>
+        </div>
+        <div class="price-col">
+          <div class="price-label">Highest Bid</div>
+          <div class="lowest-ask">${fmtPrice(opp.sellPrice)}</div>
+          <div class="volume">Vol: $${Math.floor(opp.volume24h * 0.9).toLocaleString()}</div>
+          <div class="liquidity-val">Sell Liq: $${sellLiq.toLocaleString()}</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="network-bar">
+        <span>⚡</span>
+        <span>Active Deposit</span>
+      </div>
+      <div class="network-value">${opp.coin} via ${opp.networkName}</div>
+      <div class="step-actions">
+        <a href="${sellUrl}" target="_blank" class="check-btn">
+          ● CHECK ON ${opp.sellEx.toUpperCase()}
+        </a>
+        
+      </div>
+    </div>
+
+    <!-- Warnings -->
+    <div class="warning-box">
+      <span class="warning-icon">⚠️</span>
+      <span>Double check coin contract address before transferring. Scam tokens may share the same ticker symbol.</span>
+    </div>
+    <div class="warning-box">
+      <span class="warning-icon">🏃</span>
+      <span>Act Fast! Opportunities typically last 10–15 minutes before the market corrects.</span>
+    </div>
+  `;
+
+  // Switch screens
+  document.getElementById('screen-list').classList.remove('active');
+  document.getElementById('screen-detail').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function showList() {
+  document.getElementById('screen-detail').classList.remove('active');
+  document.getElementById('screen-list').classList.add('active');
+  currentOpp = null;
+}
+
+
+ 
+
+/* =====================================================
+   LIVE TICKER: verifiedAgo increments every second
+===================================================== */
+function startTicker() {
+  if (tickerInterval) clearInterval(tickerInterval);
+  tickerInterval = setInterval(() => {
+    opportunities.forEach((opp, idx) => {
+      opp.verifiedAgo++;
+    });
+    // Update DOM without full re-render
+    document.querySelectorAll('[data-opp-idx]').forEach(el => {
+      const idx = parseInt(el.dataset.oppIdx);
+      if (!isNaN(idx) && opportunities[idx]) {
+        el.textContent = `Last Verified ${opportunities[idx].verifiedAgo}s ago`;
+      }
+    });
+  }, 1000);
+}
+
+/* =====================================================
+   AUTO-REFRESH every 20 seconds
+===================================================== */
+function hardRefresh() {
+  opportunities = generateOpportunities();
+  renderList();
+  // Spin the refresh button briefly
+  const btn = document.getElementById('btn-refresh');
+  if (btn) {
+    btn.style.transform = 'rotate(360deg)';
+    btn.style.transition = 'transform 0.4s';
+    setTimeout(() => { btn.style.transform = ''; btn.style.transition = ''; }, 400);
+  }
+}
+
+function startAutoRefresh() {
+  if (refreshInterval) clearInterval(refreshInterval);
+  refreshInterval = setInterval(() => {
+    opportunities = generateOpportunities();
+    // Only re-render list if we're on the list screen
+    if (document.getElementById('screen-list').classList.contains('active')) {
+      renderList();
+    }
+  }, 20000);
+}
+
+/* =====================================================
+   CEX/DEX MODE
+===================================================== */
+let currentMode = 'cex';
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('btn-cex').className = 'mode-btn' + (mode === 'cex' ? ' active' : '');
+  document.getElementById('btn-dex').className = 'mode-btn' + (mode === 'dex' ? ' active' : '');
+  hardRefresh();
+}
+
+/* =====================================================
+   DATETIME
+===================================================== */
+function updateDatetime() {
+  const now = new Date();
+  const dd = String(now.getDate()).padStart(2,'0');
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const yy = String(now.getFullYear()).slice(-2);
+  const hh = String(now.getHours()).padStart(2,'0');
+  const min = String(now.getMinutes()).padStart(2,'0');
+  const ss = String(now.getSeconds()).padStart(2,'0');
+  const el = document.getElementById('datetime-display');
+  if (el) el.textContent = `${dd}/${mm}/${yy}\nTime: ${hh}:${min}:${ss}`;
+}
+
+/* =====================================================
+   INIT
+===================================================== */
+(function init() {
+  opportunities = generateOpportunities();
+  renderList();
+  startTicker();
+  startAutoRefresh();
+  updateDatetime();
+  setInterval(updateDatetime, 1000);
+})();
+</script>
+</body>
+</html>

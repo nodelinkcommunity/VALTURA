@@ -16,6 +16,8 @@ const DEFAULT_STORE = {
   claims: [],
   redemptions: [],
   commissions: [],
+  transactions: [],
+  earnings_lost: [],
   tree: [],
   config: [
     { key: 'earnings_cap_multi', value: '300', description: 'Earnings Cap multiplier (%)' },
@@ -25,8 +27,16 @@ const DEFAULT_STORE = {
     { key: 'comm_momentum', value: '10', description: 'Momentum rewards rate (%)' },
     { key: 'fee_claim', value: '2.5', description: 'Claim fee (%)' },
     { key: 'fee_redeem', value: '5', description: 'Redemption fee (%)' },
+    { key: 'fund_trading_pct', value: '85', description: 'Trading fund allocation (%)' },
+    { key: 'fund_reward_pct', value: '15', description: 'Reward fund allocation (%)' },
+    { key: 'maxout_essential', value: '300', description: 'Essential maxout (%)' },
+    { key: 'maxout_classic', value: '300', description: 'Classic maxout (%)' },
+    { key: 'maxout_ultimate', value: '300', description: 'Ultimate maxout (%)' },
+    { key: 'maxout_signature', value: '300', description: 'Signature maxout (%)' },
+    { key: 'maxout_exclusive', value: '300', description: 'Exclusive maxout (%)' },
+    { key: 'maxout_leader', value: '300', description: 'Leader maxout (%)' },
   ],
-  _counters: { userId: 1, positionId: 1, claimId: 1, redeemId: 1, commissionId: 1 }
+  _counters: { userId: 1, positionId: 1, claimId: 1, redeemId: 1, commissionId: 1, transactionId: 1 }
 };
 
 // ── Load from disk ──
@@ -36,6 +46,10 @@ function loadStore() {
       const raw = fs.readFileSync(DB_FILE, 'utf8');
       const data = JSON.parse(raw);
       console.log(`[DB] Loaded ${data.users?.length || 0} users, ${data.positions?.length || 0} positions from disk`);
+      // Merge defaults for new fields
+      if (!data.transactions) data.transactions = [];
+      if (!data.earnings_lost) data.earnings_lost = [];
+      if (!data._counters.transactionId) data._counters.transactionId = 1;
       return { ...DEFAULT_STORE, ...data };
     }
   } catch (e) {
@@ -70,6 +84,7 @@ function nextPositionId() { const id = store._counters.positionId++; debouncedSa
 function nextClaimId() { const id = store._counters.claimId++; debouncedSave(); return id; }
 function nextRedeemId() { const id = store._counters.redeemId++; debouncedSave(); return id; }
 function nextCommissionId() { const id = store._counters.commissionId++; debouncedSave(); return id; }
+function nextTransactionId() { const id = store._counters.transactionId++; debouncedSave(); return id; }
 
 // ── Helper: find / filter ──
 function findUser(predicate) { return store.users.find(predicate) || null; }
@@ -115,7 +130,7 @@ function persist() { saveStore(); }
 
 module.exports = {
   store, persist,
-  nextUserId, nextPositionId, nextClaimId, nextRedeemId, nextCommissionId,
+  nextUserId, nextPositionId, nextClaimId, nextRedeemId, nextCommissionId, nextTransactionId,
   findUser, findUsers,
   getConfigValue, setConfigValue,
   getTreeNode, ensureTreeNode,

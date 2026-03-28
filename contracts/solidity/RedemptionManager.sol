@@ -1,171 +1,183 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
-import "./VelturAccessControl.sol";
-import "./VelturVault.sol";
+interface IERC20 {
+    function transfer(address to, uint256 amount) external returns (bool);
+    function transferFrom(address from, address to, uint256 amount) external returns (bool);
+    function balanceOf(address account) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+}
 
-/**
- * @title RedemptionManager (TESTNET — Polygon Amoy)
- * @notice Capital redemption: user request → admin approve → USDT transfer
- */
-contract RedemptionManager is ReentrancyGuard, Pausable {
-    using SafeERC20 for IERC20; // C-1
+interface IAccessControl {
+    function isAdmin(address account) external view returns (bool);
+    function isAuthorized(address account) external view returns (bool);
+}
 
-    VelturAccessControl public immutable accessControl; // L-4: immutable
-    VelturVault public immutable vault; // L-4: immutable
-    IERC20 public immutable usdt;
+interface IVault {
+    function getPosition(address user, uint256 posId)
+        external
+        view
+        returns (
+            uint256 amount,
+            uint256 startTime,
+            uint256 lockDays,
+            uint8 tier,
+            uint8 packageType,
+            bool active,
+            bool isGranted
+        );
+}
+
+contract RedemptionManager {
+    // ── Reentrancy guard ────────────────────────────────────────────
+    bool private _locked;
+    modifier nonReentrant() {
+        require(!_locked, "ReentrancyGuard");
+        _locked = true;
+        _;
+        _locked = false;
+    }
+
+    // ── Constants ───────────────────────────────────────────────────
+    address public constant S_WALLET = 0x031eA4bA7E1C5729C352e846549E9B5745f3C66E;
+
+    // Status enum
+    uint8 public constant STATUS_PENDING  = 0;
+    uint8 public constant STATUS_APPROVED = 1;
+    uint8 public constant STATUS_REJECTED = 2;
+
+    // ── State ───────────────────────────────────────────────────────
+    IERC20 public usdt;
+    IAccessControl public accessControl;
+    IVault public vault;
+
+    // Admin-settable redemption fee in basis points (default 500 = 5%)
+    uint256 public redemptionFeeBps = 500;
+
+    // Order counter
+    uint256 public orderCount;
 
     struct Order {
         address user;
         uint256 posId;
         uint256 amount;
         uint256 createdAt;
-        uint8 status; // 0=pending, 1=approved, 2=rejected
-        uint8 rejectReason; // L-5: 0=none, 1=invalid_position, 2=policy_violation, 3=suspicious_activity, 4=other
+        uint8 status;   // 0=pending, 1=approved, 2=rejected
+        uint8 rejectReason;
     }
 
-    Order[] public orders;
-    uint256 public redemptionFeeBps = 500; // 5%
+    // orderId => Order
+    mapping(uint256 => Order) public orders;
 
-    // M-3: Batch size limit
-    uint256 public constant MAX_BATCH = 200;
+    // ── Events ──────────────────────────────────────────────────────
+    event OrderCreated(uint256 indexed orderId, address indexed user, uint256 posId, uint256 amount);
+    event RedemptionApproved(uint256 indexed orderId, address indexed user, uint256 gross, uint256 fee, uint256 net);
+    event RedemptionRejected(uint256 indexed orderId, address indexed user, uint8 reason);
+    event RedemptionFeeUpdated(uint256 oldBps, uint256 newBps);
 
-    event RedemptionCreated(uint256 indexed orderId, address indexed user, uint256 amount);
-    event RedemptionApproved(uint256 indexed orderId, address indexed user, uint256 net);
-    event RedemptionRejected(uint256 indexed orderId, uint8 reason); // L-5: uint8 reason
-
-    constructor(address _usdt, address _vault, address _accessControl) {
-        usdt = IERC20(_usdt);
-        vault = VelturVault(_vault);
-        accessControl = VelturAccessControl(_accessControl);
-    }
-
+    // ── Modifiers ───────────────────────────────────────────────────
     modifier onlyAdmin() {
+        require(accessControl.isAdmin(msg.sender), "Not admin");
+        _;
+    }
+
+    modifier onlyAuthorized() {
         require(accessControl.isAuthorized(msg.sender), "Not authorized");
         _;
     }
 
-    modifier onlyOwnerOrSuper() {
-        require(
-            msg.sender == accessControl.S_WALLET() ||
-            msg.sender == accessControl.owner(),
-            "Not owner or super"
-        );
-        _;
+    // ── Constructor ─────────────────────────────────────────────────
+    constructor(address _usdt, address _vault, address _accessControl) {
+        usdt = IERC20(_usdt);
+        vault = IVault(_vault);
+        accessControl = IAccessControl(_accessControl);
     }
 
-    // ── L-3: Pausable ──
-    function pause() external onlyOwnerOrSuper {
-        _pause();
-    }
+    // ── Backend: create redemption order ────────────────────────────
+    function createOrder(
+        address user,
+        uint256 posId,
+        uint256 amount
+    ) external onlyAuthorized {
+        require(user != address(0), "Zero address");
+        require(amount > 0, "Zero amount");
 
-    function unpause() external onlyOwnerOrSuper {
-        _unpause();
-    }
+        // Cross-validate with Vault: position must exist
+        (uint256 posAmount,,,,,,) = vault.getPosition(user, posId);
+        require(posAmount > 0, "Position not found");
 
-    // ── Create redemption order (called by backend after user requestRedemption) ──
-    function createOrder(address user, uint256 posId, uint256 amount) external onlyAdmin whenNotPaused {
-        // H-4: Validate against vault position
-        (uint256 posAmount,,,,, bool active,) = vault.getPosition(user, posId);
-        require(active == false, "Position still active in vault"); // position should be deactivated by requestRedemption
-        require(posAmount == amount, "Amount mismatch with position");
-
-        uint256 orderId = orders.length;
-        orders.push(Order({
+        uint256 orderId = orderCount;
+        orders[orderId] = Order({
             user: user,
             posId: posId,
             amount: amount,
             createdAt: block.timestamp,
-            status: 0,
-            rejectReason: 0 // L-5
-        }));
-        emit RedemptionCreated(orderId, user, amount);
+            status: STATUS_PENDING,
+            rejectReason: 0
+        });
+        orderCount++;
+
+        emit OrderCreated(orderId, user, posId, amount);
     }
 
-    // ── Admin approve ──
-    function approveRedemption(uint256 orderId) external onlyAdmin nonReentrant whenNotPaused {
+    // ── Admin: approve redemption ───────────────────────────────────
+    function approveRedemption(uint256 orderId) external onlyAdmin nonReentrant {
         Order storage o = orders[orderId];
-        require(o.status == 0, "Not pending");
+        require(o.user != address(0), "Order not found");
+        require(o.status == STATUS_PENDING, "Not pending");
 
-        uint256 fee = (o.amount * redemptionFeeBps) / 10000;
-        uint256 net = o.amount - fee;
-        require(usdt.balanceOf(address(this)) >= net, "Insufficient balance");
+        o.status = STATUS_APPROVED;
 
-        o.status = 1;
-        usdt.safeTransfer(o.user, net); // C-1
-        emit RedemptionApproved(orderId, o.user, net);
-    }
+        uint256 gross = o.amount;
+        uint256 fee = (gross * redemptionFeeBps) / 10000;
+        uint256 net = gross - fee;
 
-    // ── Admin batch approve ──
-    function batchApproveRedemptions(uint256[] calldata orderIds) external onlyAdmin nonReentrant whenNotPaused {
-        require(orderIds.length <= MAX_BATCH, "Exceeds max batch size"); // M-3
-        for (uint256 i = 0; i < orderIds.length; i++) {
-            Order storage o = orders[orderIds[i]];
-            require(o.status == 0, "Not pending");
-
-            uint256 fee = (o.amount * redemptionFeeBps) / 10000;
-            uint256 net = o.amount - fee;
-            require(usdt.balanceOf(address(this)) >= net, "Insufficient balance");
-
-            o.status = 1;
-            usdt.safeTransfer(o.user, net); // C-1
-            emit RedemptionApproved(orderIds[i], o.user, net);
+        if (fee > 0) {
+            require(usdt.transferFrom(address(vault), S_WALLET, fee), "Fee transfer failed");
         }
+        require(usdt.transferFrom(address(vault), o.user, net), "Payout transfer failed");
+
+        emit RedemptionApproved(orderId, o.user, gross, fee, net);
     }
 
-    // ── Admin reject (L-5: uint8 reason code) ──
+    // ── Admin: reject redemption ────────────────────────────────────
     function rejectRedemption(uint256 orderId, uint8 reason) external onlyAdmin {
         Order storage o = orders[orderId];
-        require(o.status == 0, "Not pending");
-        o.status = 2;
+        require(o.user != address(0), "Order not found");
+        require(o.status == STATUS_PENDING, "Not pending");
+
+        o.status = STATUS_REJECTED;
         o.rejectReason = reason;
-        emit RedemptionRejected(orderId, reason);
+
+        emit RedemptionRejected(orderId, o.user, reason);
     }
 
-    // ── H-1: Withdraw accumulated fees ──
-    function withdrawFees(address to, uint256 amount) external onlyOwnerOrSuper {
-        require(to != address(0), "Zero address");
-        usdt.safeTransfer(to, amount);
+    // ── Admin: set redemption fee ───────────────────────────────────
+    function setRedemptionFee(uint256 _bps) external onlyAdmin {
+        require(_bps <= 5000, "Fee too high"); // max 50%
+        uint256 old = redemptionFeeBps;
+        redemptionFeeBps = _bps;
+        emit RedemptionFeeUpdated(old, _bps);
     }
 
-    // ── View pending orders (filters hidden for non-Super) ──
-    function getPendingOrderCount() external view returns (uint256 count) {
-        for (uint256 i = 0; i < orders.length; i++) {
-            if (orders[i].status == 0) {
-                // Filter hidden positions for non-Super callers
-                if (accessControl.isHidden(orders[i].user, orders[i].posId) &&
-                    msg.sender != accessControl.S_WALLET()) {
-                    continue;
-                }
-                count++;
-            }
-        }
-    }
-
-    function getOrder(uint256 orderId) external view returns (
-        address user, uint256 posId, uint256 amount,
-        uint256 createdAt, uint8 status
-    ) {
+    // ── Views ───────────────────────────────────────────────────────
+    function getOrder(uint256 orderId)
+        external
+        view
+        returns (
+            address user,
+            uint256 posId,
+            uint256 amount,
+            uint256 createdAt,
+            uint8 status,
+            uint8 rejectReason
+        )
+    {
         Order storage o = orders[orderId];
-        // Filter hidden
-        if (accessControl.isHidden(o.user, o.posId) &&
-            msg.sender != accessControl.S_WALLET()) {
-            return (address(0), 0, 0, 0, 0);
-        }
-        return (o.user, o.posId, o.amount, o.createdAt, o.status);
+        return (o.user, o.posId, o.amount, o.createdAt, o.status, o.rejectReason);
     }
 
-    // ── Config ──
-    function setRedemptionFee(uint256 bps) external onlyOwnerOrSuper {
-        require(bps <= 1000, "Max 10%");
-        redemptionFeeBps = bps;
-    }
-
-    function totalOrders() external view returns (uint256) {
-        return orders.length;
+    function getContractBalance() external view returns (uint256) {
+        return usdt.balanceOf(address(this));
     }
 }

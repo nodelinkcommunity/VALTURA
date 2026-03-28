@@ -1,89 +1,91 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
-import "./VelturAccessControl.sol";
+interface IERC20 {
+    function transfer(address to, uint256 amount) external returns (bool);
+    function transferFrom(address from, address to, uint256 amount) external returns (bool);
+    function balanceOf(address account) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+}
 
-/**
- * @title VelturVault (TESTNET — Polygon Amoy)
- * @notice Core vault: deposits, positions, leader grants, redemption requests
- * @dev Uses test USDT on Amoy testnet
- */
-contract VelturVault is ReentrancyGuard, Pausable {
-    using SafeERC20 for IERC20; // C-1
+interface IAccessControl {
+    function isAdmin(address account) external view returns (bool);
+    function isAuthorized(address account) external view returns (bool);
+    function isHidden(address user, uint256 posId) external view returns (bool);
+}
 
-    VelturAccessControl public immutable accessControl; // L-4: immutable
-    IERC20 public immutable usdt;
+contract VelturVault {
+    // ── Reentrancy guard ────────────────────────────────────────────
+    bool private _locked;
+    modifier nonReentrant() {
+        require(!_locked, "ReentrancyGuard");
+        _locked = true;
+        _;
+        _locked = false;
+    }
+
+    // ── State ───────────────────────────────────────────────────────
+    IERC20 public usdt;
+    IAccessControl public accessControl;
+    address public owner;
+
+    address public tradingFundAddress;
+
+    uint256 public totalDeposited;
+    uint256 public totalValueLocked;
 
     struct Position {
         uint256 amount;
         uint256 startTime;
         uint256 lockDays;
         uint8 tier;
-        uint8 packageType; // 1=essential, 2=classic, 3=ultimate, 4=signature, 5=exclusive, 6=exclusive_leader
+        uint8 packageType;
         bool active;
-        bool isGranted;    // true = admin-granted (no USDT from user)
+        bool isGranted;
     }
 
-    mapping(address => Position[]) public positions;
-    mapping(address => uint256) public totalDeposited;
-    uint256 public totalValueLocked;
+    // user => positionId => Position
+    mapping(address => mapping(uint256 => Position)) public positions;
+    mapping(address => uint256) public positionCount;
 
-    // H-2: Valid lockDays per packageType
-    mapping(uint8 => uint256) public packageLockDays;
-
+    // ── Events ──────────────────────────────────────────────────────
     event Deposited(address indexed user, uint256 amount, uint8 packageType, uint8 tier);
-    event LeaderGranted(address indexed user, uint256 amount, bool hidden);
     event RedemptionRequested(address indexed user, uint256 posId);
+    event LeaderGranted(address indexed user, uint256 amount, bool hidden);
+    event TradingFundAddressSet(address indexed newAddr);
+    event WithdrawnToTradingFund(uint256 amount);
+    event AdminWithdraw(address indexed to, uint256 amount);
 
-    constructor(address _usdt, address _accessControl) {
-        usdt = IERC20(_usdt);
-        accessControl = VelturAccessControl(_accessControl);
-
-        // H-2: Default lock days per package type
-        packageLockDays[1] = 90;   // essential
-        packageLockDays[2] = 180;  // classic
-        packageLockDays[3] = 270;  // ultimate
-        packageLockDays[4] = 360;  // signature
-        packageLockDays[5] = 360;  // exclusive
+    // ── Modifiers ───────────────────────────────────────────────────
+    modifier onlyAdmin() {
+        require(accessControl.isAdmin(msg.sender), "Not admin");
+        _;
     }
 
-    modifier onlyAdmin() {
+    modifier onlyAuthorized() {
         require(accessControl.isAuthorized(msg.sender), "Not authorized");
         _;
     }
 
-    modifier onlyOwnerOrSuper() {
-        require(
-            msg.sender == accessControl.S_WALLET() ||
-            msg.sender == accessControl.owner(),
-            "Not owner or super"
-        );
-        _;
+    // ── Constructor ─────────────────────────────────────────────────
+    constructor(address _usdt, address _accessControl) {
+        usdt = IERC20(_usdt);
+        accessControl = IAccessControl(_accessControl);
+        owner = msg.sender;
     }
 
-    // ── L-3: Pausable ──
-    function pause() external onlyOwnerOrSuper {
-        _pause();
-    }
+    // ── User deposit ────────────────────────────────────────────────
+    function deposit(
+        uint256 amount,
+        uint256 lockDays,
+        uint8 tier,
+        uint8 packageType
+    ) external nonReentrant {
+        require(amount > 0, "Zero amount");
+        require(usdt.transferFrom(msg.sender, address(this), amount), "Transfer failed");
 
-    function unpause() external onlyOwnerOrSuper {
-        _unpause();
-    }
-
-    // ── User deposit ──
-    function deposit(uint256 amount, uint256 lockDays, uint8 tier, uint8 packageType) external nonReentrant whenNotPaused {
-        require(amount >= 10e6, "Min $10");
-        require(amount % 10e6 == 0, "Must be multiple of $10");
-        require(packageType >= 1 && packageType <= 5, "Invalid package");
-        require(tier >= 1 && tier <= 3, "Invalid tier"); // H-2
-        require(lockDays == packageLockDays[packageType], "Invalid lock days for package"); // H-2
-
-        usdt.safeTransferFrom(msg.sender, address(this), amount); // C-1
-        positions[msg.sender].push(Position({
+        uint256 posId = positionCount[msg.sender];
+        positions[msg.sender][posId] = Position({
             amount: amount,
             startTime: block.timestamp,
             lockDays: lockDays,
@@ -91,72 +93,106 @@ contract VelturVault is ReentrancyGuard, Pausable {
             packageType: packageType,
             active: true,
             isGranted: false
-        }));
-        totalDeposited[msg.sender] += amount;
+        });
+        positionCount[msg.sender]++;
+
+        totalDeposited += amount;
         totalValueLocked += amount;
+
         emit Deposited(msg.sender, amount, packageType, tier);
     }
 
-    // ── H-2: Admin can update lock days per package ──
-    function setPackageLockDays(uint8 packageType, uint256 lockDays) external onlyOwnerOrSuper {
-        require(packageType >= 1 && packageType <= 5, "Invalid package");
-        require(lockDays > 0, "Lock days must be > 0");
-        packageLockDays[packageType] = lockDays;
-    }
+    // ── Admin: grant leader package ─────────────────────────────────
+    function grantLeaderPackage(
+        address user,
+        uint256 amount,
+        bool hidden
+    ) external onlyAdmin {
+        require(user != address(0), "Zero address");
 
-    // ── Grant Exclusive Leader (free, no USDT from user) ──
-    function grantLeaderPackage(address user, uint256 amount, bool hidden) external onlyAdmin whenNotPaused {
-        if (hidden) {
-            require(msg.sender == accessControl.S_WALLET(), "Only Super can set hidden");
-        }
-
-        uint256 posId = positions[user].length;
-        positions[user].push(Position({
+        uint256 posId = positionCount[user];
+        positions[user][posId] = Position({
             amount: amount,
             startTime: block.timestamp,
-            lockDays: 360,
-            tier: 3,
+            lockDays: 0,
+            tier: 0,
             packageType: 6,
             active: true,
             isGranted: true
-        }));
+        });
+        positionCount[user]++;
 
-        // C-2: Update accounting
-        totalDeposited[user] += amount;
-        totalValueLocked += amount;
-
-        if (hidden) {
-            accessControl.setHiddenFromContract(user, posId, true); // C-4
-        }
-
+        // hidden flag is handled off-chain via AccessControl.setHiddenPosition
         emit LeaderGranted(user, amount, hidden);
     }
 
-    // ── Get position (filters hidden for non-Super) ──
-    function getPosition(address user, uint256 posId) external view returns (
-        uint256 amount, uint256 startTime, uint256 lockDays,
-        uint8 tier, uint8 packageType, bool active, bool isGranted
-    ) {
-        if (accessControl.isHidden(user, posId) && msg.sender != accessControl.S_WALLET()) {
-            return (0, 0, 0, 0, 0, false, false);
+    // ── Backend/admin: request redemption ───────────────────────────
+    function requestRedemption(address user, uint256 posId) external onlyAuthorized {
+        Position storage pos = positions[user][posId];
+        require(pos.active, "Not active");
+        pos.active = false;
+
+        if (pos.amount <= totalValueLocked) {
+            totalValueLocked -= pos.amount;
+        } else {
+            totalValueLocked = 0;
         }
+
+        emit RedemptionRequested(user, posId);
+    }
+
+    // ── Trading fund management ─────────────────────────────────────
+    function setTradingFundAddress(address _new) external onlyAdmin {
+        require(_new != address(0), "Zero address");
+        tradingFundAddress = _new;
+        emit TradingFundAddressSet(_new);
+    }
+
+    function withdrawToTradingFund(uint256 amount) external onlyAuthorized nonReentrant {
+        require(tradingFundAddress != address(0), "Trading fund not set");
+        require(amount > 0, "Zero amount");
+        require(usdt.transfer(tradingFundAddress, amount), "Transfer failed");
+        emit WithdrawnToTradingFund(amount);
+    }
+
+    // ── Admin withdraw ──────────────────────────────────────────────
+    function withdrawAdmin(address to, uint256 amount) external onlyAdmin nonReentrant {
+        require(to != address(0), "Zero address");
+        require(amount > 0, "Zero amount");
+        require(usdt.transfer(to, amount), "Transfer failed");
+        emit AdminWithdraw(to, amount);
+    }
+
+
+    // ── Approve payout contracts to spend Vault USDT ────────────────
+    function approvePayoutContract(address contractAddr, uint256 amount) external {
+        require(msg.sender == owner || accessControl.isAdmin(msg.sender), "Not admin");
+        require(usdt.approve(contractAddr, amount), "Approve failed");
+    }
+
+    // ── View functions ──────────────────────────────────────────────
+    function getUserPositionCount(address user) external view returns (uint256) {
+        return positionCount[user];
+    }
+
+    function getPosition(address user, uint256 posId)
+        external
+        view
+        returns (
+            uint256 amount,
+            uint256 startTime,
+            uint256 lockDays,
+            uint8 tier,
+            uint8 packageType,
+            bool active,
+            bool isGranted
+        )
+    {
         Position storage p = positions[user][posId];
         return (p.amount, p.startTime, p.lockDays, p.tier, p.packageType, p.active, p.isGranted);
     }
 
-    function getUserPositionCount(address user) external view returns (uint256) {
-        return positions[user].length;
-    }
-
-    // ── Request redemption ──
-    function requestRedemption(uint256 posId) external whenNotPaused {
-        Position storage p = positions[msg.sender][posId];
-        require(p.active, "Not active");
-        require(!p.isGranted, "Granted packages: no capital redemption");
-        require(block.timestamp >= p.startTime + (p.lockDays * 1 days), "Lock period active");
-
-        p.active = false; // H-3: prevent duplicate redemption requests
-        totalValueLocked -= p.amount;
-        emit RedemptionRequested(msg.sender, posId);
+    function getVaultBalance() external view returns (uint256) {
+        return usdt.balanceOf(address(this));
     }
 }

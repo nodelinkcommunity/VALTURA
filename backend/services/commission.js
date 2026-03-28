@@ -12,7 +12,7 @@ const treeService = require('./tree');
  */
 function calculateBinaryBonus() {
   const eligibleUsers = getExclusiveUsers();
-  const bonusRate = parseFloat(db.getConfigValue('comm_binary_bonus')) || 5;
+  const _bbr = db.getConfigValue('comm_binary_bonus'); const bonusRate = (_bbr !== null && _bbr !== undefined) ? parseFloat(_bbr) : 5;
   const results = [];
 
   for (const user of eligibleUsers) {
@@ -23,7 +23,17 @@ function calculateBinaryBonus() {
 
     const bonusAmount = (newMatchedVolume * bonusRate) / 100;
     const capStatus = roiService.getEarningsCapStatus(user.user_id);
-    if (capStatus.remaining <= 0) continue;
+    if (capStatus.remaining <= 0) {
+      // Record lost income
+      if (!db.store.earnings_lost) db.store.earnings_lost = [];
+      db.store.earnings_lost.push({
+        user_id: user.user_id,
+        income_type: 'binary_bonus',
+        amount: bonusAmount,
+        created_at: new Date().toISOString(),
+      });
+      continue;
+    }
 
     const finalAmount = Math.min(bonusAmount, capStatus.remaining);
     if (finalAmount <= 0) continue;
@@ -66,7 +76,18 @@ function calculateReferralCommission(todayROI) {
     if (!roiService.hasActiveExclusive(referrer.id)) continue;
 
     const capStatus = roiService.getEarningsCapStatus(referrer.id);
-    if (capStatus.remaining <= 0) continue;
+    if (capStatus.remaining <= 0) {
+      // Record lost income
+      const calculatedAmount = (roiAmount * refRate) / 100;
+      if (!db.store.earnings_lost) db.store.earnings_lost = [];
+      db.store.earnings_lost.push({
+        user_id: referrer.id,
+        income_type: 'referral_commission',
+        amount: calculatedAmount,
+        created_at: new Date().toISOString(),
+      });
+      continue;
+    }
 
     const commissionAmount = (roiAmount * refRate) / 100;
     const finalAmount = Math.min(commissionAmount, capStatus.remaining);
@@ -107,7 +128,17 @@ function calculateBinaryCommission(todayROI) {
 
     const commissionAmount = (weakLegROI * binaryRate) / 100;
     const capStatus = roiService.getEarningsCapStatus(user.user_id);
-    if (capStatus.remaining <= 0) continue;
+    if (capStatus.remaining <= 0) {
+      // Record lost income
+      if (!db.store.earnings_lost) db.store.earnings_lost = [];
+      db.store.earnings_lost.push({
+        user_id: user.user_id,
+        income_type: 'binary_commission',
+        amount: commissionAmount,
+        created_at: new Date().toISOString(),
+      });
+      continue;
+    }
 
     const finalAmount = Math.min(commissionAmount, capStatus.remaining);
     if (finalAmount <= 0) continue;
@@ -161,7 +192,8 @@ function calculateMomentum() {
 
   for (const user of eligibleUsers) {
     const volumes = treeService.getWeakLeg(user.user_id);
-    const weakLegPersonalVolume = volumes.weakVolume;
+    // Momentum is based on TOTAL INCOME (ROI) from weak leg, NOT volume
+    const weakLegIncome = Math.min(volumes.leftRoi || 0, volumes.rightRoi || 0);
 
     // Get current highest achieved level
     const momentumCommissions = db.store.commissions.filter(
@@ -175,10 +207,20 @@ function calculateMomentum() {
 
     for (const milestone of config.momentum) {
       if (milestone.level <= currentLevel) continue;
-      if (weakLegPersonalVolume < milestone.threshold) break;
+      if (weakLegIncome < milestone.threshold) break;
 
       const capStatus = roiService.getEarningsCapStatus(user.user_id);
-      if (capStatus.remaining <= 0) break;
+      if (capStatus.remaining <= 0) {
+        // Record lost income
+        if (!db.store.earnings_lost) db.store.earnings_lost = [];
+        db.store.earnings_lost.push({
+          user_id: user.user_id,
+          income_type: 'momentum_rewards',
+          amount: milestone.reward,
+          created_at: new Date().toISOString(),
+        });
+        break;
+      }
 
       const finalAmount = Math.min(milestone.reward, capStatus.remaining);
       if (finalAmount <= 0) break;
@@ -316,11 +358,66 @@ function getExclusiveUsers() {
   });
 }
 
+
+/**
+ * Calculate Binary Bonus for a SINGLE user (called instantly on deposit).
+ * Uses same logic as calculateBinaryBonus but for one user only.
+ */
+function calculateBinaryBonusForUser(userId) {
+  // Check if user has active Exclusive package
+  const hasExclusive = db.store.positions.some(
+    (p) => p.user_id === userId && p.status === 'active' &&
+    ['exclusive360', 'exclusive360_leader'].includes(p.package_id)
+  );
+  if (!hasExclusive) return [];
+
+  const _bbr = db.getConfigValue('comm_binary_bonus'); const bonusRate = (_bbr !== null && _bbr !== undefined) ? parseFloat(_bbr) : 5;
+  const volumes = treeService.getWeakLeg(userId);
+  const weakVipVolume = Math.min(volumes.leftVipVolume, volumes.rightVipVolume);
+  const newMatchedVolume = weakVipVolume - (volumes.carryForward || 0);
+  if (newMatchedVolume <= 0) return [];
+
+  const bonusAmount = (newMatchedVolume * bonusRate) / 100;
+  const capStatus = roiService.getEarningsCapStatus(userId);
+  if (capStatus.remaining <= 0) {
+    // Record lost income
+    if (!db.store.earnings_lost) db.store.earnings_lost = [];
+    db.store.earnings_lost.push({
+      user_id: userId,
+      income_type: 'binary_bonus',
+      amount: bonusAmount,
+      created_at: new Date().toISOString(),
+    });
+    return [];
+  }
+
+  const finalAmount = Math.min(bonusAmount, capStatus.remaining);
+  if (finalAmount <= 0) return [];
+
+  const user = db.findUser((u) => u.id === userId);
+  return [{
+    userId: userId,
+    wallet: user ? user.wallet : '',
+    amount: Math.round(finalAmount * 100) / 100,
+    type: 'binary_bonus',
+    newCarryForward: weakVipVolume,
+  }];
+}
+
+/**
+ * Apply commissions immediately (alias for recordCommissions).
+ */
+function applyCommissions(commissions) {
+  return recordCommissions(commissions);
+}
+
 module.exports = {
   calculateBinaryBonus,
+  calculateBinaryBonusForUser,
   calculateReferralCommission,
   calculateBinaryCommission,
   calculateMomentum,
   recordCommissions,
+  applyCommissions,
   applyForfeiture,
 };

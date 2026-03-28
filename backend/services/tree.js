@@ -13,6 +13,8 @@ function placeMember(userId, referrerId, side) {
 
   if (!referrerId) return; // Root user
 
+  db.ensureTreeNode(referrerId);
+
   const parentId = findPlacementSlot(referrerId, side);
   if (!parentId) {
     throw new Error('Could not find placement slot in binary tree');
@@ -20,10 +22,16 @@ function placeMember(userId, referrerId, side) {
 
   const actualSide = getAvailableSide(parentId, side);
   const node = db.getTreeNode(userId);
+  if (!node) {
+    throw new Error(`Tree node missing for user ${userId}`);
+  }
   node.parent_id = parentId;
   node.side = actualSide;
 
   const parentNode = db.getTreeNode(parentId);
+  if (!parentNode) {
+    throw new Error(`Tree node missing for parent ${parentId}`);
+  }
   if (actualSide === 'left') {
     parentNode.left_child_id = userId;
   } else {
@@ -97,9 +105,19 @@ function getLeftRightVolumes(userId) {
  */
 function getWeakLeg(userId) {
   const volumes = getLeftRightVolumes(userId);
-  const weakSide = volumes.leftVolume <= volumes.rightVolume ? 'left' : 'right';
-  const weakVolume = weakSide === 'left' ? volumes.leftVolume : volumes.rightVolume;
-  const strongVolume = weakSide === 'left' ? volumes.rightVolume : volumes.leftVolume;
+  let weakSide = null;
+  if (volumes.leftVolume < volumes.rightVolume) weakSide = 'left';
+  else if (volumes.rightVolume < volumes.leftVolume) weakSide = 'right';
+  const weakVolume = weakSide === 'left'
+    ? volumes.leftVolume
+    : weakSide === 'right'
+      ? volumes.rightVolume
+      : volumes.leftVolume;
+  const strongVolume = weakSide === 'left'
+    ? volumes.rightVolume
+    : weakSide === 'right'
+      ? volumes.leftVolume
+      : volumes.rightVolume;
   return { weakSide, weakVolume, strongVolume, ...volumes };
 }
 

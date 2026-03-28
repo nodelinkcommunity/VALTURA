@@ -1,0 +1,125 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "wallet": "0xE669D94fFeC2341CDBECa855f2DedDd7e1A59Cc0",
+      "username": "veltura",
+      "referrer_id": null,
+      "parent_id": null,
+      "leg": null,
+      "placement": null,
+      "created_at": "2026-03-27T21:16:33.589Z"
+    }
+  ],
+  "positions": [],
+  "earnings": [],
+  "claims": [],
+  "redemptions": [],
+  "commissions": [],
+  "transactions": [],
+  "earnings_lost": [],
+  "tree": [
+    {
+      "user_id": 1,
+      "parent_id": null,
+      "side": null,
+      "left_child_id": null,
+      "right_child_id": null,
+      "left_volume": 0,
+      "right_volume": 0,
+      "left_vip_volume": 0,
+      "right_vip_volume": 0,
+      "left_vip_count": 0,
+      "right_vip_count": 0,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    }
+  ],
+  "config": [
+    {
+      "key": "earnings_cap_multi",
+      "value": "300",
+      "description": "Earnings Cap multiplier (%)"
+    },
+    {
+      "key": "comm_binary_bonus",
+      "value": "5",
+      "description": "Binary bonus rate (%)"
+    },
+    {
+      "key": "comm_referral",
+      "value": "10",
+      "description": "Referral commission rate (%)"
+    },
+    {
+      "key": "comm_binary",
+      "value": "15",
+      "description": "Binary commission rate (%)"
+    },
+    {
+      "key": "comm_momentum",
+      "value": "10",
+      "description": "Momentum rewards rate (%)"
+    },
+    {
+      "key": "fee_claim",
+      "value": "2.5",
+      "description": "Claim fee (%)"
+    },
+    {
+      "key": "fee_redeem",
+      "value": "5",
+      "description": "Redemption fee (%)"
+    },
+    {
+      "key": "fund_trading_pct",
+      "value": "85",
+      "description": "Trading fund allocation (%)"
+    },
+    {
+      "key": "fund_reward_pct",
+      "value": "15",
+      "description": "Reward fund allocation (%)"
+    },
+    {
+      "key": "maxout_essential",
+      "value": "300",
+      "description": "Essential maxout (%)"
+    },
+    {
+      "key": "maxout_classic",
+      "value": "300",
+      "description": "Classic maxout (%)"
+    },
+    {
+      "key": "maxout_ultimate",
+      "value": "300",
+      "description": "Ultimate maxout (%)"
+    },
+    {
+      "key": "maxout_signature",
+      "value": "300",
+      "description": "Signature maxout (%)"
+    },
+    {
+      "key": "maxout_exclusive",
+      "value": "300",
+      "description": "Exclusive maxout (%)"
+    },
+    {
+      "key": "maxout_leader",
+      "value": "300",
+      "description": "Leader maxout (%)"
+    }
+  ],
+  "_counters": {
+    "userId": 2,
+    "positionId": 1,
+    "claimId": 1,
+    "redeemId": 1,
+    "commissionId": 1,
+    "transactionId": 1
+  }
+}

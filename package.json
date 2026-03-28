@@ -7,7 +7,10 @@
     "dev": "node backend/server.js",
     "start": "NODE_ENV=production node backend/server.js",
     "migrate": "node database/migrate.js",
-    "seed": "node database/seed.js"
+    "seed": "node database/seed.js",
+    "deploy:amoy:v3": "npx hardhat run scripts/deploy-amoy-v3.js --network amoy",
+    "reset:db": "node scripts/reset-db.js",
+    "sync:deployment": "node scripts/sync-deployment.js"
   },
   "keywords": [
     "defi",

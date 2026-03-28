@@ -7,6 +7,15 @@ const db = require('../config/db');
 const config = require('../config');
 const { authenticate, requireRegistered } = require('../middleware/auth');
 const treeService = require('../services/tree');
+const blockchain = require('../services/blockchain');
+
+const COMMISSION_TYPE_CODES = {
+  binary_bonus: 2,
+};
+
+function getInstantCommissionEpoch() {
+  return (Date.now() * 1000) + Math.floor(Math.random() * 1000);
+}
 
 // ── GET /api/invest/packages ──
 router.get('/packages', (req, res) => {
@@ -29,11 +38,12 @@ router.get('/packages', (req, res) => {
 router.use(authenticate, requireRegistered);
 
 // ── POST /api/invest/deposit ──
-router.post('/deposit', (req, res) => {
+router.post('/deposit', async (req, res) => {
   try {
     const { amount, tier, txHash } = req.body;
     const packageKey = req.body.package || req.body.packageType;
     const userId = req.user.id;
+    const user = db.findUser((u) => u.id === userId);
 
     // Resolve package by key or by packageType number
     let pkg = null;
@@ -87,6 +97,24 @@ router.post('/deposit', (req, res) => {
       return res.status(409).json({ error: 'Transaction already processed' });
     }
 
+    // ── On-chain verification ──
+    try {
+      const verification = await blockchain.verifyDepositTransaction(txHash, amountNum, user ? user.wallet : null);
+      console.log("[Invest] On-chain verified: amount=" + verification.amount + " user=" + verification.user);
+    } catch (verifyErr) {
+      console.warn("[Invest] On-chain verify error:", verifyErr.message);
+      return res.status(400).json({ error: "Transaction verification failed: " + verifyErr.message });
+    }
+
+    // ── Get on-chain position index ──
+    let onChainIndex = null;
+    try {
+      const posCount = await blockchain.getUserPositionCount(user.wallet);
+      onChainIndex = posCount > 0 ? posCount - 1 : 0;
+    } catch (e) {
+      console.warn("[Invest] Could not get on-chain position count:", e.message);
+    }
+
     const lockDays = pkg.lock;
     const now = new Date();
     const expiresAt = lockDays > 0
@@ -106,13 +134,121 @@ router.post('/deposit', (req, res) => {
       started_at: now.toISOString(),
       expires_at: expiresAt,
       tx_hash: txHash,
+      on_chain_index: onChainIndex,
     };
     db.store.positions.push(position);
-    db.persist();
 
     // Update binary tree volumes
-    const isVip = ['signature180', 'exclusive360'].includes(pkgId);
+    const isVip = ['signature180', 'exclusive360', 'exclusive360_leader'].includes(pkgId);
     treeService.updateVolumes(userId, amountNum, isVip);
+
+    // ── Record transaction ──
+    const txId = db.nextTransactionId();
+    if (!db.store.transactions) db.store.transactions = [];
+    db.store.transactions.push({
+      id: txId,
+      user_id: userId,
+      type: 'deposit',
+      amount: amountNum,
+      fee_pct: 0,
+      fee_amount: 0,
+      net_amount: amountNum,
+      status: 'confirmed',
+      tx_hash: txHash,
+      created_at: now.toISOString(),
+    });
+
+    db.persist();
+
+    // ── Immediate Binary Bonus (for Signature/Exclusive) ──
+    if (isVip) {
+      try {
+        const commissionService = require('../services/commission');
+        // Walk up the tree: deposit affects all ancestors' matched volumes
+        let currentNode = db.getTreeNode(userId);
+        const processed = new Set();
+        while (currentNode && currentNode.parent_id) {
+          const parentId = currentNode.parent_id;
+          if (processed.has(parentId)) break;
+          processed.add(parentId);
+          const bonuses = commissionService.calculateBinaryBonusForUser(parentId);
+          if (bonuses.length > 0) {
+            await blockchain.distributeCommissions(
+              bonuses.map((bonus) => bonus.wallet),
+              bonuses.map((bonus) => COMMISSION_TYPE_CODES[bonus.type]),
+              bonuses.map((bonus) => bonus.amount),
+              getInstantCommissionEpoch()
+            );
+            commissionService.applyCommissions(bonuses);
+            console.log('[Invest] Instant Binary Bonus for upline', parentId, ':', bonuses[0].amount);
+            db.persist();
+          }
+          currentNode = db.getTreeNode(parentId);
+        }
+      } catch (bbErr) {
+        console.warn('[Invest] Binary bonus calc failed:', bbErr.message);
+      }
+    }
+
+    // ── Instant Binary Bonus for F0 on F1 Signature/Exclusive deposit ──
+    if (isVip) {
+      try {
+        const depositor = db.findUser((u) => u.id === userId);
+        if (depositor && depositor.referrer_id) {
+          const referrer = db.findUser((u) => u.id === depositor.referrer_id);
+          if (referrer) {
+            const roiService = require('../services/roi');
+            if (roiService.hasActiveExclusive(referrer.id)) {
+              const bonusRate = parseFloat(db.getConfigValue('comm_binary_bonus')) || 5;
+              const refAmount = Math.round((amountNum * bonusRate) / 100 * 100) / 100;
+              const capStatus = roiService.getEarningsCapStatus(referrer.id);
+              const finalRefAmount = Math.min(refAmount, capStatus.remaining);
+
+              if (finalRefAmount > 0) {
+                const commissionService = require('../services/commission');
+                const instantBonuses = [{
+                  userId: referrer.id,
+                  wallet: referrer.wallet,
+                  amount: finalRefAmount,
+                  type: 'binary_bonus',
+                  sourceUserId: userId,
+                }];
+                await blockchain.distributeCommissions(
+                  instantBonuses.map((bonus) => bonus.wallet),
+                  instantBonuses.map((bonus) => COMMISSION_TYPE_CODES[bonus.type]),
+                  instantBonuses.map((bonus) => bonus.amount),
+                  getInstantCommissionEpoch()
+                );
+                commissionService.applyCommissions(instantBonuses);
+                console.log('[Invest] Instant Binary Bonus for', referrer.username, ':', finalRefAmount);
+                db.persist();
+              }
+            }
+          }
+        }
+      } catch (rcErr) {
+        console.warn('[Invest] Binary bonus calc failed:', rcErr.message);
+      }
+    }
+
+    // ── Auto-split to TradingFunds ──
+    try {
+      if (pkgId === 'exclusive360') {
+        const vipTotal = db.store.positions
+          .filter((p) => p.user_id === userId && p.status === 'active' && ['exclusive360', 'exclusive360_leader'].includes(p.package_id))
+          .reduce((sum, p) => sum + p.amount, 0);
+        await blockchain.setVIPInvestment(user.wallet, vipTotal);
+      }
+
+      const tradingPct = parseFloat(db.getConfigValue('fund_trading_pct')) || 85;
+      const tradingAmount = amountNum * tradingPct / 100;
+      if (tradingAmount > 0) {
+        await blockchain.withdrawToTradingFund(tradingAmount);
+        console.log('[Invest] Auto-split to TradingFunds:', tradingAmount, 'USDT');
+      }
+    } catch (tfErr) {
+      console.warn('[Invest] TradingFunds split error:', tfErr.message);
+    }
 
     res.status(201).json({
       success: true,
@@ -124,6 +260,7 @@ router.post('/deposit', (req, res) => {
       lockDays,
       startedAt: position.started_at,
       expiresAt,
+      onChainIndex,
     });
   } catch (err) {
     console.error('[Invest] Deposit error:', err.message);
@@ -163,10 +300,14 @@ router.get('/positions', (req, res) => {
         startedAt: p.started_at,
         expiresAt: p.expires_at,
         txHash: p.tx_hash,
+        onChainIndex: p.on_chain_index,
         totalROI,
         claimedROI,
         unclaimedROI: totalROI - claimedROI,
-        canRedeem: p.status === 'active' && p.lock_days > 0 && p.expires_at && new Date(p.expires_at) <= new Date(),
+        canRedeem: p.status === 'active' && (
+          p.lock_days === 0 ||
+          (p.expires_at && new Date(p.expires_at) <= new Date())
+        ),
       };
     });
 
@@ -182,6 +323,8 @@ router.get('/positions', (req, res) => {
 });
 
 // ── POST /api/invest/redeem ──
+// Creates a backend redemption order (pending). Does NOT call on-chain.
+// Position stays 'active' until admin approves.
 router.post('/redeem', (req, res) => {
   try {
     const { positionId } = req.body;
@@ -200,9 +343,10 @@ router.post('/redeem', (req, res) => {
     }
 
     if (position.status !== 'active') {
-      return res.status(400).json({ error: 'Position is not active' });
+      return res.status(400).json({ error: position.status === 'redeeming' ? 'Redemption already in progress' : 'Position is not active' });
     }
 
+    // Block leader (granted) packages
     if (position.package_id === 'exclusive360_leader') {
       return res.status(400).json({ error: 'Granted packages cannot be redeemed' });
     }
@@ -221,8 +365,15 @@ router.post('/redeem', (req, res) => {
       }
     }
 
-    // Mark position as completed
-    position.status = 'completed';
+    // Check if there's already a pending redemption for this position
+    const existingPending = db.store.redemptions.find(
+      r => r.position_id === position.id && r.status === 'pending'
+    );
+    if (existingPending) {
+      return res.status(400).json({ error: 'A pending redemption already exists for this position' });
+    }
+
+    // Do NOT change position status - keep it 'active' until admin approves
 
     // Create redeem order
     const orderId = db.nextRedeemId();
@@ -230,6 +381,7 @@ router.post('/redeem', (req, res) => {
       id: orderId,
       user_id: userId,
       position_id: position.id,
+      on_chain_index: position.on_chain_index || null,
       amount: position.amount,
       status: 'pending',
       tx_hash: null,
@@ -237,6 +389,7 @@ router.post('/redeem', (req, res) => {
       processed_at: null,
     };
     db.store.redemptions.push(order);
+    db.persist();
 
     const feePercent = parseFloat(db.getConfigValue('fee_redeem')) || 5;
     const feeAmount = (position.amount * feePercent) / 100;
@@ -256,6 +409,28 @@ router.post('/redeem', (req, res) => {
   } catch (err) {
     console.error('[Invest] Redeem error:', err.message);
     res.status(500).json({ error: 'Redemption failed' });
+  }
+});
+
+
+// -- GET /api/invest/my-redemptions --
+router.get("/my-redemptions", (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userRedemptions = (db.store.redemptions || [])
+      .filter(r => r.user_id === userId)
+      .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    const items = userRedemptions.map(r => {
+      const pos = db.store.positions.find(p => p.id === r.position_id);
+      const pkgName = pos && config.packages[pos.package_id] ? config.packages[pos.package_id].name : (pos ? pos.package_id : "Unknown");
+      const feePercent = parseFloat(db.getConfigValue("fee_redeem")) || 5;
+      const feeAmount = ((r.amount || 0) * feePercent) / 100;
+      return { id: r.id, positionId: r.position_id, packageName: pkgName, amount: r.amount || 0, feePercent, feeAmount, netAmount: (r.amount || 0) - feeAmount, status: r.status, txHash: r.tx_hash || null, createdAt: r.created_at, processedAt: r.processed_at || null };
+    });
+    res.json({ success: true, redemptions: items });
+  } catch (err) {
+    console.error("[Invest] My-redemptions error:", err.message);
+    res.status(500).json({ error: "Failed to load redemptions" });
   }
 });
 

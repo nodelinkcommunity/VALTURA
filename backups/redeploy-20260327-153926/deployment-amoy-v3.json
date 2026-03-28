@@ -1,0 +1,23 @@
+{
+  "network": "polygon-amoy",
+  "chainId": 80002,
+  "deployer": "0xE669D94fFeC2341CDBECa855f2DedDd7e1A59Cc0",
+  "owner": "0xE669D94fFeC2341CDBECa855f2DedDd7e1A59Cc0",
+  "sWallet": "0x031eA4bA7E1C5729C352e846549E9B5745f3C66E",
+  "contracts": {
+    "MockUSDT": "0x96FBA824E3798E59e98fDE8E019a684700F9fF4a",
+    "VelturAccessControl": "0x4A920e52eE8B637CFF89Fcab7CAffdA4186f79D6",
+    "VelturVault": "0x6706bDB9F533aC9a11aB724360024dcc8B91e38f",
+    "TradingFunds": "0xa4070CB577fA87eFC478d643FC25b8bA17b41BbB",
+    "ROIDistributor": "0x692AdC6f69205AFe6Ad843795E79121ec2212Ec3",
+    "CommissionPayout": "0x16faf9704925D032cFe7e55cc189AaAf7B47066c",
+    "RedemptionManager": "0x85617644f3021124C5A03B4671618516d5B18e1e"
+  },
+  "defaults": {
+    "feeClaimPct": 2.5,
+    "feeRedeemPct": 5,
+    "earningsCapPct": 300
+  },
+  "architecture": "ONLY Vault + TradingFunds hold USDT. ROI/Commission/Redemption pay from Vault via transferFrom.",
+  "deployedAt": "2026-03-27T15:56:13.444Z"
+}

@@ -1,0 +1,846 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "wallet": "0xE669D94fFeC2341CDBECa855f2DedDd7e1A59Cc0",
+      "username": "veltura",
+      "referrer_id": null,
+      "parent_id": null,
+      "leg": null,
+      "placement": null,
+      "created_at": "2026-03-27T15:56:26.948Z"
+    },
+    {
+      "id": 2,
+      "wallet": "0xF758ED788d746aFEAd0e965B92f2bd8842993643",
+      "username": "homealfa",
+      "referrer_id": 1,
+      "placement": "left",
+      "created_at": "2026-03-27T17:17:20.769Z"
+    },
+    {
+      "id": 3,
+      "wallet": "0x4A47ca79da4d1e4166745Ce9D0250C5103a66924",
+      "username": "skyteam",
+      "referrer_id": 1,
+      "placement": "right",
+      "created_at": "2026-03-27T18:28:47.187Z"
+    },
+    {
+      "id": 4,
+      "wallet": "0xC52C1214fd408ca9De03D9C1e95f3eC02c538ecF",
+      "username": "sky01",
+      "referrer_id": 3,
+      "placement": "left",
+      "created_at": "2026-03-27T18:31:07.668Z"
+    },
+    {
+      "id": 5,
+      "wallet": "0xe4798FFD50F5E3bF705D4B540151d274aB154D61",
+      "username": "sky02",
+      "referrer_id": 3,
+      "placement": "right",
+      "created_at": "2026-03-27T18:31:43.661Z"
+    }
+  ],
+  "positions": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "package_id": "exclusive360",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 1.2,
+      "lock_days": 360,
+      "status": "active",
+      "started_at": "2026-03-27T16:33:20.415Z",
+      "expires_at": "2027-03-22T16:33:20.415Z",
+      "tx_hash": "0xf83aa3c25b8ad4dd064f1c0b8def8ea47d00b60208121264e536985d56cd8622",
+      "on_chain_index": 0
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "package_id": "essential",
+      "amount": 1000,
+      "tier": 1,
+      "daily_rate": 0.2,
+      "lock_days": 0,
+      "status": "completed",
+      "started_at": "2026-03-27T16:50:45.228Z",
+      "expires_at": null,
+      "tx_hash": "0x07d10f936a42df6bc099540c0def1db6df28b2932d7d84cdf7971152d4c662d4",
+      "on_chain_index": 0
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "package_id": "essential",
+      "amount": 5000,
+      "tier": 2,
+      "daily_rate": 0.25,
+      "lock_days": 0,
+      "status": "active",
+      "started_at": "2026-03-27T17:31:17.165Z",
+      "expires_at": null,
+      "tx_hash": "0x135da79f88ad79cea897a4fc7615df6881d8e46c257f084c639d853a836b2d37",
+      "on_chain_index": 1
+    },
+    {
+      "id": 4,
+      "user_id": 2,
+      "package_id": "exclusive360_leader",
+      "amount": 5000,
+      "tier": 3,
+      "daily_rate": 1.2,
+      "lock_days": 360,
+      "status": "active",
+      "hidden": false,
+      "started_at": "2026-03-27T17:38:11.441Z",
+      "expires_at": "2027-03-22T17:38:11.441Z",
+      "tx_hash": "0x20035c66e987935142396579516ddae52a5374e67a8e67e83b54d07f97a092fa",
+      "on_chain_index": 0
+    },
+    {
+      "id": 5,
+      "user_id": 3,
+      "package_id": "essential",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.35,
+      "lock_days": 0,
+      "status": "active",
+      "started_at": "2026-03-27T18:33:22.516Z",
+      "expires_at": null,
+      "tx_hash": "0xd13d3b429ad539e0776f52d4226370dbdbb1781ddff52382a8aa79ca36c13f22",
+      "on_chain_index": 0
+    },
+    {
+      "id": 6,
+      "user_id": 3,
+      "package_id": "classic30",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.45,
+      "lock_days": 30,
+      "status": "active",
+      "started_at": "2026-03-27T18:34:02.014Z",
+      "expires_at": "2026-04-26T18:34:02.014Z",
+      "tx_hash": "0xee3ed7dba8fb729d65960f860f9a8c5c681d536afce5a5a463ccd5f396dcb6fd",
+      "on_chain_index": 1
+    },
+    {
+      "id": 7,
+      "user_id": 3,
+      "package_id": "ultimate90",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.6,
+      "lock_days": 90,
+      "status": "active",
+      "started_at": "2026-03-27T18:34:38.052Z",
+      "expires_at": "2026-06-25T18:34:38.052Z",
+      "tx_hash": "0x4ffd6dd714d649471baf70f7adb103d6b1c69503b6f9d48401ddac063819bba8",
+      "on_chain_index": 2
+    },
+    {
+      "id": 8,
+      "user_id": 3,
+      "package_id": "signature180",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.8,
+      "lock_days": 180,
+      "status": "active",
+      "started_at": "2026-03-27T18:35:21.735Z",
+      "expires_at": "2026-09-23T18:35:21.735Z",
+      "tx_hash": "0x8059d2183b51f593978de4c79b9f05a29dea40d11f83b2072e87b43159ec532a",
+      "on_chain_index": 3
+    },
+    {
+      "id": 9,
+      "user_id": 3,
+      "package_id": "exclusive360",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 1.2,
+      "lock_days": 360,
+      "status": "active",
+      "started_at": "2026-03-27T18:36:10.408Z",
+      "expires_at": "2027-03-22T18:36:10.408Z",
+      "tx_hash": "0x0065e04b84f4b6dd04aa08055de1ac92492f5f7a792af536e677fcb19cb284bc",
+      "on_chain_index": 4
+    },
+    {
+      "id": 10,
+      "user_id": 4,
+      "package_id": "essential",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.35,
+      "lock_days": 0,
+      "status": "active",
+      "started_at": "2026-03-27T18:39:26.181Z",
+      "expires_at": null,
+      "tx_hash": "0xa5420e34557ce8baaa00bdfdc90a3521e2e4eb38e001ab3daa902375cb50b5ba",
+      "on_chain_index": 0
+    },
+    {
+      "id": 11,
+      "user_id": 4,
+      "package_id": "classic30",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.45,
+      "lock_days": 30,
+      "status": "active",
+      "started_at": "2026-03-27T18:40:02.149Z",
+      "expires_at": "2026-04-26T18:40:02.149Z",
+      "tx_hash": "0xe3861692ee8b6922d9f2f83f40c49739e1b1c059c5725d41c4ee9724e302047e",
+      "on_chain_index": 1
+    },
+    {
+      "id": 12,
+      "user_id": 4,
+      "package_id": "ultimate90",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.6,
+      "lock_days": 90,
+      "status": "active",
+      "started_at": "2026-03-27T18:40:36.605Z",
+      "expires_at": "2026-06-25T18:40:36.605Z",
+      "tx_hash": "0x5956c6791e75491f9d6c32a4a050d5cab9eca26b83b5028b2f3c04670552487f",
+      "on_chain_index": 2
+    },
+    {
+      "id": 13,
+      "user_id": 4,
+      "package_id": "signature180",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.8,
+      "lock_days": 180,
+      "status": "active",
+      "started_at": "2026-03-27T18:41:10.439Z",
+      "expires_at": "2026-09-23T18:41:10.439Z",
+      "tx_hash": "0xf7a74856b6fd2113ca578660b7fac40f01019e753269fe6f2470adc243470ac1",
+      "on_chain_index": 3
+    },
+    {
+      "id": 14,
+      "user_id": 4,
+      "package_id": "exclusive360",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 1.2,
+      "lock_days": 360,
+      "status": "active",
+      "started_at": "2026-03-27T18:42:00.444Z",
+      "expires_at": "2027-03-22T18:42:00.444Z",
+      "tx_hash": "0x5fc308141ed56c303939926d4b84cc5a0af6bbd2984b4c75908f497d85ea2fe1",
+      "on_chain_index": 4
+    },
+    {
+      "id": 15,
+      "user_id": 5,
+      "package_id": "essential",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.35,
+      "lock_days": 0,
+      "status": "active",
+      "started_at": "2026-03-27T18:43:11.960Z",
+      "expires_at": null,
+      "tx_hash": "0x91a1efc637cd563b5d5c44317bacd65ab8c905a5abe92c4f8cf3c5cb443996c4",
+      "on_chain_index": 0
+    },
+    {
+      "id": 16,
+      "user_id": 5,
+      "package_id": "classic30",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.45,
+      "lock_days": 30,
+      "status": "active",
+      "started_at": "2026-03-27T18:43:38.851Z",
+      "expires_at": "2026-04-26T18:43:38.851Z",
+      "tx_hash": "0xcbe03f02cb7b822e07168b6721b0b5c3f0e407e62dfa99ef273c2fe8c6a64ab5",
+      "on_chain_index": 1
+    },
+    {
+      "id": 17,
+      "user_id": 5,
+      "package_id": "ultimate90",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.6,
+      "lock_days": 90,
+      "status": "active",
+      "started_at": "2026-03-27T18:44:10.304Z",
+      "expires_at": "2026-06-25T18:44:10.304Z",
+      "tx_hash": "0xf1f73b7911149a1f6a9763d685063a43bc96bd0f28c341d159544447345a37b7",
+      "on_chain_index": 2
+    },
+    {
+      "id": 18,
+      "user_id": 5,
+      "package_id": "signature180",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 0.8,
+      "lock_days": 180,
+      "status": "active",
+      "started_at": "2026-03-27T18:44:40.575Z",
+      "expires_at": "2026-09-23T18:44:40.575Z",
+      "tx_hash": "0x289af95345dd96150fdd1cc81286957c2a13da3c501bd725577fed011d78072f",
+      "on_chain_index": 3
+    },
+    {
+      "id": 19,
+      "user_id": 5,
+      "package_id": "exclusive360",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 1.2,
+      "lock_days": 360,
+      "status": "active",
+      "started_at": "2026-03-27T18:45:29.065Z",
+      "expires_at": "2027-03-22T18:45:29.065Z",
+      "tx_hash": "0x54efd865391acae216135d1aab9517f44e4cae9ec5f0fd65adf25bafacb30321",
+      "on_chain_index": 4
+    }
+  ],
+  "earnings": [
+    {
+      "user_id": 1,
+      "position_id": 1,
+      "income_type": "binary_bonus",
+      "total_earned": 1250,
+      "total_claimed": 0,
+      "updated_at": "2026-03-27T18:36:15.997Z"
+    },
+    {
+      "user_id": 3,
+      "position_id": 9,
+      "income_type": "binary_bonus",
+      "total_earned": 3000,
+      "total_claimed": 0,
+      "updated_at": "2026-03-27T18:45:40.226Z"
+    }
+  ],
+  "claims": [],
+  "redemptions": [
+    {
+      "id": 2,
+      "user_id": 1,
+      "position_id": 3,
+      "on_chain_index": 1,
+      "amount": 5000,
+      "status": "rejected",
+      "tx_hash": null,
+      "created_at": "2026-03-27T17:31:30.201Z",
+      "processed_at": "2026-03-27T17:31:46.310Z",
+      "processed_by": "0xe669d94ffec2341cdbeca855f2deddd7e1a59cc0"
+    },
+    {
+      "id": 1,
+      "user_id": 1,
+      "position_id": 2,
+      "on_chain_index": null,
+      "amount": 1000,
+      "status": "approved",
+      "tx_hash": "0x793cd442756e85594bdd91a32edef2aa50c5bf739575157b04db63d40d2ff60c",
+      "created_at": "2026-03-27T16:59:14.737Z",
+      "processed_at": "2026-03-27T16:59:59.462Z",
+      "processed_by": "0xe669d94ffec2341cdbeca855f2deddd7e1a59cc0"
+    }
+  ],
+  "commissions": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "source_user": null,
+      "type": "binary_bonus",
+      "amount": 250,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T18:35:27.352Z"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "source_user": 3,
+      "type": "binary_bonus",
+      "amount": 500,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T18:35:32.961Z"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "source_user": 3,
+      "type": "binary_bonus",
+      "amount": 500,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T18:36:15.997Z"
+    },
+    {
+      "id": 4,
+      "user_id": 3,
+      "source_user": 4,
+      "type": "binary_bonus",
+      "amount": 500,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T18:41:16.177Z"
+    },
+    {
+      "id": 5,
+      "user_id": 3,
+      "source_user": 4,
+      "type": "binary_bonus",
+      "amount": 500,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T18:42:06.018Z"
+    },
+    {
+      "id": 6,
+      "user_id": 3,
+      "source_user": null,
+      "type": "binary_bonus",
+      "amount": 500,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T18:44:46.164Z"
+    },
+    {
+      "id": 7,
+      "user_id": 3,
+      "source_user": 5,
+      "type": "binary_bonus",
+      "amount": 500,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T18:44:51.754Z"
+    },
+    {
+      "id": 8,
+      "user_id": 3,
+      "source_user": null,
+      "type": "binary_bonus",
+      "amount": 500,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T18:45:34.642Z"
+    },
+    {
+      "id": 9,
+      "user_id": 3,
+      "source_user": 5,
+      "type": "binary_bonus",
+      "amount": 500,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T18:45:40.226Z"
+    }
+  ],
+  "transactions": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0xf83aa3c25b8ad4dd064f1c0b8def8ea47d00b60208121264e536985d56cd8622",
+      "created_at": "2026-03-27T16:33:20.415Z"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "type": "deposit",
+      "amount": 1000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 1000,
+      "status": "confirmed",
+      "tx_hash": "0x07d10f936a42df6bc099540c0def1db6df28b2932d7d84cdf7971152d4c662d4",
+      "created_at": "2026-03-27T16:50:45.228Z"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "type": "redeem",
+      "amount": 1000,
+      "fee_pct": 5,
+      "fee_amount": 50,
+      "net_amount": 950,
+      "status": "confirmed",
+      "tx_hash": "0x793cd442756e85594bdd91a32edef2aa50c5bf739575157b04db63d40d2ff60c",
+      "created_at": "2026-03-27T16:59:59.462Z"
+    },
+    {
+      "id": 4,
+      "user_id": 1,
+      "type": "deposit",
+      "amount": 5000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 5000,
+      "status": "confirmed",
+      "tx_hash": "0x135da79f88ad79cea897a4fc7615df6881d8e46c257f084c639d853a836b2d37",
+      "created_at": "2026-03-27T17:31:17.165Z"
+    },
+    {
+      "id": 5,
+      "user_id": 3,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0xd13d3b429ad539e0776f52d4226370dbdbb1781ddff52382a8aa79ca36c13f22",
+      "created_at": "2026-03-27T18:33:22.516Z"
+    },
+    {
+      "id": 6,
+      "user_id": 3,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0xee3ed7dba8fb729d65960f860f9a8c5c681d536afce5a5a463ccd5f396dcb6fd",
+      "created_at": "2026-03-27T18:34:02.014Z"
+    },
+    {
+      "id": 7,
+      "user_id": 3,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0x4ffd6dd714d649471baf70f7adb103d6b1c69503b6f9d48401ddac063819bba8",
+      "created_at": "2026-03-27T18:34:38.052Z"
+    },
+    {
+      "id": 8,
+      "user_id": 3,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0x8059d2183b51f593978de4c79b9f05a29dea40d11f83b2072e87b43159ec532a",
+      "created_at": "2026-03-27T18:35:21.735Z"
+    },
+    {
+      "id": 9,
+      "user_id": 3,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0x0065e04b84f4b6dd04aa08055de1ac92492f5f7a792af536e677fcb19cb284bc",
+      "created_at": "2026-03-27T18:36:10.408Z"
+    },
+    {
+      "id": 10,
+      "user_id": 4,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0xa5420e34557ce8baaa00bdfdc90a3521e2e4eb38e001ab3daa902375cb50b5ba",
+      "created_at": "2026-03-27T18:39:26.181Z"
+    },
+    {
+      "id": 11,
+      "user_id": 4,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0xe3861692ee8b6922d9f2f83f40c49739e1b1c059c5725d41c4ee9724e302047e",
+      "created_at": "2026-03-27T18:40:02.149Z"
+    },
+    {
+      "id": 12,
+      "user_id": 4,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0x5956c6791e75491f9d6c32a4a050d5cab9eca26b83b5028b2f3c04670552487f",
+      "created_at": "2026-03-27T18:40:36.605Z"
+    },
+    {
+      "id": 13,
+      "user_id": 4,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0xf7a74856b6fd2113ca578660b7fac40f01019e753269fe6f2470adc243470ac1",
+      "created_at": "2026-03-27T18:41:10.439Z"
+    },
+    {
+      "id": 14,
+      "user_id": 4,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0x5fc308141ed56c303939926d4b84cc5a0af6bbd2984b4c75908f497d85ea2fe1",
+      "created_at": "2026-03-27T18:42:00.444Z"
+    },
+    {
+      "id": 15,
+      "user_id": 5,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0x91a1efc637cd563b5d5c44317bacd65ab8c905a5abe92c4f8cf3c5cb443996c4",
+      "created_at": "2026-03-27T18:43:11.960Z"
+    },
+    {
+      "id": 16,
+      "user_id": 5,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0xcbe03f02cb7b822e07168b6721b0b5c3f0e407e62dfa99ef273c2fe8c6a64ab5",
+      "created_at": "2026-03-27T18:43:38.851Z"
+    },
+    {
+      "id": 17,
+      "user_id": 5,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0xf1f73b7911149a1f6a9763d685063a43bc96bd0f28c341d159544447345a37b7",
+      "created_at": "2026-03-27T18:44:10.304Z"
+    },
+    {
+      "id": 18,
+      "user_id": 5,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0x289af95345dd96150fdd1cc81286957c2a13da3c501bd725577fed011d78072f",
+      "created_at": "2026-03-27T18:44:40.575Z"
+    },
+    {
+      "id": 19,
+      "user_id": 5,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0x54efd865391acae216135d1aab9517f44e4cae9ec5f0fd65adf25bafacb30321",
+      "created_at": "2026-03-27T18:45:29.065Z"
+    }
+  ],
+  "earnings_lost": [],
+  "tree": [
+    {
+      "user_id": 1,
+      "parent_id": null,
+      "side": null,
+      "left_child_id": 2,
+      "right_child_id": 3,
+      "left_volume": 5000,
+      "right_volume": 150000,
+      "left_vip_volume": 5000,
+      "right_vip_volume": 60000,
+      "left_vip_count": 1,
+      "right_vip_count": 6,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 5000,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 2,
+      "parent_id": 1,
+      "side": "left",
+      "left_child_id": null,
+      "right_child_id": null,
+      "left_volume": 0,
+      "right_volume": 0,
+      "left_vip_volume": 0,
+      "right_vip_volume": 0,
+      "left_vip_count": 0,
+      "right_vip_count": 0,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 3,
+      "parent_id": 1,
+      "side": "right",
+      "left_child_id": 4,
+      "right_child_id": 5,
+      "left_volume": 50000,
+      "right_volume": 50000,
+      "left_vip_volume": 20000,
+      "right_vip_volume": 20000,
+      "left_vip_count": 2,
+      "right_vip_count": 2,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 20000,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 4,
+      "parent_id": 3,
+      "side": "left",
+      "left_child_id": null,
+      "right_child_id": null,
+      "left_volume": 0,
+      "right_volume": 0,
+      "left_vip_volume": 0,
+      "right_vip_volume": 0,
+      "left_vip_count": 0,
+      "right_vip_count": 0,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 5,
+      "parent_id": 3,
+      "side": "right",
+      "left_child_id": null,
+      "right_child_id": null,
+      "left_volume": 0,
+      "right_volume": 0,
+      "left_vip_volume": 0,
+      "right_vip_volume": 0,
+      "left_vip_count": 0,
+      "right_vip_count": 0,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    }
+  ],
+  "config": [
+    {
+      "key": "earnings_cap_multi",
+      "value": "300",
+      "description": "Earnings Cap multiplier (%)"
+    },
+    {
+      "key": "comm_binary_bonus",
+      "value": "5",
+      "description": "Binary bonus rate (%)"
+    },
+    {
+      "key": "comm_referral",
+      "value": "10",
+      "description": "Referral commission rate (%)"
+    },
+    {
+      "key": "comm_binary",
+      "value": "15",
+      "description": "Binary commission rate (%)"
+    },
+    {
+      "key": "comm_momentum",
+      "value": "10",
+      "description": "Momentum rewards rate (%)"
+    },
+    {
+      "key": "fee_claim",
+      "value": "2.5",
+      "description": "Claim fee (%)"
+    },
+    {
+      "key": "fee_redeem",
+      "value": "5",
+      "description": "Redemption fee (%)"
+    },
+    {
+      "key": "fund_trading_pct",
+      "value": "85",
+      "description": "Trading fund allocation (%)"
+    },
+    {
+      "key": "fund_reward_pct",
+      "value": "15",
+      "description": "Reward fund allocation (%)"
+    },
+    {
+      "key": "maxout_essential",
+      "value": "300",
+      "description": "Essential maxout (%)"
+    },
+    {
+      "key": "maxout_classic",
+      "value": "300",
+      "description": "Classic maxout (%)"
+    },
+    {
+      "key": "maxout_ultimate",
+      "value": "300",
+      "description": "Ultimate maxout (%)"
+    },
+    {
+      "key": "maxout_signature",
+      "value": "300",
+      "description": "Signature maxout (%)"
+    },
+    {
+      "key": "maxout_exclusive",
+      "value": "300",
+      "description": "Exclusive maxout (%)"
+    },
+    {
+      "key": "maxout_leader",
+      "value": "300",
+      "description": "Leader maxout (%)"
+    }
+  ],
+  "_counters": {
+    "userId": 6,
+    "positionId": 20,
+    "claimId": 1,
+    "redeemId": 3,
+    "commissionId": 10,
+    "transactionId": 20
+  }
+}

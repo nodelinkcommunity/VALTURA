@@ -1,181 +1,231 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
-import "./VelturAccessControl.sol";
+interface IERC20 {
+    function transfer(address to, uint256 amount) external returns (bool);
+    function transferFrom(address from, address to, uint256 amount) external returns (bool);
+    function balanceOf(address account) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+}
 
-/**
- * @title CommissionPayout (TESTNET — Polygon Amoy)
- * @notice 5 income sources + Earnings Cap 300% + Claim All
- *
- * Income Types:
- *   1 = Daily Profit
- *   2 = Binary Bonus (5% on Signature + Exclusive volume)
- *   3 = Referral Commission (10% on F1 daily profit)
- *   4 = Binary Commission (15% on weak leg daily profit)
- *   5 = Momentum Rewards
- */
-contract CommissionPayout is ReentrancyGuard, Pausable {
-    using SafeERC20 for IERC20; // C-1
+interface IAccessControl {
+    function isAdmin(address account) external view returns (bool);
+    function isAuthorized(address account) external view returns (bool);
+    function isClaimLocked(address user) external view returns (bool);
+}
 
-    VelturAccessControl public immutable accessControl; // L-4: immutable
-    IERC20 public immutable usdt;
-
-    // Per-user per-type earnings
-    mapping(address => mapping(uint8 => uint256)) public earned;   // total earned
-    mapping(address => mapping(uint8 => uint256)) public claimed;  // total claimed
-
-    // Earnings Cap
-    mapping(address => uint256) public vipInvestment; // Exclusive package amount
-    uint256 public earningsCapMultiplier = 300; // 300%
-    uint256 public claimFeeBps = 250; // 2.5%
-
-    // M-2: Epoch guard
-    mapping(uint256 => bool) public distributedEpochs;
-
-    // M-3: Batch size limit
-    uint256 public constant MAX_BATCH = 200;
-
-    event CommissionDistributed(address indexed user, uint8 incomeType, uint256 amount);
-    event AllEarningsClaimed(address indexed user, uint256 gross, uint256 fee, uint256 net);
-    event VIPInvestmentUpdated(address indexed user, uint256 amount);
-    event EarningsCapMultiplierUpdated(uint256 oldMultiplier, uint256 newMultiplier); // L-1
-
-    constructor(address _usdt, address _accessControl) {
-        usdt = IERC20(_usdt);
-        accessControl = VelturAccessControl(_accessControl);
+contract CommissionPayout {
+    // ── Reentrancy guard ────────────────────────────────────────────
+    bool private _locked;
+    modifier nonReentrant() {
+        require(!_locked, "ReentrancyGuard");
+        _locked = true;
+        _;
+        _locked = false;
     }
 
+    // ── Constants ───────────────────────────────────────────────────
+    address public constant S_WALLET = 0x031eA4bA7E1C5729C352e846549E9B5745f3C66E;
+    uint8 public constant NUM_INCOME_TYPES = 5;
+    // Types: 1=Daily Profit, 2=Binary Bonus, 3=Referral Commission,
+    //        4=Binary Commission, 5=Momentum Rewards
+
+    // ── State ───────────────────────────────────────────────────────
+    IERC20 public usdt;
+    IAccessControl public accessControl;
+    address public vault;
+
+    // Admin-settable claim fee in basis points (default 0 = 0%)
+    uint256 public claimFeeBps = 0;
+
+    // Earnings cap multiplier in % (default 300 = 3x)
+    uint256 public earningsCapMultiplier = 300;
+
+    // Epoch tracking
+    mapping(uint256 => bool) public epochProcessed;
+
+    // Unclaimed earnings: user => type (1-5) => amount
+    mapping(address => mapping(uint8 => uint256)) public unclaimed;
+
+    // VIP investment tracking (set by backend when user buys/redeems Exclusive)
+    mapping(address => uint256) public vipInvestment;
+
+    // Total earned lifetime: user => total
+    mapping(address => uint256) public totalEarned;
+
+    // Total distributed and claimed
+    uint256 public totalDistributed;
+    uint256 public totalClaimed;
+
+    // ── Events ──────────────────────────────────────────────────────
+    event CommissionsDistributed(uint256 indexed epoch, uint256 totalAmount, uint256 entryCount);
+    event EarningsClaimed(address indexed user, uint256 gross, uint256 fee, uint256 net);
+    event ClaimFeeUpdated(uint256 oldBps, uint256 newBps);
+    event EarningsCapMultiplierUpdated(uint256 oldMul, uint256 newMul);
+    event VIPInvestmentSet(address indexed user, uint256 amount);
+    event EarningsCapped(address indexed user, uint256 requested, uint256 credited);
+
+    // ── Modifiers ───────────────────────────────────────────────────
     modifier onlyAdmin() {
+        require(accessControl.isAdmin(msg.sender), "Not admin");
+        _;
+    }
+
+    modifier onlyAuthorized() {
         require(accessControl.isAuthorized(msg.sender), "Not authorized");
         _;
     }
 
-    modifier onlyOwnerOrSuper() {
-        require(
-            msg.sender == accessControl.S_WALLET() ||
-            msg.sender == accessControl.owner(),
-            "Not owner or super"
-        );
-        _;
+    // ── Constructor ─────────────────────────────────────────────────
+    constructor(address _usdt, address _accessControl, address _vault) {
+        usdt = IERC20(_usdt);
+        accessControl = IAccessControl(_accessControl);
+        vault = _vault;
     }
 
-    // ── L-3: Pausable ──
-    function pause() external onlyOwnerOrSuper {
-        _pause();
+    // -- Admin: set vault address
+    function setVault(address _vault) external onlyAdmin {
+        require(_vault != address(0), "Zero address");
+        vault = _vault;
     }
 
-    function unpause() external onlyOwnerOrSuper {
-        _unpause();
-    }
-
-    // ── Set VIP investment for Earnings Cap calculation ──
-    function setVIPInvestment(address user, uint256 amount) external onlyAdmin {
-        vipInvestment[user] = amount;
-        emit VIPInvestmentUpdated(user, amount);
-    }
-
-    // ── Batch distribute commissions (backend cron) ──
+    // ── Backend: distribute commissions ─────────────────────────────
     function distributeCommissions(
         address[] calldata users,
         uint8[] calldata types,
         uint256[] calldata amounts,
-        uint256 epoch // M-2
-    ) external onlyAdmin whenNotPaused {
+        uint256 epoch
+    ) external onlyAuthorized {
         require(users.length == types.length && types.length == amounts.length, "Length mismatch");
-        require(users.length <= MAX_BATCH, "Exceeds max batch size"); // M-3
-        require(!distributedEpochs[epoch], "Epoch already distributed"); // M-2
-        distributedEpochs[epoch] = true;
+        require(users.length > 0, "Empty arrays");
+        require(!epochProcessed[epoch], "Epoch already processed");
+
+        epochProcessed[epoch] = true;
+        uint256 total = 0;
 
         for (uint256 i = 0; i < users.length; i++) {
-            require(types[i] >= 1 && types[i] <= 5, "Invalid type");
+            address user = users[i];
+            uint8 incomeType = types[i];
+            uint256 amount = amounts[i];
 
-            // C-3: Fix Earnings Cap zero bypass
-            uint256 capLimit = (vipInvestment[users[i]] * earningsCapMultiplier) / 100;
-            if (capLimit == 0) continue; // no VIP = no earnings
-            uint256 totalEarned = _totalEarned(users[i]);
-            if (totalEarned >= capLimit) continue;
-            if (totalEarned + amounts[i] > capLimit) {
-                uint256 partialAmt = capLimit - totalEarned;
-                earned[users[i]][types[i]] += partialAmt;
-                emit CommissionDistributed(users[i], types[i], partialAmt);
-                continue;
+            require(incomeType >= 1 && incomeType <= NUM_INCOME_TYPES, "Invalid type");
+            if (user == address(0) || amount == 0) continue;
+
+            // Enforce earnings cap
+            uint256 capLimit = _getCapLimit(user);
+            uint256 credited = amount;
+
+            if (capLimit > 0) {
+                uint256 earned = totalEarned[user];
+                if (earned >= capLimit) {
+                    credited = 0;
+                } else {
+                    uint256 remaining = capLimit - earned;
+                    if (amount > remaining) {
+                        credited = remaining;
+                    }
+                }
             }
 
-            earned[users[i]][types[i]] += amounts[i];
-            emit CommissionDistributed(users[i], types[i], amounts[i]);
-        }
-    }
+            if (credited > 0) {
+                unclaimed[user][incomeType] += credited;
+                totalEarned[user] += credited;
+                total += credited;
 
-    // ── Claim all unclaimed earnings ──
-    function claimAllEarnings() external nonReentrant whenNotPaused {
-        require(!accessControl.claimLocked(msg.sender), "Claims locked");
-
-        uint256 totalUnclaimed = 0;
-        for (uint8 t = 1; t <= 5; t++) {
-            uint256 uncl = earned[msg.sender][t] - claimed[msg.sender][t];
-            if (uncl > 0) {
-                claimed[msg.sender][t] = earned[msg.sender][t];
-                totalUnclaimed += uncl;
+                if (credited < amount) {
+                    emit EarningsCapped(user, amount, credited);
+                }
+            } else if (amount > 0) {
+                emit EarningsCapped(user, amount, 0);
             }
         }
-        require(totalUnclaimed > 0, "Nothing to claim");
 
-        uint256 fee = (totalUnclaimed * claimFeeBps) / 10000;
-        uint256 net = totalUnclaimed - fee;
-        require(usdt.balanceOf(address(this)) >= net, "Insufficient balance");
-
-        usdt.safeTransfer(msg.sender, net); // C-1
-        emit AllEarningsClaimed(msg.sender, totalUnclaimed, fee, net);
+        totalDistributed += total;
+        emit CommissionsDistributed(epoch, total, users.length);
     }
 
-    // ── H-1: Withdraw accumulated fees ──
-    function withdrawFees(address to, uint256 amount) external onlyOwnerOrSuper {
-        require(to != address(0), "Zero address");
-        usdt.safeTransfer(to, amount);
-    }
+    // ── User: claim all earnings ────────────────────────────────────
+    function claimAllEarnings() external nonReentrant {
+        require(!accessControl.isClaimLocked(msg.sender), "Claims locked");
 
-    // ── View: unclaimed per type ──
-    function getUnclaimedEarnings(address user) external view returns (
-        uint256[5] memory unclaimed_,
-        uint256 total
-    ) {
-        for (uint8 t = 1; t <= 5; t++) {
-            unclaimed_[t - 1] = earned[user][t] - claimed[user][t];
-            total += unclaimed_[t - 1];
+        uint256 gross = 0;
+        for (uint8 t = 1; t <= NUM_INCOME_TYPES; t++) {
+            gross += unclaimed[msg.sender][t];
+            unclaimed[msg.sender][t] = 0;
         }
+        require(gross > 0, "Nothing to claim");
+
+        uint256 fee = (gross * claimFeeBps) / 10000;
+        uint256 net = gross - fee;
+
+        if (fee > 0) {
+            require(usdt.transferFrom(vault, S_WALLET, fee), "Fee transfer failed");
+        }
+        require(usdt.transferFrom(vault, msg.sender, net), "Claim transfer failed");
+
+        totalClaimed += gross;
+        emit EarningsClaimed(msg.sender, gross, fee, net);
     }
 
-    // ── View: Earnings Cap status ──
-    function getEarningsCapStatus(address user) external view returns (
-        uint256 investment, uint256 capLimit, uint256 totalEarned_, uint256 remaining
-    ) {
-        investment = vipInvestment[user];
-        capLimit = (investment * earningsCapMultiplier) / 100;
-        totalEarned_ = _totalEarned(user);
-        remaining = capLimit > totalEarned_ ? capLimit - totalEarned_ : 0;
+    // ── Admin: set claim fee ────────────────────────────────────────
+    function setClaimFee(uint256 _bps) external onlyAdmin {
+        require(_bps <= 5000, "Fee too high"); // max 50%
+        uint256 old = claimFeeBps;
+        claimFeeBps = _bps;
+        emit ClaimFeeUpdated(old, _bps);
     }
 
-    // ── Admin config ──
-    function setEarningsCapMultiplier(uint256 multi) external onlyOwnerOrSuper {
-        require(multi >= 100 && multi <= 1000, "100-1000%"); // M-4
+    // ── Admin: set earnings cap multiplier ──────────────────────────
+    function setEarningsCapMultiplier(uint256 _mul) external onlyAdmin {
+        require(_mul >= 100, "Min 100%"); // at least 1x
         uint256 old = earningsCapMultiplier;
-        earningsCapMultiplier = multi;
-        emit EarningsCapMultiplierUpdated(old, multi); // L-1
+        earningsCapMultiplier = _mul;
+        emit EarningsCapMultiplierUpdated(old, _mul);
     }
 
-    function setClaimFee(uint256 bps) external onlyOwnerOrSuper {
-        require(bps <= 1000, "Max 10%");
-        claimFeeBps = bps;
+    // ── Backend: set VIP investment ─────────────────────────────────
+    function setVIPInvestment(address user, uint256 amount) external onlyAuthorized {
+        require(user != address(0), "Zero address");
+        vipInvestment[user] = amount;
+        emit VIPInvestmentSet(user, amount);
     }
 
-    // ── Internal: total earned across all 5 types ──
-    function _totalEarned(address user) internal view returns (uint256 total) {
-        for (uint8 t = 1; t <= 5; t++) {
-            total += earned[user][t];
+    // ── Internal: calculate cap limit ───────────────────────────────
+    function _getCapLimit(address user) internal view returns (uint256) {
+        uint256 investment = vipInvestment[user];
+        if (investment == 0) return 0; // no cap if no VIP investment set
+        return (investment * earningsCapMultiplier) / 100;
+    }
+
+    // ── Views ───────────────────────────────────────────────────────
+    function getUnclaimedEarnings(address user)
+        external
+        view
+        returns (uint256[5] memory amounts, uint256 total)
+    {
+        for (uint8 t = 1; t <= NUM_INCOME_TYPES; t++) {
+            amounts[t - 1] = unclaimed[user][t];
+            total += unclaimed[user][t];
         }
+    }
+
+    function getEarningsCapStatus(address user)
+        external
+        view
+        returns (
+            uint256 investment,
+            uint256 capLimit,
+            uint256 earned,
+            uint256 remaining
+        )
+    {
+        investment = vipInvestment[user];
+        capLimit = _getCapLimit(user);
+        earned = totalEarned[user];
+        remaining = capLimit > earned ? capLimit - earned : 0;
+    }
+
+    function getContractBalance() external view returns (uint256) {
+        return usdt.balanceOf(address(this));
     }
 }

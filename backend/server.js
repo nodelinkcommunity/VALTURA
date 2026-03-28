@@ -36,10 +36,32 @@ if (config.server.env === 'development') {
   });
 }
 
-// ── Serve frontend static files ──
-app.use('/', express.static(path.join(__dirname, '../frontend')));
-app.use('/admin', express.static(path.join(__dirname, '../admin')));
+// ── Serve frontend static files (no cache for HTML) ──
+app.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('Surrogate-Control', 'no-store');
+  res.setHeader('CDN-Cache-Control', 'no-store');
+  res.setHeader('Cloudflare-CDN-Cache-Control', 'no-store');
+  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+app.use('/', express.static(path.join(__dirname, '../frontend'), {
+  setHeaders: function(res, filePath) {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('CDN-Cache-Control', 'no-store');
+      res.setHeader('Cloudflare-CDN-Cache-Control', 'no-store');
+    }
+  }
+}));
+app.use('/admin', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  next();
+}, express.static(path.join(__dirname, '../admin')));
 app.use('/assets', express.static(path.join(__dirname, '../assets')));
+app.use('/live_trade_demo', express.static(path.join(__dirname, '../live_trade_demo')));
 
 // ── API Routes ──
 app.use('/api/auth', require('./routes/auth'));
@@ -55,7 +77,7 @@ app.get('/api/health', (req, res) => {
     version: '1.0.0',
     chain: 'polygon',
     network: config.polygon.chainId === 137 ? 'mainnet' : 'amoy-testnet',
-    storage: 'in-memory',
+    storage: 'json-file',
     uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
   });

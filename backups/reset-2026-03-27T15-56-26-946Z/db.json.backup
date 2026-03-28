@@ -1,0 +1,771 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "wallet": "0xE669D94fFeC2341CDBECa855f2DedDd7e1A59Cc0",
+      "username": "veltura",
+      "referrer_id": null,
+      "parent_id": null,
+      "leg": null,
+      "created_at": "2026-03-27T06:55:43.236Z"
+    },
+    {
+      "id": 2,
+      "wallet": "0xfd03fee48a4792c9b904fe945dd85e96395417b6",
+      "username": "tst_01",
+      "referrer_id": 1,
+      "placement": "left",
+      "created_at": "2026-03-27T08:12:23.445Z"
+    },
+    {
+      "id": 3,
+      "wallet": "0x4A47ca79da4d1e4166745Ce9D0250C5103a66924",
+      "username": "skyteam",
+      "referrer_id": 1,
+      "placement": "right",
+      "created_at": "2026-03-27T08:58:36.062Z"
+    },
+    {
+      "id": 4,
+      "wallet": "0xC52C1214fd408ca9De03D9C1e95f3eC02c538ecF",
+      "username": "sky01",
+      "referrer_id": 3,
+      "placement": "left",
+      "created_at": "2026-03-27T09:01:24.957Z"
+    },
+    {
+      "id": 5,
+      "wallet": "0xe4798FFD50F5E3bF705D4B540151d274aB154D61",
+      "username": "sky02",
+      "referrer_id": 3,
+      "placement": "right",
+      "created_at": "2026-03-27T09:02:01.280Z"
+    },
+    {
+      "id": 6,
+      "wallet": "0xf7EFb4fe5e4C8D5c8bAEd182157e96657b32ba79",
+      "username": "codex_t1",
+      "referrer_id": 1,
+      "placement": "left",
+      "created_at": "2026-03-27T09:09:21.263Z"
+    },
+    {
+      "id": 7,
+      "wallet": "0x9f24d77D98d2B9ce2c956256ABCac590c7451629",
+      "username": "tst_04",
+      "referrer_id": 1,
+      "placement": "right",
+      "created_at": "2026-03-27T10:36:58.122Z"
+    },
+    {
+      "id": 8,
+      "wallet": "0x0c343CC73A3ABFe7Cc2eE991aA00DCdA9C291e05",
+      "username": "tst_02",
+      "referrer_id": 7,
+      "placement": "left",
+      "created_at": "2026-03-27T10:36:59.298Z"
+    },
+    {
+      "id": 9,
+      "wallet": "0x3ef590aE39C66370D10187f4D58f3b3043717747",
+      "username": "tst_03",
+      "referrer_id": 7,
+      "placement": "right",
+      "created_at": "2026-03-27T10:36:59.846Z"
+    }
+  ],
+  "positions": [
+    {
+      "id": 3,
+      "user_id": 1,
+      "package_id": "essential",
+      "amount": 10,
+      "tier": 1,
+      "daily_rate": 0.2,
+      "lock_days": 1,
+      "status": "active",
+      "started_at": "2026-03-27T09:00:47.000Z",
+      "expires_at": "2026-03-28T09:00:47.000Z",
+      "tx_hash": "synced-from-chain",
+      "on_chain_index": 0
+    },
+    {
+      "id": 4,
+      "user_id": 1,
+      "package_id": "exclusive360_leader",
+      "amount": 10,
+      "tier": 0,
+      "lock_days": 0,
+      "status": "active",
+      "started_at": "2026-03-27T09:09:25.000Z",
+      "expires_at": "2026-03-27T09:09:25.000Z",
+      "tx_hash": "synced-from-chain",
+      "on_chain_index": 1
+    },
+    {
+      "id": 5,
+      "user_id": 2,
+      "package_id": "essential",
+      "amount": 10,
+      "tier": 1,
+      "daily_rate": 0.2,
+      "lock_days": 0,
+      "status": "active",
+      "started_at": "2026-03-27T09:56:26.330Z",
+      "expires_at": null,
+      "tx_hash": "0xb49b8b51109852a354075eb60040a5e9fb728b625da0d33345ec1d4624a2fa36",
+      "on_chain_index": 0
+    },
+    {
+      "id": 6,
+      "user_id": 1,
+      "package_id": "exclusive360",
+      "amount": 5000,
+      "tier": 2,
+      "daily_rate": 1,
+      "lock_days": 360,
+      "status": "active",
+      "started_at": "2026-03-27T10:34:42.726Z",
+      "expires_at": "2027-03-22T10:34:42.726Z",
+      "tx_hash": "0x804f4842628524442f3069250dbd3be1e8a337569e1731b5e7e28572661a9afc",
+      "on_chain_index": 2
+    },
+    {
+      "id": 7,
+      "user_id": 7,
+      "package_id": "exclusive360",
+      "amount": 100,
+      "tier": 1,
+      "daily_rate": 0.8,
+      "lock_days": 360,
+      "status": "active",
+      "started_at": "2026-03-27T10:37:15.592Z",
+      "expires_at": "2027-03-22T10:37:15.592Z",
+      "tx_hash": "0xef33d3244e9311e8f781a540a37c907250b5c78387ec886c6df7bf112f996b07",
+      "on_chain_index": 0
+    },
+    {
+      "id": 8,
+      "user_id": 8,
+      "package_id": "signature180",
+      "amount": 100,
+      "tier": 1,
+      "daily_rate": 0.6,
+      "lock_days": 180,
+      "status": "active",
+      "started_at": "2026-03-27T10:37:36.236Z",
+      "expires_at": "2026-09-23T10:37:36.236Z",
+      "tx_hash": "0x8d0ea3f7d8746401a2a2d3be9bb1aac98c83426eea47d81cd215c7ba9360f79a",
+      "on_chain_index": 0
+    },
+    {
+      "id": 9,
+      "user_id": 9,
+      "package_id": "signature180",
+      "amount": 100,
+      "tier": 1,
+      "daily_rate": 0.6,
+      "lock_days": 180,
+      "status": "active",
+      "started_at": "2026-03-27T10:37:51.314Z",
+      "expires_at": "2026-09-23T10:37:51.314Z",
+      "tx_hash": "0xb3127e263537dcde490407cc3965070d204f165262066920b0a7e4b3fe5e10d1",
+      "on_chain_index": 0
+    },
+    {
+      "id": 10,
+      "user_id": 8,
+      "package_id": "signature180",
+      "amount": 100,
+      "tier": 1,
+      "daily_rate": 0.6,
+      "lock_days": 180,
+      "status": "active",
+      "started_at": "2026-03-27T10:41:37.590Z",
+      "expires_at": "2026-09-23T10:41:37.590Z",
+      "tx_hash": "0xcbc6582370a8be68050b0000049030100455dc32112e6300018b5fbcb0b9f8a1",
+      "on_chain_index": 1
+    }
+  ],
+  "earnings": [
+    {
+      "user_id": 1,
+      "position_id": 3,
+      "income_type": "daily_profit",
+      "total_earned": 0.04,
+      "total_claimed": 0,
+      "updated_at": "2026-03-27T10:37:57.561Z"
+    },
+    {
+      "user_id": 2,
+      "position_id": 5,
+      "income_type": "daily_profit",
+      "total_earned": 0.04,
+      "total_claimed": 0.02,
+      "updated_at": "2026-03-27T10:37:57.561Z"
+    },
+    {
+      "user_id": 1,
+      "position_id": 4,
+      "income_type": "binary_bonus",
+      "total_earned": 0.5,
+      "total_claimed": 0,
+      "updated_at": "2026-03-27T10:37:21.187Z"
+    },
+    {
+      "user_id": 1,
+      "position_id": 6,
+      "income_type": "daily_profit",
+      "total_earned": 50,
+      "total_claimed": 0,
+      "updated_at": "2026-03-27T10:37:57.561Z"
+    },
+    {
+      "user_id": 7,
+      "position_id": 7,
+      "income_type": "daily_profit",
+      "total_earned": 0.8,
+      "total_claimed": 0,
+      "updated_at": "2026-03-27T10:37:57.561Z"
+    },
+    {
+      "user_id": 8,
+      "position_id": 8,
+      "income_type": "daily_profit",
+      "total_earned": 0.6,
+      "total_claimed": 0.6,
+      "updated_at": "2026-03-27T10:40:56.476Z"
+    },
+    {
+      "user_id": 9,
+      "position_id": 9,
+      "income_type": "daily_profit",
+      "total_earned": 0.6,
+      "total_claimed": 0,
+      "updated_at": "2026-03-27T10:37:57.561Z"
+    },
+    {
+      "user_id": 7,
+      "position_id": 7,
+      "income_type": "binary_bonus",
+      "total_earned": 10,
+      "total_claimed": 10,
+      "updated_at": "2026-03-27T10:44:25.749Z"
+    },
+    {
+      "user_id": 1,
+      "position_id": 4,
+      "income_type": "referral_commission",
+      "total_earned": 0.08,
+      "total_claimed": 0,
+      "updated_at": "2026-03-27T10:43:29.327Z"
+    },
+    {
+      "user_id": 7,
+      "position_id": 7,
+      "income_type": "referral_commission",
+      "total_earned": 0.12,
+      "total_claimed": 0.12,
+      "updated_at": "2026-03-27T10:44:25.749Z"
+    },
+    {
+      "user_id": 7,
+      "position_id": 7,
+      "income_type": "binary_commission",
+      "total_earned": 0.09,
+      "total_claimed": 0.09,
+      "updated_at": "2026-03-27T10:44:25.749Z"
+    }
+  ],
+  "claims": [
+    {
+      "id": 1,
+      "user_id": 2,
+      "gross_amount": 0.02,
+      "fee_percent": 2.5,
+      "fee_amount": 0,
+      "net_amount": 0.02,
+      "breakdown": "{\"daily_profit\":0.02}",
+      "status": "completed",
+      "tx_hash": "0xba4773e6126710553176d122638126a34617fcd1fff2e6efdd13f3f1acd3d358",
+      "created_at": "2026-03-27T10:01:13.935Z"
+    },
+    {
+      "id": 2,
+      "user_id": 8,
+      "gross_amount": 0.6,
+      "fee_percent": 2.5,
+      "fee_amount": 0.015,
+      "net_amount": 0.585,
+      "breakdown": "{\"daily_profit\":0.6}",
+      "status": "completed",
+      "tx_hash": "0x2f0d14e9f724ec3aa732efcfc52bbf9d8ffb44b3ab419739b10cd36f808c6267",
+      "tx_hash_commission": null,
+      "tx_hash_roi": "0x2f0d14e9f724ec3aa732efcfc52bbf9d8ffb44b3ab419739b10cd36f808c6267",
+      "created_at": "2026-03-27T10:40:56.476Z"
+    },
+    {
+      "id": 3,
+      "user_id": 7,
+      "gross_amount": 10.21,
+      "fee_percent": 2.5,
+      "fee_amount": 0.25525,
+      "net_amount": 9.95475,
+      "breakdown": "{\"binary_bonus\":10,\"referral_commission\":0.12,\"binary_commission\":0.09}",
+      "status": "completed",
+      "tx_hash": "0xc79be1d03a33e5841bf63855c4bb34cddb9209255d899d99fb83e743f6f66bac",
+      "tx_hash_commission": "0xc79be1d03a33e5841bf63855c4bb34cddb9209255d899d99fb83e743f6f66bac",
+      "tx_hash_roi": null,
+      "created_at": "2026-03-27T10:44:25.749Z"
+    }
+  ],
+  "redemptions": [],
+  "commissions": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "source_user": null,
+      "type": "daily_profit",
+      "amount": 0.02,
+      "description": "Daily ROI for position #3",
+      "created_at": "2026-03-27T09:57:30.298Z"
+    },
+    {
+      "id": 3,
+      "user_id": 2,
+      "source_user": null,
+      "type": "daily_profit",
+      "amount": 0.02,
+      "description": "Daily ROI for position #5",
+      "created_at": "2026-03-27T09:57:30.298Z"
+    },
+    {
+      "id": 5,
+      "user_id": 1,
+      "source_user": null,
+      "type": "binary_bonus",
+      "amount": 0.5,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T10:37:21.187Z"
+    },
+    {
+      "id": 6,
+      "user_id": 1,
+      "source_user": null,
+      "type": "daily_profit",
+      "amount": 0.02,
+      "description": "Daily ROI for position #3",
+      "created_at": "2026-03-27T10:37:57.561Z"
+    },
+    {
+      "id": 7,
+      "user_id": 2,
+      "source_user": null,
+      "type": "daily_profit",
+      "amount": 0.02,
+      "description": "Daily ROI for position #5",
+      "created_at": "2026-03-27T10:37:57.561Z"
+    },
+    {
+      "id": 8,
+      "user_id": 1,
+      "source_user": null,
+      "type": "daily_profit",
+      "amount": 50,
+      "description": "Daily ROI for position #6",
+      "created_at": "2026-03-27T10:37:57.561Z"
+    },
+    {
+      "id": 9,
+      "user_id": 7,
+      "source_user": null,
+      "type": "daily_profit",
+      "amount": 0.8,
+      "description": "Daily ROI for position #7",
+      "created_at": "2026-03-27T10:37:57.561Z"
+    },
+    {
+      "id": 10,
+      "user_id": 8,
+      "source_user": null,
+      "type": "daily_profit",
+      "amount": 0.6,
+      "description": "Daily ROI for position #8",
+      "created_at": "2026-03-27T10:37:57.561Z"
+    },
+    {
+      "id": 11,
+      "user_id": 9,
+      "source_user": null,
+      "type": "daily_profit",
+      "amount": 0.6,
+      "description": "Daily ROI for position #9",
+      "created_at": "2026-03-27T10:37:57.561Z"
+    },
+    {
+      "id": 12,
+      "user_id": 7,
+      "source_user": null,
+      "type": "binary_bonus",
+      "amount": 5,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T10:41:43.404Z"
+    },
+    {
+      "id": 13,
+      "user_id": 7,
+      "source_user": 8,
+      "type": "binary_bonus",
+      "amount": 5,
+      "description": "Binary Bonus on Signature + Exclusive weak leg volume",
+      "created_at": "2026-03-27T10:41:49.044Z"
+    },
+    {
+      "id": 14,
+      "user_id": 1,
+      "source_user": 2,
+      "type": "referral_commission",
+      "amount": 0.08,
+      "description": "Referral Commission on F1 daily profit",
+      "created_at": "2026-03-27T10:43:29.328Z"
+    },
+    {
+      "id": 15,
+      "user_id": 7,
+      "source_user": 8,
+      "type": "referral_commission",
+      "amount": 0.12,
+      "description": "Referral Commission on F1 daily profit",
+      "created_at": "2026-03-27T10:43:29.328Z"
+    },
+    {
+      "id": 16,
+      "user_id": 7,
+      "source_user": null,
+      "type": "binary_commission",
+      "amount": 0.09,
+      "description": "Binary Commission on weak leg daily profit",
+      "created_at": "2026-03-27T10:43:29.328Z"
+    }
+  ],
+  "transactions": [
+    {
+      "id": 1,
+      "user_id": 2,
+      "type": "deposit",
+      "amount": 10,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10,
+      "status": "confirmed",
+      "tx_hash": "0xb49b8b51109852a354075eb60040a5e9fb728b625da0d33345ec1d4624a2fa36",
+      "created_at": "2026-03-27T09:56:26.330Z"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "type": "deposit",
+      "amount": 5000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 5000,
+      "status": "confirmed",
+      "tx_hash": "0x804f4842628524442f3069250dbd3be1e8a337569e1731b5e7e28572661a9afc",
+      "created_at": "2026-03-27T10:34:42.726Z"
+    },
+    {
+      "id": 3,
+      "user_id": 7,
+      "type": "deposit",
+      "amount": 100,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 100,
+      "status": "confirmed",
+      "tx_hash": "0xef33d3244e9311e8f781a540a37c907250b5c78387ec886c6df7bf112f996b07",
+      "created_at": "2026-03-27T10:37:15.592Z"
+    },
+    {
+      "id": 4,
+      "user_id": 8,
+      "type": "deposit",
+      "amount": 100,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 100,
+      "status": "confirmed",
+      "tx_hash": "0x8d0ea3f7d8746401a2a2d3be9bb1aac98c83426eea47d81cd215c7ba9360f79a",
+      "created_at": "2026-03-27T10:37:36.236Z"
+    },
+    {
+      "id": 5,
+      "user_id": 9,
+      "type": "deposit",
+      "amount": 100,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 100,
+      "status": "confirmed",
+      "tx_hash": "0xb3127e263537dcde490407cc3965070d204f165262066920b0a7e4b3fe5e10d1",
+      "created_at": "2026-03-27T10:37:51.314Z"
+    },
+    {
+      "id": 6,
+      "user_id": 8,
+      "type": "deposit",
+      "amount": 100,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 100,
+      "status": "confirmed",
+      "tx_hash": "0xcbc6582370a8be68050b0000049030100455dc32112e6300018b5fbcb0b9f8a1",
+      "created_at": "2026-03-27T10:41:37.590Z"
+    }
+  ],
+  "earnings_lost": [],
+  "tree": [
+    {
+      "user_id": 1,
+      "parent_id": null,
+      "side": null,
+      "left_child_id": 2,
+      "right_child_id": 3,
+      "left_volume": 20,
+      "right_volume": 400,
+      "left_vip_volume": 10,
+      "right_vip_volume": 400,
+      "left_vip_count": 1,
+      "right_vip_count": 4,
+      "left_roi": 0.04,
+      "right_roi": 2,
+      "carry_forward": 10,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 2,
+      "parent_id": 1,
+      "side": "left",
+      "left_child_id": 6,
+      "right_child_id": null,
+      "left_volume": 10,
+      "right_volume": 0,
+      "left_vip_volume": 10,
+      "right_vip_volume": 0,
+      "left_vip_count": 1,
+      "right_vip_count": 0,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 3,
+      "parent_id": 1,
+      "side": "right",
+      "left_child_id": 4,
+      "right_child_id": 5,
+      "left_volume": 400,
+      "right_volume": 0,
+      "left_vip_volume": 400,
+      "right_vip_volume": 0,
+      "left_vip_count": 4,
+      "right_vip_count": 0,
+      "left_roi": 2,
+      "right_roi": 0,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 4,
+      "parent_id": 3,
+      "side": "left",
+      "left_child_id": null,
+      "right_child_id": 7,
+      "left_volume": 0,
+      "right_volume": 400,
+      "left_vip_volume": 0,
+      "right_vip_volume": 400,
+      "left_vip_count": 0,
+      "right_vip_count": 4,
+      "left_roi": 0,
+      "right_roi": 2,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 5,
+      "parent_id": 3,
+      "side": "right",
+      "left_child_id": null,
+      "right_child_id": null,
+      "left_volume": 0,
+      "right_volume": 0,
+      "left_vip_volume": 0,
+      "right_vip_volume": 0,
+      "left_vip_count": 0,
+      "right_vip_count": 0,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 6,
+      "parent_id": 2,
+      "side": "left",
+      "left_child_id": null,
+      "right_child_id": null,
+      "left_volume": 0,
+      "right_volume": 0,
+      "left_vip_volume": 0,
+      "right_vip_volume": 0,
+      "left_vip_count": 0,
+      "right_vip_count": 0,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 7,
+      "parent_id": 4,
+      "side": "right",
+      "left_child_id": 8,
+      "right_child_id": 9,
+      "left_volume": 200,
+      "right_volume": 100,
+      "left_vip_volume": 200,
+      "right_vip_volume": 100,
+      "left_vip_count": 2,
+      "right_vip_count": 1,
+      "left_roi": 0.6,
+      "right_roi": 0.6,
+      "carry_forward": 100,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 8,
+      "parent_id": 7,
+      "side": "left",
+      "left_child_id": null,
+      "right_child_id": null,
+      "left_volume": 0,
+      "right_volume": 0,
+      "left_vip_volume": 0,
+      "right_vip_volume": 0,
+      "left_vip_count": 0,
+      "right_vip_count": 0,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    },
+    {
+      "user_id": 9,
+      "parent_id": 7,
+      "side": "right",
+      "left_child_id": null,
+      "right_child_id": null,
+      "left_volume": 0,
+      "right_volume": 0,
+      "left_vip_volume": 0,
+      "right_vip_volume": 0,
+      "left_vip_count": 0,
+      "right_vip_count": 0,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    }
+  ],
+  "config": [
+    {
+      "key": "earnings_cap_multi",
+      "value": "300",
+      "description": "Earnings Cap multiplier (%)"
+    },
+    {
+      "key": "comm_binary_bonus",
+      "value": "5",
+      "description": "Binary bonus rate (%)"
+    },
+    {
+      "key": "comm_referral",
+      "value": "10",
+      "description": "Referral commission rate (%)"
+    },
+    {
+      "key": "comm_binary",
+      "value": "15",
+      "description": "Binary commission rate (%)"
+    },
+    {
+      "key": "comm_momentum",
+      "value": "10",
+      "description": "Momentum rewards rate (%)"
+    },
+    {
+      "key": "fee_claim",
+      "value": "2.5",
+      "description": "Claim fee (%)"
+    },
+    {
+      "key": "fee_redeem",
+      "value": "5",
+      "description": "Redemption fee (%)"
+    },
+    {
+      "key": "fund_trading_pct",
+      "value": "85",
+      "description": "Trading fund allocation (%)"
+    },
+    {
+      "key": "fund_reward_pct",
+      "value": "15",
+      "description": "Reward fund allocation (%)"
+    },
+    {
+      "key": "maxout_essential",
+      "value": "300",
+      "description": "Essential maxout (%)"
+    },
+    {
+      "key": "maxout_classic",
+      "value": "300",
+      "description": "Classic maxout (%)"
+    },
+    {
+      "key": "maxout_ultimate",
+      "value": "300",
+      "description": "Ultimate maxout (%)"
+    },
+    {
+      "key": "maxout_signature",
+      "value": "300",
+      "description": "Signature maxout (%)"
+    },
+    {
+      "key": "maxout_exclusive",
+      "value": "300",
+      "description": "Exclusive maxout (%)"
+    },
+    {
+      "key": "maxout_leader",
+      "value": "300",
+      "description": "Leader maxout (%)"
+    },
+    {
+      "key": "last_daily_epoch",
+      "value": "20539",
+      "description": ""
+    }
+  ],
+  "_counters": {
+    "userId": 10,
+    "positionId": 11,
+    "claimId": 4,
+    "redeemId": 1,
+    "commissionId": 17,
+    "transactionId": 7
+  }
+}

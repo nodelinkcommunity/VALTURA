@@ -40,11 +40,12 @@ module.exports = {
     usdtAddress: process.env.USDT_ADDRESS || '0x96FBA824E3798E59e98fDE8E019a684700F9fF4a',
     // Contract addresses — defaults match Amoy testnet deployment
     contracts: {
-      accessControl: process.env.ACCESS_CONTROL_ADDRESS || '0xd6334e915c7Dc32Daa3Cdd5f753f772e8A7B798F',
-      valturVault: process.env.VALTUR_VAULT_ADDRESS || '0x377F951349B1cE2cE6a9bF78229FBfeE4bD884fE',
-      roiDistributor: process.env.ROI_DISTRIBUTOR_ADDRESS || '0xDE3C753bfBc419c223eEf2226b8756Bf9c6FDA86',
-      commissionPayout: process.env.COMMISSION_PAYOUT_ADDRESS || '0xA0FE3CAB18898d8dd2e3E7e6eB3550cde078675a',
-      redemptionManager: process.env.REDEMPTION_MANAGER_ADDRESS || '0x2D96439da922896528390ad704C2796c83d815Bd',
+      accessControl: process.env.ACCESS_CONTROL_ADDRESS || '0x6C32Db03a2334aeebA2161129931De73A79c7334',
+      valturVault: process.env.VALTUR_VAULT_ADDRESS || '0x095D4b988A90F7FFb8E4A0eE1c90F1426A4E0B08',
+      roiDistributor: process.env.ROI_DISTRIBUTOR_ADDRESS || '0x92199A32E9B81309bdA62f9AA32b2cB8e5D21410',
+      commissionPayout: process.env.COMMISSION_PAYOUT_ADDRESS || '0xa54EbfA82Cc8E981f4ff524802194D1A00Dfe7E6',
+      redemptionManager: process.env.REDEMPTION_MANAGER_ADDRESS || '0x417F29694654bbaeD7c5ae0170E3Cc8492F4072f',
+      tradingFunds: process.env.TRADING_FUNDS_ADDRESS || '0x7a514138c92591C12E724f8E22b632A274b698E4',
     },
   },
 
@@ -84,7 +85,7 @@ module.exports = {
 
   // ── Fees ──
   fees: {
-    claim: 2.5,   // 2.5% claim fee
+    claim: 0,   // 2.5% claim fee
     redeem: 5,    // 5% redemption fee
   },
 

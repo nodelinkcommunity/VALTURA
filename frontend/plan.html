@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VELTURA — Architecture & Flow Plan V3</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Montserrat',sans-serif;background:#0B1426;color:#e0e0e0;padding:20px;line-height:1.7;}
+h1{color:#3EDDB5;text-align:center;margin-bottom:8px;font-size:22px;}
+h1+p{text-align:center;color:#888;font-size:12px;margin-bottom:30px;}
+h2{color:#00d4ff;margin:25px 0 12px;font-size:17px;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:8px;}
+h3{color:#fbbf24;margin:15px 0 8px;font-size:14px;}
+h4{color:#b39dff;margin:10px 0 6px;font-size:13px;}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:18px;margin-bottom:16px;}
+.flow{background:rgba(62,221,181,.05);border:1px solid rgba(62,221,181,.2);border-radius:10px;padding:14px;margin:10px 0;font-size:13px;}
+.flow b{color:#3EDDB5;}
+.step{display:flex;align-items:flex-start;gap:10px;margin:6px 0;}
+.step .num{background:#3EDDB5;color:#0B1426;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px;}
+.step .txt{font-size:13px;}
+code{background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-size:12px;color:#00d4ff;}
+.warn{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);border-radius:8px;padding:10px;margin:10px 0;font-size:12px;color:#fbbf24;}
+.ok{color:#3EDDB5;} .err{color:#ef4444;}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px;}
+th{background:rgba(255,255,255,.05);color:#00d4ff;padding:8px;text-align:left;border-bottom:1px solid rgba(255,255,255,.1);}
+td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.05);}
+.arrow{color:#3EDDB5;font-weight:700;}
+.contract{color:#b39dff;font-weight:600;}
+.ro{margin-top:10px;padding:10px;background:rgba(255,255,255,.02);border-left:3px solid rgba(0,212,255,.3);font-size:11px;color:#999;line-height:1.6;}
+.ro b{color:#aaa;} .ro code{font-size:10px;}
+.lang-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;display:block;}
+.lang-label.en-label{color:#3EDDB5;}
+.lang-label.ro-label{color:rgba(0,212,255,.5);}
+</style>
+</head>
+<body>
+<h1>VELTURA — Architecture & Flow Plan V3</h1>
+<p>2-Fund Architecture · Full On-Chain Sync · Per-Package MaxOut</p>
+
+<!-- ═══ SECTION 1: OBJECTIVE ═══ -->
+<div class="card">
+<h2>Objective</h2>
+<p>Redeploy all smart contracts (keep MockUSDT). Ensure <b class="ok">100% synchronization</b> between on-chain and backend. Clean DB reset.</p>
+<div class="warn">Keep MockUSDT: <code>0x96FBA824E3798E59e98fDE8E019a684700F9fF4a</code></div>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+Redeployare toate contractele inteligente (păstrăm MockUSDT). Asigurare <b>sincronizare 100%</b> între on-chain și backend. Resetare curată a bazei de date.
+</div>
+</div>
+
+<!-- ═══ SECTION 2: SMART CONTRACTS ═══ -->
+<div class="card">
+<h2>1. Smart Contracts — Changes</h2>
+<h3>VelturVault.sol — Fix lock days</h3>
+<table>
+<tr><th>Package</th><th>Old (Wrong)</th><th>New (Correct)</th></tr>
+<tr><td>Essential</td><td class="err">90 days</td><td class="ok">0 days (flexible)</td></tr>
+<tr><td>Classic</td><td class="err">180 days</td><td class="ok">30 days</td></tr>
+<tr><td>Ultimate</td><td class="err">270 days</td><td class="ok">90 days</td></tr>
+<tr><td>Signature</td><td class="err">360 days</td><td class="ok">180 days</td></tr>
+<tr><td>Exclusive</td><td>360 days</td><td class="ok">360 days (unchanged)</td></tr>
+</table>
+
+<h3>2-Fund Architecture</h3>
+<p>Only <b>2 contracts hold USDT</b>:</p>
+<table>
+<tr><th>Fund</th><th>Contract</th><th>Purpose</th><th>Who Controls</th></tr>
+<tr><td style="color:#00d4ff;"><b>💹 Trading Funds</b><br><span style="font-size:11px;">Expert Trading + DEX/Arbitrage</span></td>
+<td><code class="contract">TradingFunds</code> (new)</td>
+<td>Admin withdraws for trading. Can transfer back to Vault.</td>
+<td>Admin/Owner only</td></tr>
+<tr><td style="color:#22c55e;"><b>🎁 Reward & Redeem Fund</b></td>
+<td><code class="contract">VelturVault</code> (only)<br>ROI, Commission, Redemption contracts hold <b>NO USDT</b> — they withdraw from Vault via <code>transferFrom</code></td>
+<td>Pay all: Claim ROI, Claim Commission, Redeem capital</td>
+<td>Automatic (smart contracts pay users)</td></tr>
+</table>
+
+<h3>TradingFunds Contract (NEW)</h3>
+<div style="background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);border-radius:8px;padding:12px;margin-bottom:12px;font-size:12px;">
+<b>Functions:</b><br>
+— <code>withdraw(toWallet, amount)</code> — Admin withdraws USDT for trading<br>
+— <code>transferToVault(vault, amount)</code> — Admin transfers USDT back to Vault (Reward Fund)<br>
+— <code>getBalance()</code> — View current balance<br><br>
+<b style="color:#fbbf24;">🔄 Replaceable without affecting system:</b><br>
+— Vault stores <code>tradingFundAddress</code> as updatable variable (not hardcoded)<br>
+— Admin calls <code>Vault.setTradingFundAddress(newContract)</code> to point to new contract<br>
+— Other contracts (ROI, Commission, Redemption) are <b>unrelated</b> to TradingFunds
+</div>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+Doar <b>2 contracte dețin USDT</b>: TradingFunds (pentru tranzacționare) și VelturVault (pentru plăți utilizatori). ROIDistributor, CommissionPayout, RedemptionManager nu dețin USDT — retrag din Vault prin transferFrom. TradingFunds poate fi înlocuit fără a afecta sistemul.
+</div>
+</div>
+
+<!-- ═══ SECTION 3: DEPOSIT FLOW ═══ -->
+<div class="card">
+<h2>2. Deposit Flow (User Buys Package)</h2>
+<div class="flow">
+<div class="step"><div class="num">1</div><div class="txt"><b>Frontend:</b> User selects package + amount → Calls <code>USDT.approve(Vault, amount)</code> on-chain</div></div>
+<div class="step"><div class="num">2</div><div class="txt"><b>Frontend:</b> Calls <code class="contract">Vault.deposit(amount, lockDays, tier, pkgType)</code> on-chain → USDT transfers to Vault, position created on-chain</div></div>
+<div class="step"><div class="num">3</div><div class="txt"><b>Frontend:</b> Sends <code>txHash</code> (of vault.deposit, NOT approve) → Backend API <code>POST /api/invest/deposit</code></div></div>
+<div class="step"><div class="num">4</div><div class="txt"><b>Backend:</b> Verify on-chain:
+<br>— txHash exists and confirmed
+<br>— Parse event <code>Deposited(address, uint256, uint8, uint8)</code>
+<br>— Verify: user wallet matches, amount matches, to = Vault address
+<br>— Get <code>on_chain_index</code> = getUserPositionCount(wallet) - 1</div></div>
+<div class="step"><div class="num">5</div><div class="txt"><b>Backend:</b> Save to DB: position with <code>on_chain_index</code>, <code>tx_hash</code>, <code>status=active</code>
+<br>— Update binary tree volumes
+<br>— Calculate Binary Bonus <b style="color:#fbbf24;">X%</b> (from <code>db.getConfigValue('comm_binary_bonus')</code>, default 5%) if Signature/Exclusive</div></div>
+<div class="step"><div class="num">6</div><div class="txt"><b>Backend:</b> Auto-split deposit to funds:
+<br>— Read <code>fund_trading_pct</code> from config (default 85%)
+<br>— Call <code class="contract">Vault.withdrawToTradingFund(amount × tradingPct / 100)</code>
+<br>— Remaining stays in Vault = <b>Reward & Redeem Fund</b></div></div>
+</div>
+<div class="warn">Backend rejects fake txHash or approve txHash (no Deposited event).</div>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+Utilizatorul selectează pachet + sumă → Approve USDT → Apel Vault.deposit() on-chain → Frontend trimite txHash la Backend → Backend verifică on-chain (eveniment Deposited, wallet, sumă) → Salvează în DB → Împarte automat: 85% la TradingFunds, 15% rămâne în Vault (Reward Fund). Procentele se citesc din config Admin (nu sunt fixe).
+</div>
+</div>
+
+<!-- ═══ SECTION 4: DAILY ROI ═══ -->
+<div class="card">
+<h2>3. Daily ROI Flow (Cron Job)</h2>
+<div class="flow">
+<div class="step"><div class="num">1</div><div class="txt"><b>Backend Cron:</b> Calculate daily ROI for all active positions (amount × dailyRate%)</div></div>
+<div class="step"><div class="num">2</div><div class="txt"><b>Backend:</b> Call on-chain <code class="contract">ROIDistributor.distributeROI(users[], amounts[], epoch)</code></div></div>
+<div class="step"><div class="num">3</div><div class="txt"><b>Backend:</b> Calculate commissions: Referral <b style="color:#fbbf24;">X%</b> (from <code>comm_referral</code>), Binary <b style="color:#fbbf24;">Y%</b> (from <code>comm_binary</code>), Momentum</div></div>
+<div class="step"><div class="num">4</div><div class="txt"><b>Backend:</b> Call on-chain <code class="contract">CommissionPayout.distributeCommissions(users[], types[], amounts[], epoch)</code></div></div>
+<div class="step"><div class="num">5</div><div class="txt"><b>Backend:</b> Save to DB: earnings, commission records. <b>On-chain and DB 100% synced.</b></div></div>
+</div>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+Cron zilnic: Calculează ROI pentru toate pozițiile active → Distribuie on-chain → Calculează comisioane (Referral X%, Binary Y%, Momentum) → Distribuie on-chain → Salvează în DB. On-chain și DB sincronizate 100%.
+</div>
+</div>
+
+<!-- ═══ SECTION 5: CLAIM FLOW ═══ -->
+<div class="card">
+<h2>4. Claim Flow (User Withdraws Earnings)</h2>
+<div class="flow">
+<div class="step"><div class="num">1</div><div class="txt"><b>Frontend:</b> User clicks "Claim All" → Shows <b>Confirmation Modal</b>:
+<br>— Total Claimable: <code>$X</code>
+<br>— Claim Fee: <code>Y%</code> (from <code>db.getConfigValue('fee_claim')</code>, NOT hardcoded)
+<br>— Amount to Receive: <code>$Z</code>
+<br>— Buttons: <b style="color:var(--t-muted);">Cancel</b> | <b style="color:#22c55e;">Confirm</b></div></div>
+<div class="step"><div class="num">2</div><div class="txt"><b>Frontend (after Confirm):</b> Calls on-chain <code class="contract">CommissionPayout.claimAllEarnings()</code>
+<br>— On-chain: deducts claim fee, sends USDT to user wallet (from Vault via transferFrom)</div></div>
+<div class="step"><div class="num">3</div><div class="txt"><b>Frontend:</b> Shows success: "Claim successful! $Z USDT sent to your wallet."
+<br>— Sends txHash to Backend <code>POST /api/user/claim</code></div></div>
+<div class="step"><div class="num">4</div><div class="txt"><b>Backend:</b> Verify on-chain claim event, update DB:
+<br>— <code>earnings.total_claimed += amount</code> per income type
+<br>— Record in <code>transactions</code> table</div></div>
+</div>
+
+<h3 style="color:#00d4ff;">📋 Transaction History (User Frontend)</h3>
+<p style="font-size:12px;margin-bottom:10px;"><b>Finance > History</b> tab — records ALL user transactions.</p>
+<table>
+<tr><th>Column</th><th>Description</th><th>Example</th></tr>
+<tr><td><b>Date</b></td><td>Transaction time</td><td>03/26/2026 14:30</td></tr>
+<tr><td><b>Type</b></td><td>Transaction type</td><td>Buy Essential, Claim All, Redeem Funds</td></tr>
+<tr><td><b>Amount</b></td><td>Gross amount</td><td>$5,000</td></tr>
+<tr><td><b>Fee</b></td><td>Fee (% + amount)</td><td>5% ($250)</td></tr>
+<tr><td><b>Net</b></td><td>Net received/paid</td><td>$4,750</td></tr>
+<tr><td><b>Status</b></td><td>State</td><td><span class="ok">Confirmed</span> / <span style="color:#fbbf24;">Pending</span> / <span class="err">Failed</span></td></tr>
+<tr><td><b>TX ID</b></td><td>On-chain link</td><td><code style="font-size:10px;">0xabc...def</code> → Polygonscan</td></tr>
+</table>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+Utilizatorul apasă "Claim All" → Modal de confirmare (Total, Comision, Suma netă) → Apel on-chain ClaimAllEarnings() → USDT trimis din Vault la wallet utilizator → Backend verifică și salvează. Istoricul tranzacțiilor: Data, Tip, Sumă, Comision, Net, Status, TX ID.
+</div>
+</div>
+
+<!-- ═══ SECTION 6: REDEEM FLOW ═══ -->
+<div class="card" style="border-color:rgba(34,197,94,.3);">
+<h2>5. Redeem Flow (User Withdraws Capital)</h2>
+<p style="font-size:13px;background:rgba(34,197,94,.1);padding:8px 12px;border-radius:8px;margin-bottom:12px;">
+<b>Core principle:</b> User clicks Redeem → <b>Backend only</b> (pending). On-chain <b>ONLY happens when Admin Approves</b>. Package stays active, keeps earning ROI until approved.</p>
+
+<h3>Step 1: User Requests Redeem</h3>
+<div class="flow">
+<div class="step"><div class="num">1</div><div class="txt"><b>Frontend:</b> User clicks "Redeem Funds" on expired lock package
+<br>— <span class="err">NO on-chain call</span>
+<br>— Only sends <code>POST /api/invest/redeem { positionId }</code> to backend
+<br>— Package stays <b>100% active</b> on-chain, keeps receiving Daily ROI</div></div>
+<div class="step"><div class="num">2</div><div class="txt"><b>Backend:</b>
+<br>— Creates <code>redemption</code> order: status = <code>'pending'</code>
+<br>— Position status <b>UNCHANGED</b>, stays <code>'active'</code>
+<br>— Appears in Admin > Redeem Orders for review</div></div>
+</div>
+
+<h3>Step 2a: Admin APPROVES</h3>
+<div class="flow">
+<div class="step"><div class="num">3</div><div class="txt"><b>Admin:</b> Clicks "Approve" in Redeem Orders</div></div>
+<div class="step"><div class="num">4</div><div class="txt"><b>Backend automatically executes ON-CHAIN (3 steps):</b>
+<br>a) <code class="contract">Vault.requestRedemption(user, posId)</code> → deactivates position, reduces TVL
+<br>b) <code class="contract">RedemptionManager.createOrder(user, posId, amount)</code>
+<br>c) <code class="contract">RedemptionManager.approveRedemption(orderId)</code> → <b>USDT sent to user wallet</b> (minus fee, from Vault via transferFrom)
+<br>— Redeem fee = <code>parseFloat(db.getConfigValue('fee_redeem'))</code> % (NOT hardcoded)</div></div>
+<div class="step"><div class="num">5</div><div class="txt"><b>Backend updates DB:</b>
+<br>— <code>position.status = 'completed'</code>
+<br>— <code>redemption.status = 'approved'</code>
+<br>— <code>redemption.tx_hash</code> = TX hash of refund transaction</div></div>
+<div class="step"><div class="num">6</div><div class="txt"><b>User Frontend — Redeemed Packages:</b>
+<br>— Status: <span class="ok">✅ Done</span>
+<br>— Button: <b style="color:#00d4ff;">"See Transaction"</b> → Polygonscan link to refund TX
+<br>— Shows: Package name, Amount, Fee %, Net Amount, Request date, Process date</div></div>
+</div>
+
+<h3>Step 2b: Admin REJECTS</h3>
+<div class="flow">
+<div class="step"><div class="num">3</div><div class="txt"><b>Admin:</b> Clicks "Reject" in Redeem Orders</div></div>
+<div class="step"><div class="num">4</div><div class="txt"><b>Backend:</b>
+<br>— <span class="err">NO on-chain changes</span> — package stays active, keeps earning ROI
+<br>— <code>redemption.status = 'rejected'</code>
+<br>— <code>position.status</code> stays <code>'active'</code> (unchanged)
+<br>— User can submit Redeem request again anytime</div></div>
+</div>
+
+<div class="warn">
+<b>Important notes:</b><br>
+— <b>No <code>reactivatePosition()</code> needed</b> — on-chain is unchanged until admin approves<br>
+— Exclusive Leader Access (admin grant): <span class="err">CANNOT Redeem</span> (frontend hides button, backend rejects)<br>
+— Packages with unexpired lock: <span class="err">CANNOT Redeem</span> (frontend disables button)<br>
+— Redeem fee from <code>db.getConfigValue('fee_redeem')</code> — NOT hardcoded
+</div>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+Utilizatorul cere Redeem → doar backend (pending). On-chain doar la Aprobare Admin. Aprobare: Backend dezactivează pe chain + trimite USDT la utilizator (minus comision). Respingere: Nimic on-chain, pachet rămâne activ. Nu e nevoie de reactivatePosition(). Leader packages nu pot fi răscumpărate.
+</div>
+</div>
+
+<!-- ═══ SECTION 7: GRANT LEADER ═══ -->
+<div class="card">
+<h2>6. Grant Leader Package (Admin Grants to Leaders)</h2>
+<div class="flow">
+<div class="step"><div class="num">1</div><div class="txt"><b>Admin/S_Wallet:</b> Select wallet + amount → Calls on-chain <code class="contract">Vault.grantLeaderPackage(user, amount, hidden)</code>
+<br>— On-chain: creates position with packageType=6, isGranted=true, lockDays=360, tier=3
+<br>— NO USDT taken from user (free grant)</div></div>
+<div class="step"><div class="num">2</div><div class="txt"><b>Backend:</b> Save DB position with package_id=exclusive360_leader, status=active
+<br>— If <code>hidden=true</code>: save <code>position.hidden = true</code> in DB
+<br>— Set VIP investment on CommissionPayout (for Earnings Cap)
+<br>— NO Binary Bonus calculated (admin grant is not a real deposit)</div></div>
+</div>
+
+<h3 style="color:#ff6b6b;">🔒 HIDDEN Position (S_Wallet Only)</h3>
+<table>
+<tr><th></th><th>S_Wallet (Super Admin)</th><th>Admin (Normal)</th><th>User (Owner)</th></tr>
+<tr><td><b>See "Hidden" toggle when granting?</b></td><td class="ok">YES — checkbox/toggle</td><td class="err">NO — hidden toggle invisible</td><td>—</td></tr>
+<tr><td><b>See hidden packages in Lookup?</b></td><td class="ok">YES — with <span style="background:rgba(255,107,107,.2);color:#ff6b6b;padding:1px 6px;border-radius:4px;font-size:10px;">HIDDEN</span> badge</td><td class="err">NO — completely invisible</td><td class="ok">YES — displays normally in Finance</td></tr>
+<tr><td><b>Count in Dashboard stats?</b></td><td class="ok">YES</td><td class="err">NO</td><td>—</td></tr>
+<tr><td><b>Receive Daily ROI / Commissions?</b></td><td colspan="3" class="ok">YES — operates normally like non-hidden packages</td></tr>
+</table>
+
+<div class="warn">
+— <span class="err">CANNOT Redeem Funds</span> (on-chain: require !isGranted)<br>
+— <span class="ok">Eligible</span> for all commissions/rewards (Daily Profit, Binary Bonus, Referral, Binary Comm, Momentum)<br>
+— Earnings Cap applies (from <code>maxout_leader</code> config)<br>
+— Uplines <span class="err">DO NOT</span> receive referral/binary commission from admin-granted packages<br>
+— User receiving Leader package <b>sees it normally</b> in Finance — doesn't know if hidden or not
+</div>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+Admin/S_Wallet acordă pachet Leader → on-chain (gratuit, fără USDT de la utilizator). Doar S_Wallet vede toggle-ul "Hidden". Pachetele ascunse sunt invizibile pentru Admin normal, dar utilizatorul le vede normal. Nu se pot răscumpăra. Eligibil pentru toate comisioanele. Uplines nu primesc comision din pachetele acordate.
+</div>
+</div>
+
+<!-- ═══ SECTION 8: BINARY BONUS ═══ -->
+<div class="card">
+<h2>7. Binary Bonus Flow (On F1 Deposit of Signature/Exclusive)</h2>
+<div class="flow">
+<div class="step"><div class="num">1</div><div class="txt"><b>Trigger:</b> When deposit is recorded (Step 2.5), if package = Signature or Exclusive</div></div>
+<div class="step"><div class="num">2</div><div class="txt"><b>Backend:</b> Find referrer (F0). Calculate <b style="color:#fbbf24;">X%</b> (from <code>comm_binary_bonus</code>) on F1's deposit amount</div></div>
+<div class="step"><div class="num">3</div><div class="txt"><b>Backend:</b> Check referrer has active Exclusive package + Earnings Cap remaining</div></div>
+<div class="step"><div class="num">4</div><div class="txt"><b>Backend:</b> Record commission in DB + on-chain <code class="contract">CommissionPayout.distributeCommissions()</code></div></div>
+</div>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+Când F1 depozitează Signature/Exclusive → Backend calculează X% bonus → Verifică dacă referral-ul are pachet Exclusive activ + Cap disponibil → Înregistrează comision în DB + on-chain.
+</div>
+</div>
+
+<!-- ═══ SECTION 9: SYNC RULES ═══ -->
+<div class="card">
+<h2>8. Synchronization Rules</h2>
+<table>
+<tr><th>Data</th><th>Source of Truth</th><th>Backup</th></tr>
+<tr><td>Positions (deposit)</td><td class="ok">On-chain (Vault)</td><td>Backend DB</td></tr>
+<tr><td>ROI Distribution</td><td class="ok">On-chain (ROIDistributor)</td><td>Backend DB</td></tr>
+<tr><td>Commissions</td><td class="ok">On-chain (CommissionPayout)</td><td>Backend DB</td></tr>
+<tr><td>Claims</td><td class="ok">On-chain (CommissionPayout/ROI)</td><td>Backend DB</td></tr>
+<tr><td>Redemptions</td><td class="ok">On-chain (Vault + RedemptionManager)</td><td>Backend DB</td></tr>
+<tr><td>User registration</td><td>Backend DB</td><td>—</td></tr>
+<tr><td>Binary tree</td><td>Backend DB</td><td>—</td></tr>
+<tr><td>Fee config</td><td>Admin config (DB) + On-chain</td><td>—</td></tr>
+<tr><td><b style="color:#ff6b6b;">MaxOut (Earnings Cap)</b></td><td>Backend DB + On-chain (CommissionPayout)</td><td>Must sync on every change</td></tr>
+</table>
+<div class="warn"><b>Rule:</b> Every financial operation (deposit, claim, redeem) MUST have on-chain TX first, backend verifies TX then writes DB. Never write DB without on-chain proof.</div>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+Fiecare operațiune financiară trebuie să aibă TX on-chain mai întâi, apoi backend-ul verifică și scrie în DB. Niciodată nu se scrie în DB fără dovadă on-chain.
+</div>
+</div>
+
+<!-- ═══ SECTION 10: DYNAMIC CONFIG ═══ -->
+<div class="card" style="border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.05);">
+<h2 style="color:#fbbf24;">⚠ MANDATORY: ALL RATES = DYNAMIC VARIABLES (NO HARDCODING)</h2>
+<p style="font-size:13px;margin-bottom:12px;">All rates/fees must read from <b>Admin Config (DB)</b>. NEVER use fixed numbers in code.</p>
+
+<table>
+<tr><th>Config Key (DB)</th><th>Description</th><th>Default</th><th>Used In</th></tr>
+<tr><td><code>comm_binary_bonus</code></td><td>Binary Bonus %</td><td>5%</td><td>When F1 deposits Signature/Exclusive</td></tr>
+<tr><td><code>comm_referral</code></td><td>Referral Commission %</td><td>10%</td><td>Daily cron: % on F1 daily profit</td></tr>
+<tr><td><code>comm_binary</code></td><td>Binary Commission %</td><td>15%</td><td>Daily cron: % on weak leg daily profit</td></tr>
+<tr><td><code>earnings_cap_multi</code></td><td>Earnings Cap multiplier</td><td>300%</td><td>Max total income = X% × VIP investment</td></tr>
+<tr><td><code>fee_claim</code></td><td>Claim Fee</td><td>0%</td><td>When user claims earnings on-chain</td></tr>
+<tr><td><code>fee_redeem</code></td><td>Redeem Fee</td><td>5%</td><td>When admin approves redeem</td></tr>
+<tr style="background:rgba(255,107,107,.08);"><td><code>maxout_essential</code></td><td>MaxOut % Essential</td><td>300%</td><td rowspan="6">Max income limit = X% × investment amount.<br>Admin adjusts per package.</td></tr>
+<tr style="background:rgba(255,107,107,.08);"><td><code>maxout_classic</code></td><td>MaxOut % Classic</td><td>300%</td></tr>
+<tr style="background:rgba(255,107,107,.08);"><td><code>maxout_ultimate</code></td><td>MaxOut % Ultimate</td><td>300%</td></tr>
+<tr style="background:rgba(255,107,107,.08);"><td><code>maxout_signature</code></td><td>MaxOut % Signature</td><td>300%</td></tr>
+<tr style="background:rgba(255,107,107,.08);"><td><code>maxout_exclusive</code></td><td>MaxOut % Exclusive VIP</td><td>300%</td></tr>
+<tr style="background:rgba(255,107,107,.08);"><td><code>maxout_leader</code></td><td>MaxOut % Exclusive Leader</td><td>300%</td></tr>
+</table>
+
+<div class="warn" style="margin-top:12px;">
+<b>CORRECT CODE:</b><br>
+<code>const rate = parseFloat(db.getConfigValue('comm_referral')) || 10;</code><br>
+<code>const fee = parseFloat(db.getConfigValue('fee_claim')) || 0;</code><br><br>
+<b>ABSOLUTELY WRONG:</b> <code style="color:#ef4444;">const rate = 10;</code> or <code style="color:#ef4444;">const fee = 2.5;</code><br><br>
+<b>Admin changes value:</b> Dashboard → Marketing Plan / Fee Config → Save → Backend reads from DB → Applies immediately.<br>
+<b>On-chain sync:</b> <code>setClaimFee(bps)</code>, <code>setRedemptionFee(bps)</code>, <code>setEarningsCapMultiplier(multi)</code>
+</div>
+
+<h3>Fee Sync Flow: Admin → DB → On-chain</h3>
+<div class="flow">
+<div class="step"><div class="num">1</div><div class="txt"><b>Admin</b> changes fee/rate in Dashboard</div></div>
+<div class="step"><div class="num">2</div><div class="txt"><b>Backend</b> saves to DB config table</div></div>
+<div class="step"><div class="num">3</div><div class="txt"><b>Backend</b> SIMULTANEOUSLY calls on-chain: <code>setClaimFee()</code>, <code>setRedemptionFee()</code>, <code>setEarningsCapMultiplier()</code></div></div>
+<div class="step"><div class="num">4</div><div class="txt">All calculations read from DB (backend) and on-chain (smart contract) — <b>NEVER use fixed numbers</b></div></div>
+</div>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+Toate ratele/comisioanele se citesc din Config Admin (DB), NICIODATĂ numere fixe în cod. Admin modifică → se salvează în DB → se sincronizează on-chain automat. MaxOut se aplică per pachet, Admin ajustează individual.
+</div>
+</div>
+
+<!-- ═══ SECTION 11: MAXOUT ═══ -->
+<div class="card">
+<h2 style="color:#ff6b6b;">🚨 MaxOut (Earnings Cap) — Detailed Sync</h2>
+<p style="font-size:12px;margin-bottom:10px;">MaxOut = Maximum income per package = <code>maxout_%</code> × Investment amount. Applies to <b>ALL packages</b>, not just VIP.</p>
+
+<h4>Per-Package MaxOut (Admin Adjustable):</h4>
+<table>
+<tr><th>Package</th><th>Config Key</th><th>Default</th><th>Example: $1,000 invested</th></tr>
+<tr><td>Essential</td><td><code>maxout_essential</code></td><td>300%</td><td>Max income = $3,000</td></tr>
+<tr><td>Classic</td><td><code>maxout_classic</code></td><td>300%</td><td>Max income = $3,000</td></tr>
+<tr><td>Ultimate</td><td><code>maxout_ultimate</code></td><td>300%</td><td>Max income = $3,000</td></tr>
+<tr><td>Signature</td><td><code>maxout_signature</code></td><td>300%</td><td>Max income = $3,000</td></tr>
+<tr><td>Exclusive VIP</td><td><code>maxout_exclusive</code></td><td>300%</td><td>Max income = $3,000</td></tr>
+<tr><td>Exclusive Leader</td><td><code>maxout_leader</code></td><td>300%</td><td>Max income = $3,000</td></tr>
+</table>
+
+<div style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);border-radius:8px;padding:10px;margin:10px 0;font-size:12px;">
+<b>💡 MaxOut Logic:</b><br>
+— Non-VIP packages: MaxOut calculated on <b>Daily ROI only</b><br>
+— VIP packages: MaxOut calculated on <b>ALL income</b> (ROI + Bonus + Commission + Momentum)<br>
+— When MaxOut reached → position <b>stops receiving ROI</b><br>
+— Lost income recorded in <code>earnings_lost</code> table
+</div>
+
+<h3 style="color:#ff6b6b;">🔔 MaxOut Alerts — User Frontend (English)</h3>
+<table>
+<tr><th>Level</th><th>Condition</th><th>User Sees</th></tr>
+<tr><td style="color:#22c55e;">Normal</td><td>Earned < 85% Cap</td><td>Green progress bar</td></tr>
+<tr style="background:rgba(251,191,36,.1);"><td style="color:#fbbf24;"><b>⚠ Warning</b></td><td><b>Earned ≥ 85% Cap</b></td>
+<td><i>"⚠ You have reached X% of your Earnings Cap. To avoid losing future income, consider upgrading your Exclusive VIP package."</i><br>Button: <b>"Upgrade Now →"</b></td></tr>
+<tr style="background:rgba(255,107,107,.15);"><td style="color:#ff6b6b;"><b>🛑 MaxOut</b></td><td><b>Earned ≥ 100% Cap</b></td>
+<td><i>"🛑 Earnings Cap Reached! You have lost $X in potential income. Upgrade your package to resume earning."</i><br>Button: <b>"Upgrade to Keep Earning →"</b></td></tr>
+</table>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+MaxOut = Venit maxim per pachet = maxout_% × Investiție. Se aplică TUTUROR pachetelor. Non-VIP: doar ROI zilnic. VIP: toate veniturile. Când e atins: se oprește ROI-ul. Alertă la 85%: "Actualizați pachetul". La 100%: "Ați pierdut $X venituri potențiale".
+</div>
+</div>
+
+<!-- ═══ SECTION 12: REWARD FUND HEALTH ═══ -->
+<div class="card" style="border-color:rgba(34,197,94,.3);">
+<h2 style="color:#22c55e;">🎁 Reward & Redeem Fund — Real-Time Monitoring</h2>
+<p style="font-size:12px;margin-bottom:10px;">Admin Dashboard shows REAL-TIME on Reward Fund card:</p>
+
+<table>
+<tr><th>Metric</th><th>Source</th></tr>
+<tr><td><b>Fund Balance</b></td><td>On-chain: <code>USDT.balanceOf(Vault)</code></td></tr>
+<tr><td><b>Total Unclaimed</b></td><td>DB: SUM(earnings.total_earned - total_claimed) for ALL users</td></tr>
+<tr><td><b>Pending Redeems</b></td><td>DB: SUM(redemptions.amount) WHERE status = 'pending'</td></tr>
+<tr><td><b>Usage %</b></td><td>(Unclaimed + Pending) / Fund Balance × 100</td></tr>
+</table>
+
+<h4>Alert System:</h4>
+<table>
+<tr><th>Level</th><th>Condition</th><th>Display</th></tr>
+<tr><td style="color:#22c55e;">✅ Safe</td><td>< 50%</td><td>Green bar</td></tr>
+<tr><td style="color:#fbbf24;">⚠ Attention</td><td>50-75%</td><td>Yellow bar + warning</td></tr>
+<tr style="background:rgba(255,107,107,.1);"><td style="color:#ff6b6b;"><b>🚨 Danger</b></td><td><b>≥ 75%</b></td><td><b>Red flashing bar: "Reward Fund running low! Transfer from Trading Funds."</b></td></tr>
+<tr style="background:rgba(255,0,0,.1);"><td style="color:#ff0000;"><b>💥 Overload</b></td><td><b>≥ 100%</b></td><td><b>BLOCK: Users cannot Claim/Redeem until fund is topped up</b></td></tr>
+</table>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+Dashboard Admin arată în timp real: Balanță fond, Total nerevendicat, Răscumpărări în așteptare, % utilizare. Alerte: verde (<50%), galben (50-75%), roșu (≥75%), blocare (≥100%).
+</div>
+</div>
+
+<!-- ═══ SECTION 13: CONTRACTS TABLE ═══ -->
+<div class="card">
+<h2>9. Deployed Contracts (V3)</h2>
+<table>
+<tr><th>#</th><th>Contract</th><th>Address</th><th>Holds USDT?</th></tr>
+<tr><td>1</td><td>MockUSDT</td><td><code>0x96FBA824E3798E59e98fDE8E019a684700F9fF4a</code></td><td>—</td></tr>
+<tr><td>2</td><td>VelturAccessControl</td><td><code>0x27D456c4D287D0E8bf7B76FbE3AA986520cEF5CC</code></td><td>No</td></tr>
+<tr><td>3</td><td>VelturVault</td><td><code>0x40FBCc98bE7F8CcC2fF732d7807679592FDC66dD</code></td><td class="ok"><b>YES — Reward Fund</b></td></tr>
+<tr><td>4</td><td>TradingFunds</td><td><code>0x2BD4727018E3a70D49B536A0187791e363de56ff</code></td><td class="ok"><b>YES — Trading Fund</b></td></tr>
+<tr><td>5</td><td>ROIDistributor</td><td><code>0xd486208A37Df4014Fcc6d607178274632d83B903</code></td><td class="err">No — pays from Vault</td></tr>
+<tr><td>6</td><td>CommissionPayout</td><td><code>0xC0b3368B020bcad722F431aDa33601a26755D3cC</code></td><td class="err">No — pays from Vault</td></tr>
+<tr><td>7</td><td>RedemptionManager</td><td><code>0xfa698a22F6E2a7836eeDAA24eEbDe834E65654EC</code></td><td class="err">No — pays from Vault</td></tr>
+</table>
+
+<div class="ro">
+<span class="lang-label ro-label">🇷🇴 Română</span>
+7 contracte implementate. Doar Vault (Fond Recompensă) și TradingFunds (Fond Tranzacționare) dețin USDT. Celelalte 3 contracte de plată retrag din Vault.
+</div>
+</div>
+
+<div style="text-align:center;margin:30px 0;color:#555;font-size:11px;">
+VELTURA Protocol · V3 Architecture · Polygon Amoy Testnet · March 2026
+</div>
+</body>
+</html>

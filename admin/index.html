@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<style id="auth-lock">
+#login-screen{display:flex!important;position:fixed!important;inset:0!important;z-index:99999!important;background:#050c12!important;align-items:center!important;justify-content:center!important}
+#app{display:none!important}
+</style>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>VELTURA Labs — Admin Dashboard</title>
@@ -81,11 +85,13 @@ body {
 /* ══════════════════════════════════════════════
    LOGIN / CONNECT WALLET SCREEN
    ══════════════════════════════════════════════ */
+
 #login-screen {
+
   position: fixed; inset: 0; z-index: 9000;
   display: flex; align-items: center; justify-content: center;
   background: var(--bg-0);
-  overflow: hidden;
+  overflow-y: auto;
 }
 /* Animated grid */
 .login-grid {
@@ -345,7 +351,7 @@ body {
 .stat-card {
   background: var(--bg-2); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 18px 20px;
-  transition: border-color 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s; position: relative; overflow-y: auto;
 }
 .stat-card::after {
   content: ''; position: absolute; right: -16px; bottom: -16px;
@@ -358,7 +364,7 @@ body {
 .stat-card.g { --glow-c: rgba(0,229,140,0.12); }
 .stat-card.r { --glow-c: rgba(255,71,87,0.12); }
 .stat-label { font-size: 10px; letter-spacing: 1px; color: var(--t-secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
-.stat-val { font-family: 'Montserrat', monospace; font-size: 26px; font-weight: 700; line-height: 1; color: var(--t-bright); }
+.stat-val { font-family: 'Montserrat', monospace; font-size: 21px; font-weight: 700; line-height: 1; color: var(--t-bright); }
 .stat-val.teal { background: linear-gradient(135deg, var(--teal), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .stat-val.green { color: var(--green); }
 .stat-val.blue { color: var(--blue-light); }
@@ -393,7 +399,7 @@ thead th {
 }
 tbody tr { border-top: 1px solid var(--border); transition: background 0.12s; }
 tbody tr:hover { background: var(--bg-hover); }
-tbody td { padding: 11px 15px; font-size: 13px; vertical-align: middle; }
+tbody td, tfoot td { padding: 11px 15px; font-size: 13px; vertical-align: middle; }
 .mono { font-family: 'Montserrat', monospace; font-size: 12px; }
 .addr { font-family: 'Montserrat', monospace; font-size: 11px; color: var(--t-secondary); cursor: pointer; }
 .addr:hover { color: var(--teal); }
@@ -489,7 +495,7 @@ input[type=range] {
 /* ──────────────── FUND CARDS ──────────────── */
 .fund-card {
   background: var(--bg-2); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 22px; position: relative; overflow: hidden;
+  border-radius: var(--radius); padding: 22px; position: relative; overflow-y: auto;
 }
 .fund-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
@@ -500,7 +506,7 @@ input[type=range] {
 .fund-card.gc { --fc: var(--green); }
 .fund-name { font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 2px; }
 .fund-type { font-size: 10px; color: var(--t-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
-.fund-amt  { font-family: 'Montserrat', monospace; font-size: 26px; font-weight: 700; color: var(--teal); margin-bottom: 4px; }
+.fund-amt  { font-family: 'Montserrat', monospace; font-size: 20px; font-weight: 700; color: var(--teal); margin-bottom: 4px; }
 .fund-usd  { font-size: 11px; color: var(--t-muted); font-family: 'Montserrat', monospace; margin-bottom: 16px; }
 .fund-pct-row { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); border-radius: 7px; padding: 8px 12px; margin-bottom: 10px; }
 .fund-pct-label { font-size: 11px; color: var(--t-secondary); }
@@ -551,7 +557,7 @@ input[type=range] {
 .ftab.active { background: var(--bg-3); color: var(--teal); border: 1px solid var(--border-teal); }
 
 /* ──────────────── PROGRESS BAR ──────────────── */
-.pbar-wrap { background: rgba(255,255,255,0.05); border-radius: 4px; height: 5px; overflow: hidden; }
+.pbar-wrap { background: rgba(255,255,255,0.05); border-radius: 4px; height: 5px; overflow-y: auto; }
 .pbar { height: 100%; border-radius: 4px; }
 .pbar.teal  { background: linear-gradient(90deg, var(--teal), var(--cyan)); }
 .pbar.blue  { background: linear-gradient(90deg, var(--blue), var(--blue-light)); }
@@ -608,7 +614,7 @@ input[type=range] {
 .vip-terms-card {
   background: linear-gradient(145deg, rgba(0,212,200,0.06), rgba(0,168,158,0.04));
   border: 1px solid var(--border-teal);
-  border-radius: var(--radius); padding: 22px; position: relative; overflow: hidden;
+  border-radius: var(--radius); padding: 22px; position: relative; overflow-y: auto;
 }
 .vip-terms-card::after {
   content: ''; position: absolute; top: -40px; right: -40px;
@@ -747,7 +753,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
   .table-wrap { font-size: 11px; border-radius: 10px; -webkit-overflow-scrolling: touch; }
   table { min-width: 520px; }
   thead th { padding: 8px 10px; font-size: 8px; }
-  tbody td { padding: 8px 10px; font-size: 11px; }
+  tbody td, tfoot td { padding: 8px 10px; font-size: 11px; }
 
   /* Cards */
   .card { padding: 14px; border-radius: 10px; word-break: break-word; overflow-wrap: break-word; }
@@ -842,7 +848,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
   .slider-val { font-size: 14px; min-width: 40px; }
   table { min-width: 440px; }
   thead th { padding: 6px 8px; }
-  tbody td { padding: 6px 8px; font-size: 10px; }
+  tbody td, tfoot td { padding: 6px 8px; font-size: 10px; }
   .fund-amt { font-size: 16px; }
   .modal { padding: 14px; margin: 6px; }
 
@@ -865,6 +871,31 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
   .logo-hex, .logo-hex img { width: 40px; height: 40px; }
   .logo-text { font-size: 18px; }
   .gate-badge { margin-bottom: 16px; }
+}
+/* ── LAPTOP / DESKTOP LOGIN ── */
+@media (min-width: 1024px) {
+  .login-card { width: min(90vw, 720px); max-width: 720px; padding: 32px 48px; border-radius: 24px; max-height: 96vh; overflow-y: auto; }
+  .login-logo { margin-bottom: 20px; }
+  .logo-hex, .logo-hex img { width: 72px; height: 72px; }
+  .logo-text { font-size: 26px; letter-spacing: 5px; margin-top: 10px; }
+  .gate-badge { padding: 8px 24px; font-size: 11px; margin-bottom: 20px; }
+  .wallet-detect-box { padding: 18px 24px; margin-bottom: 18px; }
+  .wallet-detect-box p { font-size: 14px; line-height: 1.7; }
+  .connect-section { gap: 10px; margin-bottom: 18px; }
+  .btn-wallet { padding: 14px 24px; border-radius: 12px; font-size: 15px; }
+  .btn-wallet .w-icon { width: 38px; height: 38px; font-size: 20px; }
+  .login-foot { font-size: 12px; }
+  .orbit-ring { width: 680px; height: 680px; }
+  .orbit-ring-2 { width: 520px; height: 520px; }
+}
+@media (min-width: 1440px) {
+  .login-card { width: min(85vw, 780px); max-width: 780px; padding: 40px 56px; }
+  .logo-hex, .logo-hex img { width: 84px; height: 84px; }
+  .logo-text { font-size: 30px; }
+  .btn-wallet { padding: 16px 28px; font-size: 16px; }
+  .btn-wallet .w-icon { width: 42px; height: 42px; font-size: 22px; }
+  .orbit-ring { width: 800px; height: 800px; }
+  .orbit-ring-2 { width: 620px; height: 620px; }
 }
 </style>
 </head>
@@ -937,7 +968,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
 
     <!-- Wallet buttons -->
     <div class="connect-section">
-      <button class="btn-wallet primary" onclick="connectWallet('metamask')">
+      <button class="btn-wallet primary" onclick="connectWallet('metamask', event)">
         <div class="w-icon">🦊</div>
         <div class="w-name">
           MetaMask
@@ -945,7 +976,15 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
         </div>
         <span class="w-arrow">›</span>
       </button>
-      <button class="btn-wallet" onclick="connectWallet('walletconnect')">
+      <button class="btn-wallet" onclick="connectWallet('trustwallet', event)">
+        <div class="w-icon" style="font-size:22px">🛡️</div>
+        <div class="w-name">
+          Trust Wallet
+          <div class="w-sub">Mobile & browser extension</div>
+        </div>
+        <span class="w-arrow">›</span>
+      </button>
+      <button class="btn-wallet" onclick="connectWallet('walletconnect', event)">
         <div class="w-icon">🔗</div>
         <div class="w-name">
           WalletConnect
@@ -953,18 +992,10 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
         </div>
         <span class="w-arrow">›</span>
       </button>
-      <button class="btn-wallet" onclick="connectWallet('coinbase')">
-        <div class="w-icon">🔵</div>
-        <div class="w-name">
-          Coinbase Wallet
-          <div class="w-sub">Coinbase browser or app</div>
-        </div>
-        <span class="w-arrow">›</span>
-      </button>
     </div>
 
     <div class="login-foot">
-      Polygon Mainnet · Chain ID 137 · USDT<br>
+      Polygon Amoy Testnet · Chain ID 80002 · MockUSDT<br>
       <a href="#">Terms of Use</a> · <a href="#">Privacy Policy</a>
     </div>
   </div>
@@ -1005,16 +1036,17 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
       <div class="nav-group-label">Members</div>
       <div class="nav-item" onclick="goPage('lookup')"><span class="nav-icon">🔍</span> Wallet Lookup</div>
       <div class="nav-item" onclick="goPage('tree')"><span class="nav-icon">🌿</span> System Tree</div>
-      <div class="nav-item" onclick="goPage('redeem')"><span class="nav-icon">📋</span> Redeem Orders <span class="nav-badge">4</span></div>
+      <div class="nav-item" onclick="goPage('redeem')"><span class="nav-icon">📋</span> Redeem Orders <span class="nav-badge" id="redeem-badge" style="display:none">0</span></div>
       <div class="nav-item" onclick="goPage('expiry')"><span class="nav-icon">⏳</span> Expiry Tracker</div>
     </div>
     <div class="nav-group">
       <div class="nav-group-label">Finance</div>
       <div class="nav-item" onclick="goPage('funds')"><span class="nav-icon">🏦</span> Fund Management</div>
       <div class="nav-item" onclick="goPage('vip360')"><span class="nav-icon">👑</span> Exclusive (VIP-360) Leader Access</div>
-      <div class="nav-item" onclick="goPage('fee')"><span class="nav-icon">⚙️</span> Withdrawal Fee</div>
+      <div class="nav-item" onclick="goPage('fee')"><span class="nav-icon">⚙️</span> Claim Fee</div>
+      <div class="nav-item" onclick="goPage('fee-redeem')"><span class="nav-icon">⚙️</span> Redeem Fee</div>
       <div class="nav-item" onclick="goPage('profit')"><span class="nav-icon">📈</span> Deposit Tiers</div>
-      <div class="nav-item" onclick="goPage('rewards')"><span class="nav-icon">🎁</span> Community Rewards</div>
+      <div class="nav-item" onclick="goPage('marketing')"><span class="nav-icon">📋</span> Marketing Plan</div>
     </div>
     <div class="nav-group">
       <div class="nav-group-label">Control</div>
@@ -1042,7 +1074,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
       <button class="hamburger" id="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
       <div class="topbar-title">VELTURA <span id="tb-section">Admin</span></div>
       <div class="topbar-right">
-        <div class="chain-pill">🔷 Polygon · Chain ID 137</div>
+        <div class="chain-pill">🔷 Polygon · Chain ID 80002</div>
         <div class="topbar-clock" id="clock">--:--:-- UTC</div>
       </div>
     </div>
@@ -1052,30 +1084,30 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
       <div class="page-hd"><h2>📊 General Overview</h2><p>Real-time platform statistics and fund summary.</p></div>
 
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label">Total Registered Members</div><div class="stat-val teal">2,847</div><div class="stat-change up">↑ 18 this week</div></div>
-        <div class="stat-card g"><div class="stat-label">Active Members</div><div class="stat-val green">1,934</div><div class="stat-sub">67.9% of total</div></div>
-        <div class="stat-card b"><div class="stat-label">Total Deposits (Current)</div><div class="stat-val blue">$4,287,340</div><div class="stat-sub">USDT · On-chain</div></div>
-        <div class="stat-card"><div class="stat-label">Fixed Period Matured</div><div class="stat-val">$892,150</div><div class="stat-sub">Total expired packages</div></div>
-        <div class="stat-card"><div class="stat-label">Redeem Approved (All Time)</div><div class="stat-val teal">1,204</div><div class="stat-sub">Orders processed</div></div>
-        <div class="stat-card r"><div class="stat-label">Redeem Orders · Last 12h</div><div class="stat-val orange">17</div><button class="btn btn-ghost btn-sm mt12" onclick="goPage('redeem')">View Details →</button></div>
+        <div class="stat-card"><div class="stat-label">Total Registered Members</div><div class="stat-val teal"><span id="stat-total-users">0</span></div><div class="stat-change up"><span id="stat-new-week">0 this week</span></div></div>
+        <div class="stat-card g"><div class="stat-label">Active Members</div><div class="stat-val green"><span id="stat-active-users">0</span></div><div class="stat-sub"><span id="stat-active-pct">0%</span> of total</div></div>
+        <div class="stat-card b"><div class="stat-label">Total Deposits (Current)</div><div class="stat-val blue"><span id="stat-tvl">$0</span></div><div class="stat-sub">USDT · On-chain</div></div>
+        <div class="stat-card"><div class="stat-label">Fixed Period Matured</div><div class="stat-val"><span id="stat-matured">$0</span></div><div class="stat-sub">Total expired packages</div></div>
+        <div class="stat-card"><div class="stat-label">Redeem Approved (All Time)</div><div class="stat-val teal"><span id="stat-redeemed">0</span></div><div class="stat-sub">Orders processed</div></div>
+        <div class="stat-card r"><div class="stat-label">Redeem Orders · Last 12h</div><div class="stat-val orange">0</div><button class="btn btn-ghost btn-sm mt12" onclick="goPage('redeem')">View Details →</button></div>
       </div>
 
       <div class="g2 mb20">
         <div class="card">
           <div class="card-title">💰 Deposit Breakdown (Current)</div>
           <div class="dep-list">
-            <div class="dep-row fl"><div><div class="dep-name">Essential</div><div class="dep-sub">No lock-up</div></div><div class="dep-val">$312,800</div></div>
-            <div class="dep-row std"><div><div class="dep-name">Classic (30 Days)</div><div class="dep-sub">Fixed · 30 day term</div></div><div class="dep-val">$1,048,200</div></div>
-            <div class="dep-row plus"><div><div class="dep-name">Ultimate (90 Days)</div><div class="dep-sub">Fixed · 90 day term</div></div><div class="dep-val">$765,400</div></div>
-            <div class="dep-row v180"><div><div class="dep-name">Signature (180 Days)</div><div class="dep-sub">Fixed · 180 day term</div></div><div class="dep-val">$892,640</div></div>
-            <div class="dep-row vmax"><div><div class="dep-name">Exclusive (VIP-360)</div><div class="dep-sub">VIP · 360 day term</div></div><div class="dep-val">$1,268,300</div></div>
+            <div class="dep-row fl"><div><div class="dep-name">Essential</div><div class="dep-sub">No lock-up</div></div><div class="dep-val"><span id="bd-essential">$0</span></div></div>
+            <div class="dep-row std"><div><div class="dep-name">Classic (30 Days)</div><div class="dep-sub">Fixed · 30 day term</div></div><div class="dep-val"><span id="bd-classic">$0</span></div></div>
+            <div class="dep-row plus"><div><div class="dep-name">Ultimate (90 Days)</div><div class="dep-sub">Fixed · 90 day term</div></div><div class="dep-val">$0</div></div>
+            <div class="dep-row v180"><div><div class="dep-name">Signature (180 Days)</div><div class="dep-sub">Fixed · 180 day term</div></div><div class="dep-val">$0</div></div>
+            <div class="dep-row vmax"><div><div class="dep-name">Exclusive (VIP-360)</div><div class="dep-sub">VIP · 360 day term</div></div><div class="dep-val">$0</div></div>
           </div>
         </div>
         <div class="card">
           <div class="card-title">👑 Exclusive (VIP-360) Leader Access — Issued</div>
           <div class="flex gap16 mb16">
-            <div><div class="stat-label">Packages Issued</div><div style="font-family:'Montserrat',monospace;font-size:24px;font-weight:700;color:var(--teal)">28</div></div>
-            <div><div class="stat-label">Total Capital Granted</div><div style="font-family:'Montserrat',monospace;font-size:24px;font-weight:700;color:var(--teal)">$840,000</div></div>
+            <div><div class="stat-label">Packages Issued</div><div style="font-family:'Montserrat',monospace;font-size:18px;font-weight:700;color:var(--teal)" id="vip-pkg-count">0</div></div>
+            <div><div class="stat-label">Total Capital Granted</div><div style="font-family:'Montserrat',monospace;font-size:18px;font-weight:700;color:var(--teal)"><span id="vip-capital">$0</span></div></div>
           </div>
           <div class="alert info mb16">ℹ Leader packages do not generate referral volume or referral/binary commissions for uplines. Capital is non-withdrawable.</div>
           <button class="btn btn-teal btn-sm" onclick="goPage('vip360')">Manage Leader Packages →</button>
@@ -1103,78 +1135,148 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
         <button class="btn btn-ghost" onclick="clearLookup()">✕ Clear</button>
       </div>
       <div id="lookup-res" style="display:none;">
+
+        <!-- ═══ BLOCK 1: USER'S INFOS ═══ -->
         <div class="card accent mb16">
-          <div class="flex items-c jbet mb16">
-            <div><div class="stat-label">Queried Wallet</div><div class="mono" style="color:var(--teal);font-size:14px" id="lookup-addr-show">0x—</div><div style="color:var(--cyan);font-size:12px;font-weight:600;margin-top:2px" id="lookup-user-show">@—</div></div>
+          <div class="flex items-c jbet mb12">
+            <div class="card-title" style="margin:0;">👤 User's Infos</div>
             <div class="flex gap8">
-              <span class="badge active">Active</span>
+              <span class="badge active" id="lk-status-badge">Active</span>
               <button class="btn btn-sm btn-red" onclick="openModal('lock-modal')">🔒 Lock Claim</button>
             </div>
           </div>
-          <div class="lookup-grid">
-            <div class="lookup-item"><div class="lookup-key">Username</div><div class="lookup-val" style="color:var(--cyan)" id="lookup-username">@john_doe</div></div>
-            <div class="lookup-item"><div class="lookup-key">Left Branch Members</div><div class="lookup-val blue">142</div></div>
-            <div class="lookup-item"><div class="lookup-key">Right Branch Members</div><div class="lookup-val blue">118</div></div>
-            <div class="lookup-item"><div class="lookup-key">Classic Term Volume</div><div class="lookup-val teal">$84,200</div></div>
-            <div class="lookup-item"><div class="lookup-key">VIP Term Volume</div><div class="lookup-val teal">$320,000</div></div>
-            <div class="lookup-item"><div class="lookup-key">Direct VIP Packages</div><div class="lookup-val teal">4</div></div>
-            <div class="lookup-item"><div class="lookup-key">Team VIP Packages</div><div class="lookup-val teal">12</div></div>
-            <div class="lookup-item"><div class="lookup-key">VIP Sales Remaining</div><div class="lookup-val teal">6</div></div>
-            <div class="lookup-item"><div class="lookup-key">Left Branch Term + VIP</div><div class="lookup-val teal">$178,400</div></div>
-            <div class="lookup-item"><div class="lookup-key">Right Branch Term + VIP</div><div class="lookup-val teal">$225,800</div></div>
-            <div class="lookup-item"><div class="lookup-key">Total System Profit</div><div class="lookup-val teal">$41,220</div></div>
-            <div class="lookup-item"><div class="lookup-key">Left Branch Profit</div><div class="lookup-val teal">$19,400</div></div>
-            <div class="lookup-item"><div class="lookup-key">Right Branch Profit</div><div class="lookup-val teal">$21,820</div></div>
-            <div class="lookup-item"><div class="lookup-key">Profit Share Received</div><div class="lookup-val teal">$14,880</div></div>
-            <div class="lookup-item"><div class="lookup-key">VIP Balanced Branch Bonus</div><div class="lookup-val teal">$3,200</div></div>
-            <div class="lookup-item"><div class="lookup-key">Total Claimed</div><div class="lookup-val teal">$18,080</div></div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+            <div>
+              <div style="font-size:10px;letter-spacing:1px;color:var(--t-muted);font-weight:600;text-transform:uppercase;margin-bottom:4px;">Sponsor</div>
+              <div style="font-size:14px;font-weight:700;color:var(--cyan);font-family:'Montserrat',monospace;" id="lk-sponsor">—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;letter-spacing:1px;color:var(--t-muted);font-weight:600;text-transform:uppercase;margin-bottom:4px;">Username</div>
+              <div style="font-size:14px;font-weight:700;color:var(--teal);font-family:'Montserrat',monospace;" id="lk-username">@—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;letter-spacing:1px;color:var(--t-muted);font-weight:600;text-transform:uppercase;margin-bottom:4px;">Placement</div>
+              <div style="font-size:14px;font-weight:700;color:var(--t-secondary);font-family:'Montserrat',monospace;" id="lk-placement">—</div>
+            </div>
           </div>
-          <div class="flex gap10 mt16 fw">
-            <button class="btn btn-ghost btn-sm" onclick="goPage('tree')">🌿 View System Tree</button>
-            <button class="btn btn-ghost btn-sm">📄 Export Report</button>
+          <div style="margin-bottom:16px;">
+            <div style="font-size:10px;letter-spacing:1px;color:var(--t-muted);font-weight:600;text-transform:uppercase;margin-bottom:4px;">Wallet Address</div>
+            <div class="mono" style="color:var(--teal);font-size:12px;word-break:break-all;background:rgba(0,0,0,0.2);padding:8px 12px;border-radius:8px;border:1px solid var(--border-teal);" id="lk-wallet">0x—</div>
+          </div>
+
+          <div style="font-size:11px;letter-spacing:1px;color:var(--t-muted);font-weight:700;text-transform:uppercase;margin-bottom:10px;">💼 Personal Investment</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+            <div style="background:rgba(0,0,0,0.15);border-radius:10px;padding:12px;border-left:3px solid var(--blue-light);">
+              <div style="font-size:10px;color:var(--t-muted);font-weight:600;margin-bottom:4px;">Essential</div>
+              <div style="font-size:16px;font-weight:700;color:var(--teal);font-family:'Montserrat',monospace;" id="lk-pkg-essential">$0</div>
+            </div>
+            <div style="background:rgba(0,0,0,0.15);border-radius:10px;padding:12px;border-left:3px solid var(--blue-light);">
+              <div style="font-size:10px;color:var(--t-muted);font-weight:600;margin-bottom:4px;">Classic</div>
+              <div style="font-size:16px;font-weight:700;color:var(--teal);font-family:'Montserrat',monospace;" id="lk-pkg-classic">$0</div>
+            </div>
+            <div style="background:rgba(0,0,0,0.15);border-radius:10px;padding:12px;border-left:3px solid var(--blue-light);">
+              <div style="font-size:10px;color:var(--t-muted);font-weight:600;margin-bottom:4px;">Ultimate</div>
+              <div style="font-size:16px;font-weight:700;color:var(--teal);font-family:'Montserrat',monospace;" id="lk-pkg-ultimate">$0</div>
+            </div>
+            <div style="background:rgba(0,0,0,0.15);border-radius:10px;padding:12px;border-left:3px solid var(--orange);">
+              <div style="font-size:10px;color:var(--t-muted);font-weight:600;margin-bottom:4px;">Signature</div>
+              <div style="font-size:16px;font-weight:700;color:var(--orange);font-family:'Montserrat',monospace;" id="lk-pkg-signature">$0</div>
+            </div>
+            <div style="background:rgba(0,0,0,0.15);border-radius:10px;padding:12px;border-left:3px solid var(--cyan);">
+              <div style="font-size:10px;color:var(--t-muted);font-weight:600;margin-bottom:4px;">Exclusive · VIP</div>
+              <div style="font-size:16px;font-weight:700;color:var(--cyan);font-family:'Montserrat',monospace;" id="lk-pkg-exclusive">$0</div>
+            </div>
+            <div style="background:rgba(0,0,0,0.15);border-radius:10px;padding:12px;border-left:3px solid #c084fc;" id="lk-pkg-leader-wrap">
+              <div style="font-size:10px;color:var(--t-muted);font-weight:600;margin-bottom:4px;">VIP Leader Access</div>
+              <div style="font-size:16px;font-weight:700;color:#c084fc;font-family:'Montserrat',monospace;" id="lk-pkg-leader">$0</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.2);padding:10px 16px;border-radius:10px;border:1px solid var(--border-teal);">
+            <span style="font-size:11px;color:var(--t-muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Total Invested</span>
+            <span style="font-size:20px;font-weight:800;color:var(--teal);font-family:'Montserrat',monospace;" id="lk-total-invested">$0</span>
           </div>
         </div>
 
-        <!-- ═══ USER EARNINGS & CLAIMS ═══ -->
-        <div class="card mb16" id="lookup-claims">
-          <div class="card-title">💰 User Earnings & Claims</div>
-
-          <!-- Summary row -->
-          <div class="lookup-grid" style="margin-bottom:16px;">
-            <div class="lookup-item">
-              <div class="lookup-key">Total Earnings</div>
-              <div class="lookup-val teal" id="claim-total-earnings">$22,480</div>
+        <!-- ═══ BLOCK 2: REFERRAL ORGANIZATION ═══ -->
+        <div class="card mb16">
+          <div class="card-title">🌐 Referral Organization</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;">
+            <div style="background:rgba(0,0,0,0.15);border-radius:10px;padding:14px;text-align:center;">
+              <div style="font-size:10px;color:var(--t-muted);font-weight:600;text-transform:uppercase;margin-bottom:6px;">Total System Volume</div>
+              <div style="font-size:18px;font-weight:800;color:var(--teal);font-family:'Montserrat',monospace;" id="lk-sys-vol">$0</div>
             </div>
-            <div class="lookup-item">
-              <div class="lookup-key">Earnings Cap Limit</div>
-              <div class="lookup-val teal" id="claim-maxout">$252,600</div>
+            <div style="background:rgba(0,0,0,0.15);border-radius:10px;padding:14px;text-align:center;">
+              <div style="font-size:10px;color:var(--t-muted);font-weight:600;text-transform:uppercase;margin-bottom:6px;">Direct F1 Members</div>
+              <div style="font-size:18px;font-weight:800;color:var(--cyan);font-family:'Montserrat',monospace;" id="lk-f1-count">0</div>
             </div>
-            <div class="lookup-item">
-              <div class="lookup-key">Claimed</div>
-              <div class="lookup-val teal" id="claim-claimed">$18,080</div>
-            </div>
-            <div class="lookup-item">
-              <div class="lookup-key">Claimable (Pending)</div>
-              <div class="lookup-val teal" id="claim-pending">$4,400</div>
+            <div style="background:rgba(0,0,0,0.15);border-radius:10px;padding:14px;text-align:center;">
+              <div style="font-size:10px;color:var(--t-muted);font-weight:600;text-transform:uppercase;margin-bottom:6px;">Total Team Members</div>
+              <div style="font-size:18px;font-weight:800;color:var(--cyan);font-family:'Montserrat',monospace;" id="lk-team-count">0</div>
             </div>
           </div>
 
-          <!-- Progress bar: Earnings vs Earnings Cap -->
+          <div style="font-size:10px;letter-spacing:1px;color:var(--t-muted);font-weight:700;text-transform:uppercase;margin-bottom:8px;">📊 F1 Direct Referral Volume</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+            <div style="background:rgba(0,0,0,0.15);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:var(--t-muted);font-weight:600;">Total F1 Volume</span>
+              <span style="font-size:15px;font-weight:700;color:var(--teal);font-family:'Montserrat',monospace;" id="lk-f1-vol">$0</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.15);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:11px;color:var(--t-muted);font-weight:600;">F1 VIP Volume</span>
+              <span style="font-size:15px;font-weight:700;color:var(--orange);font-family:'Montserrat',monospace;" id="lk-f1-vip">$0</span>
+            </div>
+          </div>
+
+          <div style="font-size:10px;letter-spacing:1px;color:var(--t-muted);font-weight:700;text-transform:uppercase;margin-bottom:8px;">🌿 Branch Volume Breakdown</div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th style="text-align:center;">🅻 Left Branch</th>
+                  <th style="text-align:center;">🆁 Right Branch</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600;color:var(--t-secondary);">Members</td>
+                  <td style="text-align:center;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);" id="lk-left-members">0</td>
+                  <td style="text-align:center;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);" id="lk-right-members">0</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;color:var(--t-secondary);">Total Volume</td>
+                  <td style="text-align:center;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);" id="lk-left-vol">$0</td>
+                  <td style="text-align:center;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);" id="lk-right-vol">$0</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600;color:var(--t-secondary);">VIP Volume</td>
+                  <td style="text-align:center;font-family:'Montserrat',monospace;font-weight:700;color:var(--orange);" id="lk-left-vip">$0</td>
+                  <td style="text-align:center;font-family:'Montserrat',monospace;font-weight:700;color:var(--orange);" id="lk-right-vip">$0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ═══ BLOCK 3: INCOME STATISTICS ═══ -->
+        <div class="card mb16">
+          <div class="card-title">💰 Income Statistics</div>
+
           <div style="margin-bottom:18px;">
             <div class="flex jbet" style="margin-bottom:6px;">
-              <span style="font-size:10px;letter-spacing:1px;color:var(--t-muted);font-weight:700;text-transform:uppercase;">Earnings vs Earnings Cap</span>
-              <span style="font-size:12px;font-weight:700;color:var(--t-secondary);font-family:'Montserrat',monospace;" id="claim-pbar-pct">8.9%</span>
+              <span style="font-size:10px;letter-spacing:1px;color:var(--t-muted);font-weight:700;text-transform:uppercase;">Earnings Cap Progress (300%)</span>
+              <span style="font-size:12px;font-weight:700;color:var(--t-secondary);font-family:'Montserrat',monospace;" id="lk-cap-pct">0%</span>
             </div>
             <div class="pbar-wrap" style="height:8px;border-radius:6px;">
-              <div class="pbar teal" id="claim-pbar" style="width:8.9%;border-radius:6px;"></div>
+              <div class="pbar teal" id="lk-cap-bar" style="width:0%;border-radius:6px;"></div>
             </div>
             <div class="flex jbet" style="margin-top:4px;">
-              <span style="font-size:10px;color:var(--t-muted);">$0</span>
-              <span style="font-size:10px;color:var(--t-muted);" id="claim-pbar-max">$252,600</span>
+              <span style="font-size:10px;color:var(--t-muted);" id="lk-cap-earned">$0 earned</span>
+              <span style="font-size:10px;color:var(--t-muted);" id="lk-cap-max">Cap: $0</span>
             </div>
           </div>
 
-          <!-- Breakdown table -->
           <div style="overflow-x:auto;">
             <table>
               <thead>
@@ -1185,48 +1287,70 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
                   <th style="text-align:right;">Unclaimed</th>
                 </tr>
               </thead>
-              <tbody id="claim-breakdown-body">
+              <tbody>
                 <tr>
-                  <td>Daily Profit</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);">$14,880</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);">$12,600</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);">$2,280</td>
+                  <td><span style="color:var(--teal);font-weight:600;">📈 Daily Profit</span></td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);" id="lk-inc-dp-e">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--t-secondary);" id="lk-inc-dp-c">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);" id="lk-inc-dp-u">$0</td>
                 </tr>
                 <tr>
-                  <td>Binary Bonus</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);">$3,200</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);">$2,480</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);">$720</td>
+                  <td><span style="color:var(--orange);font-weight:600;">⚡ Referral Commission</span><br><span style="font-size:10px;color:var(--t-muted);">5% on F1 VIP Deposit · On-chain Instantly</span></td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);" id="lk-inc-rc-e">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--t-secondary);" id="lk-inc-rc-c">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);" id="lk-inc-rc-u">$0</td>
                 </tr>
                 <tr>
-                  <td>Referral Commission</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);">$2,400</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);">$1,600</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);">$800</td>
+                  <td><span style="color:var(--cyan);font-weight:600;">🔗 F1 Profit Commission</span><br><span style="font-size:10px;color:var(--t-muted);">10% on F1 Daily Profit · End-of-Day</span></td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);" id="lk-inc-f1-e">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--t-secondary);" id="lk-inc-f1-c">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);" id="lk-inc-f1-u">$0</td>
                 </tr>
                 <tr>
-                  <td>Binary Commission</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);">$1,500</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);">$1,000</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);">$500</td>
+                  <td><span style="color:var(--blue-light);font-weight:600;">🏆 Binary Profit Bonus</span><br><span style="font-size:10px;color:var(--t-muted);">5% on Matched VIP Weak Leg Volume</span></td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);" id="lk-inc-bb-e">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--t-secondary);" id="lk-inc-bb-c">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);" id="lk-inc-bb-u">$0</td>
                 </tr>
                 <tr>
-                  <td>Momentum Rewards</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);">$500</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);">$400</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);">$100</td>
+                  <td><span style="color:var(--blue-light);font-weight:600;">📊 Binary Commission</span><br><span style="font-size:10px;color:var(--t-muted);">15% on Weak Leg Daily Profit · End-of-Day</span></td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);" id="lk-inc-bc-e">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--t-secondary);" id="lk-inc-bc-c">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);" id="lk-inc-bc-u">$0</td>
+                </tr>
+                <tr>
+                  <td><span style="color:#c084fc;font-weight:600;">🚀 Momentum Rewards</span><br><span style="font-size:10px;color:var(--t-muted);">Milestone Bonuses on Weak Leg Volume</span></td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);" id="lk-inc-mr-e">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--t-secondary);" id="lk-inc-mr-c">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);" id="lk-inc-mr-u">$0</td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr style="border-top:2px solid var(--border-teal);">
-                  <td style="font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:1px;color:var(--t-secondary);">Total</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;font-size:14px;color:var(--teal);" id="claim-foot-earned">$22,480</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;font-size:14px;color:var(--teal);" id="claim-foot-claimed">$18,080</td>
-                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;font-size:14px;color:var(--cyan);" id="claim-foot-unclaimed">$4,400</td>
+                  <td style="font-family:'Montserrat',monospace;font-weight:700;color:var(--t-secondary);">TOTAL</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--teal);" id="lk-inc-total-e">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--t-secondary);" id="lk-inc-total-c">$0</td>
+                  <td style="text-align:right;font-family:'Montserrat',monospace;font-weight:700;color:var(--cyan);" id="lk-inc-total-u">$0</td>
                 </tr>
               </tfoot>
             </table>
           </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;">
+            <div style="background:rgba(0,200,150,0.08);border-radius:10px;padding:14px;text-align:center;border:1px solid var(--border-teal);">
+              <div style="font-size:10px;color:var(--t-muted);font-weight:600;text-transform:uppercase;margin-bottom:4px;">Total Income Claimed</div>
+              <div style="font-size:20px;font-weight:800;color:var(--teal);font-family:'Montserrat',monospace;" id="lk-claimed-total">$0</div>
+            </div>
+            <div style="background:rgba(0,180,255,0.08);border-radius:10px;padding:14px;text-align:center;border:1px solid rgba(0,180,255,0.2);">
+              <div style="font-size:10px;color:var(--t-muted);font-weight:600;text-transform:uppercase;margin-bottom:4px;">Total Income Unclaimed</div>
+              <div style="font-size:20px;font-weight:800;color:var(--cyan);font-family:'Montserrat',monospace;" id="lk-unclaimed-total">$0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap10 mb16 fw">
+          <button class="btn btn-ghost btn-sm" onclick="goPage('tree')">🌿 View System Tree</button>
+          <button class="btn btn-ghost btn-sm">📄 Export Report</button>
         </div>
 
       </div>
@@ -1244,94 +1368,23 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
           <button class="btn btn-ghost" onclick="clearTree()">✕ Reset</button>
         </div>
       </div>
-      <div id="tree-res" style="display:none;">
-        <div class="card">
-          <div class="card-title">🌿 Upline Chain — 4 Levels Found</div>
-          <div class="tree-wrap">
-            <div class="tree-node root"><div><span style="color:var(--teal);font-weight:700;">ROOT</span><span class="tn-addr">0xDead...B33f</span><span class="tn-user">@genesis_root</span></div><div class="flex gap8 items-c" style="flex-wrap:wrap;"><span class="badge vip">Exclusive Leader</span><span style="color:var(--t-muted);font-size:11px;">2,847 downlines</span><span style="font-size:11px;color:var(--teal);font-family:'Montserrat',monospace;font-weight:600;">Invest: $500,000</span><span style="font-size:11px;color:var(--cyan);font-family:'Montserrat',monospace;">L-VIP: $1,240,000</span><span style="font-size:11px;color:var(--cyan);font-family:'Montserrat',monospace;">R-VIP: $980,000</span></div></div>
-            <div class="tree-node l1"><div><span style="color:var(--blue-light);font-weight:700;">Level 1</span><span class="tn-addr">0xCafe...A123</span><span class="tn-user">@alice_v</span></div><div class="flex gap8" style="flex-wrap:wrap;"><span class="badge active">Active</span><span style="color:var(--t-muted);font-size:11px;">Joined 2024-08-12</span><span style="font-size:11px;color:var(--teal);font-family:'Montserrat',monospace;font-weight:600;">Invest: $100,000</span><span style="font-size:11px;color:var(--cyan);font-family:'Montserrat',monospace;">L-VIP: $320,000</span><span style="font-size:11px;color:var(--cyan);font-family:'Montserrat',monospace;">R-VIP: $280,000</span></div></div>
-            <div class="tree-node l2"><div><span style="color:var(--purple);font-weight:700;">Level 2</span><span class="tn-addr">0x4B2e...9901</span><span class="tn-user">@bob_trades</span></div><div class="flex gap8" style="flex-wrap:wrap;"><span class="badge active">Active</span><span style="color:var(--t-muted);font-size:11px;">Joined 2024-09-03</span><span style="font-size:11px;color:var(--teal);font-family:'Montserrat',monospace;font-weight:600;">Invest: $50,000</span><span style="font-size:11px;color:var(--cyan);font-family:'Montserrat',monospace;">L-VIP: $120,000</span><span style="font-size:11px;color:var(--cyan);font-family:'Montserrat',monospace;">R-VIP: $95,000</span></div></div>
-            <div class="tree-node l3 l-target"><div><span style="color:var(--cyan);font-weight:700;">Level 3 · Queried Wallet</span><span class="tn-addr">0x3f4a...b82c</span><span class="tn-user">@john_doe</span></div><div class="flex gap8" style="flex-wrap:wrap;"><span class="badge active">Active</span><span style="color:var(--t-muted);font-size:11px;">Joined 2025-01-08</span><span style="font-size:11px;color:var(--teal);font-family:'Montserrat',monospace;font-weight:600;">Invest: $25,000</span><span style="font-size:11px;color:var(--cyan);font-family:'Montserrat',monospace;">L-VIP: $45,000</span><span style="font-size:11px;color:var(--cyan);font-family:'Montserrat',monospace;">R-VIP: $38,000</span></div></div>
-          </div>
-          <div class="flex gap10 mt16">
-            <button class="btn btn-ghost btn-sm">📄 Export Chain</button>
-          </div>
-        </div>
-      </div>
+      <div id="tree-res" style="display:none;"></div>
     </div>
 
     <!-- ═══ REDEEM ═══ -->
     <div class="page" id="page-redeem">
       <div class="page-hd"><h2>📋 Redeem Funds Orders</h2><p>Review and process funds redemption requests.</p></div>
       <div class="ftabs">
-        <button class="ftab active" onclick="setFtab(this)">All (17)</button>
-        <button class="ftab" onclick="setFtab(this)">Processing (4)</button>
-        <button class="ftab" onclick="setFtab(this)">Done (11)</button>
-        <button class="ftab" onclick="setFtab(this)">Rejected (2)</button>
+        <button class="ftab active" onclick="setFtab(this)">All (0)</button>
+        <button class="ftab" onclick="setFtab(this)">Processing (0)</button>
+        <button class="ftab" onclick="setFtab(this)">Done (0)</button>
+        <button class="ftab" onclick="setFtab(this)">Rejected (0)</button>
       </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Order ID</th><th>Wallet</th><th>Username</th><th>Package</th><th>Amount</th><th>Requested</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="redeem-tbody">
-            <tr data-rid="RM-2847">
-              <td class="mono">#RM-2847</td>
-              <td><span class="addr">0x3f4a...b82c</span></td>
-              <td style="color:var(--cyan);font-size:12px;font-weight:600">@john_doe</td>
-              <td>Exclusive (VIP-360)</td>
-              <td class="mono" style="color:var(--teal)">$25,000</td>
-              <td class="mono" style="color:var(--t-secondary);font-size:11px">2025-03-16 08:42 UTC</td>
-              <td class="redeem-status"><span class="badge proc">⏳ Processing</span></td>
-              <td class="redeem-actions"><div class="flex gap6">
-                <button class="btn btn-sm btn-green" onclick="redeemAction('RM-2847','approve')">✓ Approve</button>
-                <button class="btn btn-sm btn-red"   onclick="redeemAction('RM-2847','reject')">✕ Reject</button>
-              </div></td>
-            </tr>
-            <tr data-rid="RM-2846">
-              <td class="mono">#RM-2846</td>
-              <td><span class="addr">0x9a8c...d341</span></td>
-              <td style="color:var(--cyan);font-size:12px;font-weight:600">@sarah_m</td>
-              <td>Signature 180</td>
-              <td class="mono" style="color:var(--teal)">$10,000</td>
-              <td class="mono" style="color:var(--t-secondary);font-size:11px">2025-03-16 07:18 UTC</td>
-              <td class="redeem-status"><span class="badge proc">⏳ Processing</span></td>
-              <td class="redeem-actions"><div class="flex gap6">
-                <button class="btn btn-sm btn-green" onclick="redeemAction('RM-2846','approve')">✓ Approve</button>
-                <button class="btn btn-sm btn-red"   onclick="redeemAction('RM-2846','reject')">✕ Reject</button>
-              </div></td>
-            </tr>
-            <tr data-rid="RM-2845">
-              <td class="mono">#RM-2845</td>
-              <td><span class="addr">0x1b7e...4490</span></td>
-              <td style="color:var(--cyan);font-size:12px;font-weight:600">@mike_w</td>
-              <td>Ultimate 90</td>
-              <td class="mono" style="color:var(--teal)">$5,000</td>
-              <td class="mono" style="color:var(--t-secondary);font-size:11px">2025-03-15 22:10 UTC</td>
-              <td class="redeem-status"><span class="badge done">✅ Done</span></td>
-              <td class="redeem-actions"><button class="btn btn-sm btn-ghost" onclick="redeemView('RM-2845')">👁 View</button></td>
-            </tr>
-            <tr data-rid="RM-2844">
-              <td class="mono">#RM-2844</td>
-              <td><span class="addr">0xF72a...cc09</span></td>
-              <td style="color:var(--cyan);font-size:12px;font-weight:600">@crypto_fan</td>
-              <td>Classic 30</td>
-              <td class="mono" style="color:var(--teal)">$8,000</td>
-              <td class="mono" style="color:var(--t-secondary);font-size:11px">2025-03-15 19:30 UTC</td>
-              <td class="redeem-status"><span class="badge rej">✕ Rejected</span></td>
-              <td class="redeem-actions"><button class="btn btn-sm btn-ghost" onclick="redeemView('RM-2844')">👁 View</button></td>
-            </tr>
-            <tr data-rid="RM-2843">
-              <td class="mono">#RM-2843</td>
-              <td><span class="addr">0x88b0...e231</span></td>
-              <td style="color:var(--cyan);font-size:12px;font-weight:600">@lee_92</td>
-              <td>Essential</td>
-              <td class="mono" style="color:var(--teal)">$2,500</td>
-              <td class="mono" style="color:var(--t-secondary);font-size:11px">2025-03-15 14:05 UTC</td>
-              <td class="redeem-status"><span class="badge proc">⏳ Processing</span></td>
-              <td class="redeem-actions"><div class="flex gap6">
-                <button class="btn btn-sm btn-green" onclick="redeemAction('RM-2843','approve')">✓ Approve</button>
-                <button class="btn btn-sm btn-red"   onclick="redeemAction('RM-2843','reject')">✕ Reject</button>
-              </div></td>
-            </tr>
+            <tr><td colspan="8" style="text-align:center;color:var(--t-muted);padding:32px;font-size:13px;">No redemption orders</td></tr>
           </tbody>
         </table>
       </div>
@@ -1349,32 +1402,209 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
           <button class="btn btn-teal btn-sm">Apply</button>
           <button class="btn btn-ghost btn-sm">📥 Export CSV</button>
         </div>
-        <div class="alert warn">⚠ 23 packages expiring within <strong>30 days</strong>. At-risk value: <strong>$284,600 USDT</strong>.</div>
+        <div class="alert warn">⚠ 0 packages expiring within <strong>30 days</strong>. At-risk value: <strong>$0 USDT</strong>.</div>
       </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Wallet</th><th>Username</th><th>Package</th><th>Amount</th><th>Start</th><th>Expiry</th><th>Elapsed</th><th>Remaining</th><th>Profits Claimed</th></tr></thead>
           <tbody>
-            <tr>
-              <td><span class="addr">0x3f4a...b82c</span></td><td style="color:var(--cyan);font-size:12px;font-weight:600">@john_doe</td><td><span class="badge vip">Exclusive (VIP-360)</span></td>
-              <td class="mono" style="color:var(--teal)">$50,000</td>
-              <td class="mono" style="font-size:11px;color:var(--t-secondary)">2024-04-18</td>
-              <td class="mono" style="font-size:11px;color:var(--red)">2025-04-13</td>
-              <td><div class="pbar-wrap" style="width:80px;margin-bottom:4px"><div class="pbar teal" style="width:92%"></div></div><span class="mono" style="font-size:10px;color:var(--t-secondary)">330d</span></td>
-              <td><span style="color:var(--red);font-weight:700;font-family:'Montserrat',monospace">28d</span></td>
-              <td class="mono" style="color:var(--teal)">$18,000</td>
-            </tr>
-            <tr>
-              <td><span class="addr">0xCafe...A123</span></td><td style="color:var(--cyan);font-size:12px;font-weight:600">@alice_v</td><td><span class="badge" style="background:rgba(255,170,0,0.1);color:var(--orange)">Signature 180</span></td>
-              <td class="mono" style="color:var(--teal)">$20,000</td>
-              <td class="mono" style="font-size:11px;color:var(--t-secondary)">2024-09-20</td>
-              <td class="mono" style="font-size:11px;color:var(--orange)">2025-03-19</td>
-              <td><div class="pbar-wrap" style="width:80px;margin-bottom:4px"><div class="pbar blue" style="width:98%"></div></div><span class="mono" style="font-size:10px;color:var(--t-secondary)">178d</span></td>
-              <td><span style="color:var(--orange);font-weight:700;font-family:'Montserrat',monospace">3d</span></td>
-              <td class="mono" style="color:var(--teal)">$7,200</td>
-            </tr>
+            <tr><td colspan="9" style="text-align:center;color:var(--t-muted);padding:32px;font-size:13px;">No packages nearing expiry</td></tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+
+    <!-- ═══ MARKETING PLAN ═══ -->
+    <div class="page" id="page-marketing">
+      <div class="page-hd"><h2>📋 Marketing Plan</h2><p>Overview of all income types, eligibility conditions, and adjustable commission rates.</p></div>
+
+      <!-- Income Structure Overview -->
+      <div class="card accent mb16">
+        <div class="card-title">💡 Income Structure</div>
+        <div style="font-size:12px;color:var(--t-secondary);line-height:1.8;">
+          <p><strong style="color:var(--teal);">Eligibility:</strong> Must hold an active <strong>Exclusive · VIP (360 Days)</strong> package to receive commissions & rewards.</p>
+          <p><strong style="color:var(--teal);">Earnings Cap:</strong> Total income from ALL 5 sources combined cannot exceed <strong id="mp-cap-display">300%</strong> of Exclusive · VIP investment amount.</p>
+          <p><strong style="color:var(--warn);">Forfeiture Rule:</strong> Commissions generated without an active Exclusive · VIP package are <strong>permanently lost</strong>.</p>
+        </div>
+      </div>
+
+      <!-- 5 Income Types -->
+      <div class="section-title mb16" style="font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--teal);">📊 5 Income Types</div>
+
+      <!-- 1. Daily Profit -->
+      <div class="card mb16">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div class="card-title" style="margin:0;">1. Daily Profit (ROI)</div>
+          <span class="badge" style="background:rgba(45,212,191,.15);color:var(--teal);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;">Calculated Daily 00:00 UTC</span>
+        </div>
+        <div style="font-size:12px;color:var(--t-secondary);line-height:1.7;">
+          <p>Daily ROI based on investment amount × tier rate. Applied to ALL package types.</p>
+          <table style="width:100%;margin-top:8px;font-size:11px;">
+            <tr style="color:var(--t-muted);"><td>Package</td><td>Tier 1 (≤$3k)</td><td>Tier 2 ($3k-$5k)</td><td>Tier 3 (>$5k)</td><td>Lock</td></tr>
+            <tr><td style="color:var(--teal);font-weight:600;">Essential</td><td>0.20%</td><td>0.25%</td><td>0.35%</td><td>No Lock</td></tr>
+            <tr><td style="color:var(--teal);font-weight:600;">Classic</td><td>0.25%</td><td>0.35%</td><td>0.45%</td><td>30 days</td></tr>
+            <tr><td style="color:var(--teal);font-weight:600;">Ultimate</td><td>0.40%</td><td>0.50%</td><td>0.60%</td><td>90 days</td></tr>
+            <tr><td style="color:var(--teal);font-weight:600;">Signature</td><td>0.60%</td><td>0.70%</td><td>0.80%</td><td>180 days</td></tr>
+            <tr><td style="color:var(--cyan);font-weight:700;">Exclusive · VIP</td><td>0.80%</td><td>1.00%</td><td>1.20%</td><td>360 days</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. Binary Bonus -->
+      <div class="card mb16">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div class="card-title" style="margin:0;">2. Binary Bonus</div>
+          <span class="badge" style="background:rgba(59,130,246,.15);color:var(--blue);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;">⚡ Instant on Deposit</span>
+        </div>
+        <div style="font-size:12px;color:var(--t-secondary);line-height:1.7;">
+          <p>Calculated <strong>immediately</strong> when a VIP deposit (Signature or Exclusive) occurs in either leg.</p>
+          <p>Formula: <code style="background:rgba(255,255,255,.05);padding:2px 6px;border-radius:4px;">min(Left VIP Volume, Right VIP Volume) × Rate%</code></p>
+          <p><strong>Condition:</strong> Must have active Exclusive · VIP package. Counts toward 300% Earnings Cap.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:12px;padding:10px;background:rgba(255,255,255,.03);border-radius:8px;">
+          <span style="font-size:12px;color:var(--t-secondary);min-width:80px;">Rate:</span>
+          <span class="slider-val" id="mp-bb-v" style="min-width:40px;">5%</span>
+          <input type="range" class="slider" id="mp-bb-sl" min="1" max="20" step="1" value="5" style="flex:1;" oninput="document.getElementById('mp-bb-v').textContent=this.value+'%'">
+        </div>
+      </div>
+
+      <!-- 3. Referral Commission -->
+      <div class="card mb16">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div class="card-title" style="margin:0;">3. Referral Commission</div>
+          <span class="badge" style="background:rgba(45,212,191,.15);color:var(--teal);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;">Calculated Daily 00:00 UTC</span>
+        </div>
+        <div style="font-size:12px;color:var(--t-secondary);line-height:1.7;">
+          <p>Earned from <strong>daily profit of directly sponsored members (F1)</strong>.</p>
+          <p>Formula: <code style="background:rgba(255,255,255,.05);padding:2px 6px;border-radius:4px;">F1 Daily Profit × Rate%</code></p>
+          <p><strong>Condition:</strong> Must have active Exclusive · VIP package. Counts toward 300% Earnings Cap.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:12px;padding:10px;background:rgba(255,255,255,.03);border-radius:8px;">
+          <span style="font-size:12px;color:var(--t-secondary);min-width:80px;">Rate:</span>
+          <span class="slider-val" id="mp-ref-v" style="min-width:40px;">10%</span>
+          <input type="range" class="slider" id="mp-ref-sl" min="1" max="30" step="1" value="10" style="flex:1;" oninput="document.getElementById('mp-ref-v').textContent=this.value+'%'">
+        </div>
+      </div>
+
+      <!-- 4. Binary Commission -->
+      <div class="card mb16">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div class="card-title" style="margin:0;">4. Binary Commission</div>
+          <span class="badge" style="background:rgba(45,212,191,.15);color:var(--teal);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;">Calculated Daily 00:00 UTC</span>
+        </div>
+        <div style="font-size:12px;color:var(--t-secondary);line-height:1.7;">
+          <p>Calculated on <strong>daily profit of the weaker leg</strong> (lower total ROI side).</p>
+          <p>Formula: <code style="background:rgba(255,255,255,.05);padding:2px 6px;border-radius:4px;">Weak Leg Daily Profit × Rate%</code></p>
+          <p><strong>Condition:</strong> Must have active Exclusive · VIP package. Counts toward 300% Earnings Cap.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:12px;padding:10px;background:rgba(255,255,255,.03);border-radius:8px;">
+          <span style="font-size:12px;color:var(--t-secondary);min-width:80px;">Rate:</span>
+          <span class="slider-val" id="mp-bc-v" style="min-width:40px;">15%</span>
+          <input type="range" class="slider" id="mp-bc-sl" min="1" max="30" step="1" value="15" style="flex:1;" oninput="document.getElementById('mp-bc-v').textContent=this.value+'%'">
+        </div>
+      </div>
+
+      <!-- 5. Momentum Rewards -->
+      <div class="card mb16">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div class="card-title" style="margin:0;">5. Momentum Rewards</div>
+          <span class="badge" style="background:rgba(251,191,36,.15);color:#fbbf24;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;">Milestone Based</span>
+        </div>
+        <div style="font-size:12px;color:var(--t-secondary);line-height:1.7;">
+          <p>One-time bonus triggered when <strong>Weak-Leg Profit (WLP)</strong> reaches milestones.</p>
+          <p><strong>Condition:</strong> Must have active Exclusive · VIP package. Counts toward 300% Earnings Cap.</p>
+        </div>
+        <table style="width:100%;margin-top:8px;font-size:11px;border-collapse:separate;border-spacing:0 3px;">
+          <tr style="color:var(--t-muted);"><td>Level</td><td>WLP Milestone</td><td style="text-align:right;">Reward</td></tr>
+          <tr><td>1</td><td>$10,000</td><td style="text-align:right;color:var(--teal);font-weight:700;">$250</td></tr>
+          <tr><td>2</td><td>$25,000</td><td style="text-align:right;color:var(--teal);font-weight:700;">$500</td></tr>
+          <tr><td>3</td><td>$50,000</td><td style="text-align:right;color:var(--teal);font-weight:700;">$1,000</td></tr>
+          <tr><td>4</td><td>$100,000</td><td style="text-align:right;color:var(--teal);font-weight:700;">$2,500</td></tr>
+          <tr><td>5</td><td>$250,000</td><td style="text-align:right;color:var(--teal);font-weight:700;">$5,000</td></tr>
+          <tr><td>6</td><td>$500,000</td><td style="text-align:right;color:var(--teal);font-weight:700;">$10,000</td></tr>
+          <tr><td>7</td><td>$1,000,000</td><td style="text-align:right;color:var(--teal);font-weight:700;">$25,000</td></tr>
+          <tr><td>8</td><td>$2,500,000</td><td style="text-align:right;color:var(--teal);font-weight:700;">$50,000</td></tr>
+          <tr><td>9</td><td>$5,000,000</td><td style="text-align:right;color:var(--teal);font-weight:700;">$100,000</td></tr>
+          <tr><td>10</td><td>$10,000,000</td><td style="text-align:right;color:var(--teal);font-weight:700;">$250,000</td></tr>
+        </table>
+      </div>
+
+      <!-- Earnings Cap -->
+      <div class="card mb16">
+        <div class="card-title">🔒 Earnings Cap (300%)</div>
+        <div style="font-size:12px;color:var(--t-secondary);line-height:1.7;">
+          <p>Total income from <strong>ALL 5 sources combined</strong> cannot exceed:</p>
+          <p style="font-size:16px;font-weight:800;color:var(--teal);margin:8px 0;"><code>Exclusive · VIP Investment × 300%</code></p>
+          <p>Example: $10,000 Exclusive · VIP → Max earnings = $30,000 from all income types combined.</p>
+          <p>When cap is reached, the package stops generating ALL types of income.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:12px;padding:10px;background:rgba(255,255,255,.03);border-radius:8px;">
+          <span style="font-size:12px;color:var(--t-secondary);min-width:80px;">Cap %:</span>
+          <span class="slider-val" id="mp-cap-v" style="min-width:50px;">300%</span>
+          <input type="range" class="slider" id="mp-cap-sl" min="100" max="1000" step="50" value="300" style="flex:1;" oninput="document.getElementById('mp-cap-v').textContent=this.value+'%'">
+        </div>
+      </div>
+
+
+      <!-- Per-Package MaxOut Config -->
+      <div class="card mb16">
+        <div class="card-title">🎯 Per-Package Earnings Cap (MaxOut)</div>
+        <div style="font-size:12px;color:var(--t-secondary);margin-bottom:12px;line-height:1.6;">
+          Override the global earnings cap on a per-package basis. Each package can have its own MaxOut multiplier.
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:rgba(255,255,255,.03);padding:10px 12px;border-radius:8px;">
+            <label style="font-size:11px;color:var(--t-secondary);font-weight:600;">Essential</label>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+              <input type="range" class="slider" id="mo-essential-sl" min="100" max="1000" step="50" value="300" style="flex:1;" oninput="document.getElementById('mo-essential-v').textContent=this.value+'%'">
+              <span class="slider-val" id="mo-essential-v" style="min-width:50px;">300%</span>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.03);padding:10px 12px;border-radius:8px;">
+            <label style="font-size:11px;color:var(--t-secondary);font-weight:600;">Classic</label>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+              <input type="range" class="slider" id="mo-classic-sl" min="100" max="1000" step="50" value="300" style="flex:1;" oninput="document.getElementById('mo-classic-v').textContent=this.value+'%'">
+              <span class="slider-val" id="mo-classic-v" style="min-width:50px;">300%</span>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.03);padding:10px 12px;border-radius:8px;">
+            <label style="font-size:11px;color:var(--t-secondary);font-weight:600;">Ultimate</label>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+              <input type="range" class="slider" id="mo-ultimate-sl" min="100" max="1000" step="50" value="300" style="flex:1;" oninput="document.getElementById('mo-ultimate-v').textContent=this.value+'%'">
+              <span class="slider-val" id="mo-ultimate-v" style="min-width:50px;">300%</span>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.03);padding:10px 12px;border-radius:8px;">
+            <label style="font-size:11px;color:var(--t-secondary);font-weight:600;">Signature</label>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+              <input type="range" class="slider" id="mo-signature-sl" min="100" max="1000" step="50" value="300" style="flex:1;" oninput="document.getElementById('mo-signature-v').textContent=this.value+'%'">
+              <span class="slider-val" id="mo-signature-v" style="min-width:50px;">300%</span>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.03);padding:10px 12px;border-radius:8px;">
+            <label style="font-size:11px;color:var(--t-secondary);font-weight:600;">Exclusive</label>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+              <input type="range" class="slider" id="mo-exclusive-sl" min="100" max="1000" step="50" value="300" style="flex:1;" oninput="document.getElementById('mo-exclusive-v').textContent=this.value+'%'">
+              <span class="slider-val" id="mo-exclusive-v" style="min-width:50px;">300%</span>
+            </div>
+          </div>
+          <div style="background:rgba(255,255,255,.03);padding:10px 12px;border-radius:8px;">
+            <label style="font-size:11px;color:var(--t-secondary);font-weight:600;">Leader</label>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+              <input type="range" class="slider" id="mo-leader-sl" min="100" max="1000" step="50" value="300" style="flex:1;" oninput="document.getElementById('mo-leader-v').textContent=this.value+'%'">
+              <span class="slider-val" id="mo-leader-v" style="min-width:50px;">300%</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <button class="btn btn-teal" onclick="saveMaxOutConfig()">💾 Save MaxOut Config</button>
+        </div>
+      </div>
+      <!-- Save button -->
+      <div class="flex gap8" style="margin-top:20px;">
+        <button class="btn btn-teal" onclick="saveMarketingPlan()">💾 Save Marketing Plan</button>
+        <button class="btn btn-ghost" onclick="resetMarketingPlan()">↺ Reset Defaults</button>
       </div>
     </div>
 
@@ -1385,35 +1615,36 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
       <div class="g3 mb16">
         <div class="fund-card tc">
           <div class="fund-name">📈 Expert Trading Fund</div><div class="fund-type">Professional capital deployment</div>
-          <div class="fund-amt">$1,248,400</div><div class="fund-usd">≈ 1,248,400 USDT locked</div>
+          <div class="fund-amt" id="fund-trading">$0</div><div class="fund-usd" id="fund-trading-usd">≈ 0 USDT locked</div>
           <div class="fund-pct-row"><span class="fund-pct-label">Auto-inflow</span><span class="fund-pct-val" id="tp-val">60%</span></div>
           <div class="pbar-wrap mb16"><div class="pbar teal" style="width:60%"></div></div>
           <div class="flex gap8 fw">
-            <button class="btn btn-sm btn-ghost" onclick="openReceiveModal('Expert Trading Fund','0x4A8f2C3d9E1b5F6a7D0c8B3e2F1a4D5c6E7b8A9f')">⬇ Receive</button>
-            <button class="btn btn-sm btn-ghost">↔ Transfer</button>
-            <button class="btn btn-sm btn-red" onclick="openWithdrawModal('Expert Trading Fund','1,248,400')">⬆ Withdraw</button>
+            <button class="btn btn-sm btn-ghost" onclick="openReceiveModal('Expert Trading Fund','0x7a514138c92591C12E724f8E22b632A274b698E4')">⬇ Receive</button>
+            <button class="btn btn-sm btn-ghost" onclick="openInterFundTransfer('Expert Trading Fund')">↔ Transfer</button>
+            <button class="btn btn-sm btn-red" onclick="openWithdrawModal('Expert Trading Fund', document.getElementById('fund-trading').textContent)">⬆ Withdraw</button>
           </div>
         </div>
         <div class="fund-card bc">
           <div class="fund-name">⚡ DEX / Arbitrage Fund</div><div class="fund-type">Automated arbitrage strategies</div>
-          <div class="fund-amt">$628,920</div><div class="fund-usd">≈ 628,920 USDT locked</div>
+          <div class="fund-amt" id="fund-dex">$0</div><div class="fund-usd" id="fund-dex-usd">≈ 0 USDT locked</div>
           <div class="fund-pct-row"><span class="fund-pct-label">Auto-inflow</span><span class="fund-pct-val" id="dp-val">25%</span></div>
           <div class="pbar-wrap mb16"><div class="pbar blue" style="width:25%"></div></div>
           <div class="flex gap8 fw">
-            <button class="btn btn-sm btn-ghost" onclick="openReceiveModal('DEX / Arbitrage Fund','0x4A8f2C3d9E1b5F6a7D0c8B3e2F1a4D5c6E7b8A9f')">⬇ Receive</button>
-            <button class="btn btn-sm btn-ghost">↔ Transfer</button>
-            <button class="btn btn-sm btn-red" onclick="openWithdrawModal('DEX / Arbitrage Fund','628,920')">⬆ Withdraw</button>
+            <button class="btn btn-sm btn-ghost" onclick="openReceiveModal('DEX / Arbitrage Fund','0x7a514138c92591C12E724f8E22b632A274b698E4')">⬇ Receive</button>
+            <button class="btn btn-sm btn-ghost" onclick="openInterFundTransfer('DEX / Arbitrage Fund')">↔ Transfer</button>
+            <button class="btn btn-sm btn-red" onclick="openWithdrawModal('DEX / Arbitrage Fund', document.getElementById('fund-dex').textContent)">⬆ Withdraw</button>
           </div>
         </div>
         <div class="fund-card gc">
           <div class="fund-name">🎁 Reward &amp; Redeem Fund</div><div class="fund-type">Distributions, bonuses &amp; redemptions</div>
-          <div class="fund-amt">$409,020</div><div class="fund-usd">≈ 409,020 USDT available</div>
+          <div class="fund-amt" id="fund-reward">$0</div><div class="fund-usd" id="fund-reward-usd">≈ 0 USDT available</div>
           <div class="fund-pct-row"><span class="fund-pct-label">Auto-inflow</span><span class="fund-pct-val" id="rp-val">15%</span></div>
           <div class="pbar-wrap mb16"><div class="pbar green" style="width:15%"></div></div>
           <div class="flex gap8 fw">
-            <button class="btn btn-sm btn-ghost" onclick="openReceiveModal('Reward &amp; Redeem Fund','0x4A8f2C3d9E1b5F6a7D0c8B3e2F1a4D5c6E7b8A9f')">⬇ Receive</button>
-            <button class="btn btn-sm btn-ghost">↔ Transfer</button>
+            <button class="btn btn-sm btn-ghost" onclick="openReceiveModal('Reward &amp; Redeem Fund','0x095D4b988A90F7FFb8E4A0eE1c90F1426A4E0B08')">⬇ Receive</button>
+            <button class="btn btn-sm btn-ghost" onclick="openInterFundTransfer('Reward \x26 Redeem Fund')">↔ Transfer</button>
           </div>
+          <div id="fund-health-status" style="margin-top:12px;"></div>
         </div>
       </div>
       <div class="card accent mb16">
@@ -1465,14 +1696,14 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
           <span style="font-size:11px;color:var(--t-muted);margin-left:4px;">🔒 Select <strong style="color:var(--teal)">Fixed</strong> on one slider — the other two will auto-balance to 100%</span>
         </div>
       </div>
-      <div class="card">
+      <div class="card" id="interfund-card">
         <div class="card-title">↔ Inter-Fund Transfer</div>
         <div class="form-row mb12">
-          <div><label class="form-label">From Fund</label><select style="width:100%"><option>Expert Trading Fund</option><option>DEX / Arbitrage Fund</option><option>Reward &amp; Redeem Fund</option></select></div>
-          <div><label class="form-label">To Fund</label><select style="width:100%"><option>Reward &amp; Redeem Fund</option><option>Expert Trading Fund</option><option>DEX / Arbitrage Fund</option></select></div>
+          <div><label class="form-label">From Fund</label><select id="tf-from" style="width:100%"><option>Expert Trading Fund</option><option>DEX / Arbitrage Fund</option><option>Reward &amp; Redeem Fund</option></select></div>
+          <div><label class="form-label">To Fund</label><select id="tf-to" style="width:100%"><option>Reward &amp; Redeem Fund</option><option>Expert Trading Fund</option><option>DEX / Arbitrage Fund</option></select></div>
         </div>
-        <div class="mb12"><label class="form-label">Amount (USDT)</label><div class="input-suffix-wrap"><input type="number" placeholder="0.00" style="width:100%"><span class="input-sfx">USDT</span></div></div>
-        <button class="btn btn-teal">↔ Execute Transfer</button>
+        <div class="mb12"><label class="form-label">Amount (USDT)</label><div class="input-suffix-wrap"><input id="tf-amount" type="number" placeholder="0.00" style="width:100%"><span class="input-sfx">USDT</span></div></div>
+        <button onclick="executeInterFundTransfer()" class="btn btn-teal">↔ Execute Transfer</button>
       </div>
     </div>
 
@@ -1500,11 +1731,20 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
       <div class="card mb16">
         <div class="card-title">➕ Grant New Leader Package</div>
         <div class="form-row mb12">
-          <div><label class="form-label">Leader Wallet Address</label><input type="text" placeholder="0x..." style="width:100%;font-family:'Montserrat',monospace"></div>
-          <div><label class="form-label">Package Amount (USDT)</label><div class="input-suffix-wrap"><input type="number" placeholder="0.00" style="width:100%"><span class="input-sfx">USDT</span></div></div>
+          <div><label class="form-label">Leader Wallet Address</label><input type="text" id="grant-wallet" placeholder="0x..." style="width:100%;font-family:'Montserrat',monospace"></div>
+          <div><label class="form-label">Package Amount (USDT)</label><div class="input-suffix-wrap"><input type="number" id="grant-amount" placeholder="0.00" style="width:100%"><span class="input-sfx">USDT</span></div></div>
         </div>
         <div class="mb12"><label class="form-label">Reason / Notes</label><textarea placeholder="KPI achievement, community contribution, etc." style="width:100%;min-height:64px;resize:vertical"></textarea></div>
-        <button class="btn btn-teal">👑 Grant Leader Access</button>
+        <div id="grant-hide-wrap" class="sw-only" style="display:none;margin-bottom:12px;">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 14px;background:rgba(255,71,87,0.06);border:1px solid rgba(255,71,87,0.2);border-radius:10px;">
+            <input type="checkbox" id="grant-hidden" style="width:18px;height:18px;accent-color:#ff4757;">
+            <div>
+              <div style="font-weight:700;color:#ff7785;font-size:13px;">🔒 HIDE this package (S_Wallet only)</div>
+              <div style="font-size:11px;color:var(--t-muted);margin-top:2px;">Hidden packages are invisible to Owner and other Admins. Only S_Wallet can view, manage, or unhide them.</div>
+            </div>
+          </label>
+        </div>
+        <button class="btn btn-teal" onclick="doGrantLeader()">👑 Grant Leader Access</button>
       </div>
 
       <!-- List -->
@@ -1512,46 +1752,8 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
       <div class="table-wrap">
         <table>
           <thead><tr><th>Wallet</th><th>Username</th><th>Type</th><th>Issued</th><th>Expiry</th><th>Amount</th><th>Days Left</th><th>Status</th><th>Actions</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><span class="addr">0xDead...B33f</span></td>
-              <td style="color:var(--cyan);font-size:12px;font-weight:600">@genesis_root</td>
-              <td><span class="badge vip">Exclusive Leader</span></td>
-              <td class="mono" style="font-size:11px;color:var(--t-secondary)">2024-03-15</td>
-              <td class="mono" style="font-size:11px">2025-03-10</td>
-              <td class="mono" style="color:var(--teal)">$100,000</td>
-              <td><span class="mono" style="font-size:11px;color:var(--t-muted)">Expired</span></td>
-              <td><span class="badge-toggle" id="status-0" data-state="unlocked" onclick="toggleLeaderStatus(0)" title="Click to toggle">
-                <span class="badge unlocked" style="cursor:pointer;">🔓 Unlocked</span>
-              </span></td>
-              <td><button class="btn btn-sm btn-red" id="action-0" onclick="toggleLeaderStatus(0)">🔒 Lock</button></td>
-            </tr>
-            <tr>
-              <td><span class="addr">0x9Aa1...2280</span></td>
-              <td style="color:var(--cyan);font-size:12px;font-weight:600">@vip_trader</td>
-              <td><span class="badge vip">Exclusive Leader</span></td>
-              <td class="mono" style="font-size:11px;color:var(--t-secondary)">2024-06-01</td>
-              <td class="mono" style="font-size:11px">2025-05-27</td>
-              <td class="mono" style="color:var(--teal)">$50,000</td>
-              <td><span class="mono" style="font-size:11px;color:var(--orange)">72d</span></td>
-              <td><span class="badge-toggle" id="status-1" data-state="locked" onclick="toggleLeaderStatus(1)" title="Click to toggle">
-                <span class="badge locked" style="cursor:pointer;">🔒 Locked</span>
-              </span></td>
-              <td><button class="btn btn-sm btn-green" id="action-1" onclick="toggleLeaderStatus(1)">🔓 Unlock</button></td>
-            </tr>
-            <tr>
-              <td><span class="addr">0xFa55...cd44</span></td>
-              <td style="color:var(--cyan);font-size:12px;font-weight:600">@block_master</td>
-              <td><span class="badge vip">Exclusive Leader</span></td>
-              <td class="mono" style="font-size:11px;color:var(--t-secondary)">2024-09-10</td>
-              <td class="mono" style="font-size:11px">2025-09-05</td>
-              <td class="mono" style="color:var(--teal)">$30,000</td>
-              <td><span class="mono" style="font-size:11px;color:var(--green)">173d</span></td>
-              <td><span class="badge-toggle" id="status-2" data-state="unlocked" onclick="toggleLeaderStatus(2)" title="Click to toggle">
-                <span class="badge unlocked" style="cursor:pointer;">🔓 Unlocked</span>
-              </span></td>
-              <td><button class="btn btn-sm btn-red" id="action-2" onclick="toggleLeaderStatus(2)">🔒 Lock</button></td>
-            </tr>
+          <tbody id="leader-tbody">
+            <tr><td colspan="9" style="text-align:center;color:var(--t-muted);padding:32px;font-size:13px;">Loading leader packages...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1559,10 +1761,10 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
 
     <!-- ═══ FEE ═══ -->
     <div class="page" id="page-fee">
-      <div class="page-hd"><h2>⚙️ Withdrawal Fee</h2><p>Adjust the platform-wide withdrawal fee (0% – 99%).</p></div>
+      <div class="page-hd"><h2>⚙️ Claim Fee</h2><p>Adjust the platform-wide claim fee (0% – 99%).</p></div>
       <div class="card accent" style="max-width:520px">
-        <div class="card-title">💸 Current Withdrawal Fee</div>
-        <div style="font-family:'Montserrat',monospace;font-size:56px;font-weight:700;text-align:center;padding:20px 0;background:linear-gradient(135deg,var(--teal),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" id="fee-big">5%</div>
+        <div class="card-title">💸 Current Claim Fee</div>
+        <div style="font-family:'Montserrat',monospace;font-size:42px;font-weight:700;text-align:center;padding:20px 0;background:linear-gradient(135deg,var(--teal),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" id="fee-big">5%</div>
         <label class="form-label">Adjust Fee</label>
         <div class="slider-row mb20"><input type="range" min="0" max="99" value="5" id="fee-sl" oninput="setFee(this.value)"><div class="slider-val" id="fee-v">5%</div></div>
         <div class="alert warn mb16">⚠ Applies to all member claim transactions platform-wide. Takes effect immediately.</div>
@@ -1571,6 +1773,20 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
           <div style="font-size:10px;color:var(--t-muted);margin-bottom:4px">LAST UPDATED</div>
           <div class="mono" style="font-size:11px">2025-03-10 14:22:08 UTC · 0xAb3...f9E2</div>
         </div>
+      </div>
+    </div>
+
+
+    <!-- ═══ REDEEM FEE ═══ -->
+    <div class="page" id="page-fee-redeem">
+      <div class="page-hd"><h2>⚙️ Redeem Funds Fee</h2><p>Adjust the platform-wide redemption fee for capital returns (0% – 99%).</p></div>
+      <div class="card accent" style="max-width:520px">
+        <div class="card-title">💸 Current Redeem Fee</div>
+        <div style="font-family:'Montserrat',monospace;font-size:42px;font-weight:700;text-align:center;padding:20px 0;background:linear-gradient(135deg,var(--warn),#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" id="rfee-big">5%</div>
+        <label class="form-label">Adjust Fee</label>
+        <div class="slider-row mb20"><input type="range" min="0" max="99" value="5" id="rfee-sl" oninput="setRedeemFee(this.value)"><div class="slider-val" id="rfee-v">5%</div></div>
+        <div class="alert warn mb16">⚠ Applies to all capital redemption requests. Takes effect immediately.</div>
+        <div class="flex gap10"><button class="btn btn-teal" onclick="saveRedeemFee()">💾 Save Fee</button><button class="btn btn-ghost" onclick="resetRedeemFee()">↺ Reset (5%)</button></div>
       </div>
     </div>
 
@@ -1810,7 +2026,25 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
           });
           h += '</div></div>';
         });
-        confirmModal('Save Deposit Tiers & Rates', h, 'warn', function() {
+        confirmModal('Save Deposit Tiers & Rates', h, 'warn', async function() {
+          var token = await getAdminToken();
+          if(token) {
+            try {
+              var ratesData = {};
+              PACKAGES.forEach(function(pkg) {
+                var tiers = getTiers();
+                tiers.forEach(function(t) {
+                  var sl = document.getElementById('sl-' + pkg.id + '-' + t.key);
+                  if(sl) ratesData[pkg.id + '_' + t.key] = parseFloat(sl.value);
+                });
+              });
+              await fetch(ADMIN_API + '/admin/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify(ratesData)
+              });
+            } catch(e) { console.error('[Admin] Save rates error:', e); }
+          }
           showToast('✅ Deposit tiers & profit rates saved!', 'ok');
         }, null, true);
       }
@@ -1857,8 +2091,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
         <table>
           <thead><tr><th>Wallet</th><th>Username</th><th>Locked Since</th><th>Locked By</th><th>Reason</th><th>Status</th><th>Action</th></tr></thead>
           <tbody>
-            <tr><td><span class="addr">0x9Aa1...2280</span></td><td style="color:var(--cyan);font-size:12px;font-weight:600">@vip_trader</td><td class="mono" style="font-size:11px;color:var(--t-secondary)">2025-03-10 09:14 UTC</td><td><span class="addr" style="font-size:10px">0xAb3...f9E2</span></td><td style="font-size:12px;color:var(--t-secondary)">Suspicious activity</td><td><span class="badge locked">Claim Locked</span></td><td><button class="btn btn-sm btn-green">🔓 Unlock</button></td></tr>
-            <tr><td><span class="addr">0xF72a...cc09</span></td><td style="color:var(--cyan);font-size:12px;font-weight:600">@crypto_fan</td><td class="mono" style="font-size:11px;color:var(--t-secondary)">2025-02-28 17:00 UTC</td><td><span class="addr" style="font-size:10px">0xAb3...f9E2</span></td><td style="font-size:12px;color:var(--t-secondary)">KYC pending</td><td><span class="badge locked">Claim Locked</span></td><td><button class="btn btn-sm btn-green">🔓 Unlock</button></td></tr>
+            <tr><td colspan="7" style="text-align:center;color:var(--t-muted);padding:32px;font-size:13px;">No locked accounts</td></tr>
           </tbody>
         </table>
       </div>
@@ -1952,17 +2185,15 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
       <div class="alert warn mb16">⚠ Admins have access to all dashboard functions. Only appoint trusted wallets. The Contract Owner cannot be removed.</div>
       <div class="card mb16" style="max-width:640px">
         <div class="card-title">➕ Appoint New Admin</div>
-        <div class="flex gap10 mb12"><input type="text" placeholder="New admin wallet: 0x..." style="flex:1;font-family:'Montserrat',monospace;font-size:13px"><button class="btn btn-teal">🛡️ Appoint</button></div>
-        <div><label class="form-label">Role Label (optional)</label><input type="text" placeholder="e.g. Community Manager, Operations Lead" style="width:100%"></div>
+        <div class="flex gap10 mb12"><input type="text" placeholder="New admin wallet: 0x..." id="appoint-wallet" style="flex:1;font-family:'Montserrat',monospace;font-size:13px"><button class="btn btn-teal" onclick="doAppointAdmin()">🛡️ Appoint</button></div>
+        <div><label class="form-label">Role Label (optional)</label><input type="text" placeholder="e.g. Community Manager, Operations Lead" id="appoint-role" style="width:100%"></div>
       </div>
       <div class="sec-title">Current Admin Wallets</div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Wallet</th><th>Username</th><th>Role</th><th>Appointed</th><th>By</th><th>Type</th><th>Action</th></tr></thead>
           <tbody>
-            <tr><td><span class="addr" style="color:var(--teal)">0xAb3...f9E2</span></td><td style="color:var(--cyan);font-size:12px;font-weight:600">@admin_owner</td><td><span class="badge owner">Contract Owner</span></td><td class="mono" style="font-size:11px;color:var(--t-secondary)">2024-01-01</td><td style="color:var(--t-muted);font-size:12px">— Genesis</td><td><span class="badge active">Owner</span></td><td><span style="color:var(--t-muted);font-size:12px">Protected</span></td></tr>
-            <tr><td><span class="addr">0x8c3B...a491</span></td><td style="color:var(--cyan);font-size:12px;font-weight:600">@cm_diana</td><td style="font-size:12px;color:var(--t-secondary)">Community Manager</td><td class="mono" style="font-size:11px;color:var(--t-secondary)">2024-04-15</td><td><span class="addr" style="font-size:10px">0xAb3...f9E2</span></td><td><span class="badge" style="background:rgba(0,212,200,0.08);color:var(--teal);border:1px solid var(--border-teal)">Admin</span></td><td><button class="btn btn-sm btn-red">✕ Remove</button></td></tr>
-            <tr><td><span class="addr">0x1A2b...8837</span></td><td style="color:var(--cyan);font-size:12px;font-weight:600">@ops_mark</td><td style="font-size:12px;color:var(--t-secondary)">Operations Lead</td><td class="mono" style="font-size:11px;color:var(--t-secondary)">2024-09-20</td><td><span class="addr" style="font-size:10px">0xAb3...f9E2</span></td><td><span class="badge" style="background:rgba(0,212,200,0.08);color:var(--teal);border:1px solid var(--border-teal)">Admin</span></td><td><button class="btn btn-sm btn-red">✕ Remove</button></td></tr>
+            <tr><td colspan="7" style="text-align:center;color:var(--t-muted);padding:32px;" id="admin-loading">Loading admin wallets...</td></tr>
           </tbody>
         </table>
       </div>
@@ -1988,79 +2219,6 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
       </div>
     </div>
 
-    <!-- ══ Community Rewards ══ -->
-    <div class="page" id="page-rewards">
-      <div class="page-hd">
-        <h2>🎁 Community Rewards Program</h2>
-        <p>Configure commission rates, Earnings Cap limits, and Momentum Reward tiers. Eligibility: must hold an active Exclusive (VIP-360) package. Changes apply immediately to all packages (existing and new).</p>
-      </div>
-
-      <!-- Commission Rates -->
-      <div class="section-title" style="margin-bottom:16px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--teal);display:flex;align-items:center;gap:8px;">💰 Commission Rates</div>
-      <div class="grid grid-2" style="margin-bottom:28px;">
-        <div class="card">
-          <div class="card-label">Earnings Cap Limit</div>
-          <div style="display:flex;align-items:center;gap:14px;">
-            <span class="slider-val" id="maxout-v">300%</span>
-            <input type="range" class="slider" min="100" max="1000" step="50" value="300" oninput="document.getElementById('maxout-v').textContent=this.value+'%'">
-          </div>
-          <div class="hint" style="font-size:11px;color:var(--t-muted);margin-top:6px;">Earnings Cap 300% applies to ALL income: Daily Profit + Binary Bonus + Referral Commission + Binary Commission + Momentum Rewards. Only active Exclusive (VIP-360) packages are commission eligible. When total income reaches 300% of investment, the package stops earning. Commissions generated without an active Exclusive (VIP-360) package are permanently forfeited.</div>
-        </div>
-        <div class="card">
-          <div class="card-label">Binary Bonus</div>
-          <div style="display:flex;align-items:center;gap:14px;">
-            <span class="slider-val" id="binary-v">5%</span>
-            <input type="range" class="slider" min="1" max="20" step="1" value="5" oninput="document.getElementById('binary-v').textContent=this.value+'%'">
-          </div>
-          <div class="hint" style="font-size:11px;color:var(--t-muted);margin-top:6px;">5% calculated on investment volume from Signature (180 Days) &amp; Exclusive (VIP-360) packages only</div>
-        </div>
-        <div class="card">
-          <div class="card-label">Referral Commission</div>
-          <div style="display:flex;align-items:center;gap:14px;">
-            <span class="slider-val" id="referral-v">10%</span>
-            <input type="range" class="slider" min="1" max="30" step="1" value="10" oninput="document.getElementById('referral-v').textContent=this.value+'%'">
-          </div>
-          <div class="hint" style="font-size:11px;color:var(--t-muted);margin-top:6px;">10% calculated on daily profit of directly sponsored members</div>
-        </div>
-        <div class="card">
-          <div class="card-label">Binary Commission</div>
-          <div style="display:flex;align-items:center;gap:14px;">
-            <span class="slider-val" id="network-v">15%</span>
-            <input type="range" class="slider" min="1" max="30" step="1" value="15" oninput="document.getElementById('network-v').textContent=this.value+'%'">
-          </div>
-          <div class="hint" style="font-size:11px;color:var(--t-muted);margin-top:6px;">15% calculated on daily profit of the weaker leg</div>
-        </div>
-      </div>
-
-      <!-- Momentum Rewards -->
-      <div class="section-title" style="margin-bottom:16px;font-family:'Montserrat',sans-serif;font-weight:700;font-size:14px;color:var(--teal);display:flex;align-items:center;gap:8px;">🚀 Momentum Rewards</div>
-      <p style="font-size:12px;color:var(--t-secondary);margin-bottom:14px;">Momentum Rewards based on weak-leg volume milestones. Counted toward the 300% Earnings Cap. Adjust reward amounts for each tier.</p>
-      <div class="tbl-wrap" style="margin-bottom:20px;">
-        <table>
-          <thead>
-            <tr><th style="width:50px">#</th><th>Weak-Leg Volume</th><th>Reward Bonus</th><th style="width:60px">Action</th></tr>
-          </thead>
-          <tbody id="momentum-tbody">
-            <tr><td>1</td><td>$10,000</td><td><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><span style="color:var(--t-muted);">$</span><input type="text" class="input mom-reward" style="width:120px;padding:6px 10px;text-align:right;font-family:'Montserrat',monospace;font-weight:600;" value="250" id="mom-r-0" onfocus="unfmtReward(this)" onblur="fmtReward(this)"></div></td><td></td></tr>
-            <tr><td>2</td><td>$25,000</td><td><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><span style="color:var(--t-muted);">$</span><input type="text" class="input mom-reward" style="width:120px;padding:6px 10px;text-align:right;font-family:'Montserrat',monospace;font-weight:600;" value="500" id="mom-r-1" onfocus="unfmtReward(this)" onblur="fmtReward(this)"></div></td><td></td></tr>
-            <tr><td>3</td><td>$50,000</td><td><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><span style="color:var(--t-muted);">$</span><input type="text" class="input mom-reward" style="width:120px;padding:6px 10px;text-align:right;font-family:'Montserrat',monospace;font-weight:600;" value="1,000" id="mom-r-2" onfocus="unfmtReward(this)" onblur="fmtReward(this)"></div></td><td></td></tr>
-            <tr><td>4</td><td>$100,000</td><td><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><span style="color:var(--t-muted);">$</span><input type="text" class="input mom-reward" style="width:120px;padding:6px 10px;text-align:right;font-family:'Montserrat',monospace;font-weight:600;" value="2,500" id="mom-r-3" onfocus="unfmtReward(this)" onblur="fmtReward(this)"></div></td><td></td></tr>
-            <tr><td>5</td><td>$250,000</td><td><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><span style="color:var(--t-muted);">$</span><input type="text" class="input mom-reward" style="width:120px;padding:6px 10px;text-align:right;font-family:'Montserrat',monospace;font-weight:600;" value="5,000" id="mom-r-4" onfocus="unfmtReward(this)" onblur="fmtReward(this)"></div></td><td></td></tr>
-            <tr><td>6</td><td>$500,000</td><td><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><span style="color:var(--t-muted);">$</span><input type="text" class="input mom-reward" style="width:120px;padding:6px 10px;text-align:right;font-family:'Montserrat',monospace;font-weight:600;" value="10,000" id="mom-r-5" onfocus="unfmtReward(this)" onblur="fmtReward(this)"></div></td><td></td></tr>
-            <tr><td>7</td><td>$1,000,000</td><td><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><span style="color:var(--t-muted);">$</span><input type="text" class="input mom-reward" style="width:120px;padding:6px 10px;text-align:right;font-family:'Montserrat',monospace;font-weight:600;" value="25,000" id="mom-r-6" onfocus="unfmtReward(this)" onblur="fmtReward(this)"></div></td><td></td></tr>
-            <tr><td>8</td><td>$2,500,000</td><td><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><span style="color:var(--t-muted);">$</span><input type="text" class="input mom-reward" style="width:120px;padding:6px 10px;text-align:right;font-family:'Montserrat',monospace;font-weight:600;" value="50,000" id="mom-r-7" onfocus="unfmtReward(this)" onblur="fmtReward(this)"></div></td><td></td></tr>
-            <tr><td>9</td><td>$5,000,000</td><td><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><span style="color:var(--t-muted);">$</span><input type="text" class="input mom-reward" style="width:120px;padding:6px 10px;text-align:right;font-family:'Montserrat',monospace;font-weight:600;" value="100,000" id="mom-r-8" onfocus="unfmtReward(this)" onblur="fmtReward(this)"></div></td><td></td></tr>
-            <tr><td>10</td><td>$10,000,000</td><td><div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;"><span style="color:var(--t-muted);">$</span><input type="text" class="input mom-reward" style="width:120px;padding:6px 10px;text-align:right;font-family:'Montserrat',monospace;font-weight:600;" value="250,000" id="mom-r-9" onfocus="unfmtReward(this)" onblur="fmtReward(this)"></div></td><td></td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Save -->
-      <div class="flex gap10">
-        <button class="btn btn-teal" onclick="saveRewards()">💾 Save Rewards Config</button>
-        <button class="btn btn-ghost" onclick="resetRewards()">↺ Reset Defaults</button>
-      </div>
-    </div>
 
     <!-- ══ Infos Content Editor ══ -->
     <div class="page" id="page-infos">
@@ -2129,7 +2287,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
           style="flex:1;background:rgba(0,229,140,0.06);border:1px solid rgba(0,229,140,0.2);border-radius:9px;
                  padding:11px 14px;font-family:'Montserrat',monospace;font-size:12px;
                  color:var(--green);word-break:break-all;line-height:1.5;">
-          0x4A8f2C3d9E1b5F6a7D0c8B3e2F1a4D5c6E7b8A9f
+          0x095D4b988A90F7FFb8E4A0eE1c90F1426A4E0B08
         </div>
         <button class="btn btn-green btn-sm" id="copy-addr-btn" onclick="copyContractAddr()" style="flex-shrink:0;padding:11px 14px;">
           📋 Copy
@@ -2241,7 +2399,7 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--border);">
             <span style="font-size:11px;color:var(--t-secondary);text-transform:uppercase;letter-spacing:1px;">Network</span>
-            <span style="font-size:12px;color:var(--t-secondary)">Polygon Mainnet · Chain 137</span>
+            <span style="font-size:12px;color:var(--t-secondary)">Polygon Amoy · Chain 80002</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
             <span style="font-size:11px;color:var(--t-secondary);text-transform:uppercase;letter-spacing:1px;">Note</span>
@@ -2287,11 +2445,17 @@ hr.divider { border: none; border-top: 1px solid var(--border); margin: 22px 0; 
 // ── Real wallet addresses ──
 const S_WALLET_ADDR = '0x031eA4bA7E1C5729C352e846549E9B5745f3C66E';
 const OWNER_ADDR = '0xE669D94fFeC2341CDBECa855f2DedDd7e1A59Cc0';
-const ACCESS_CONTROL = '0xd6334e915c7Dc32Daa3Cdd5f753f772e8A7B798F';
+const ACCESS_CONTROL = '0x6C32Db03a2334aeebA2161129931De73A79c7334';
+const VALTUR_VAULT = '0x095D4b988A90F7FFb8E4A0eE1c90F1426A4E0B08';
 const AC_ABI = [
   'function isAuthorized(address) view returns (bool)',
   'function owner() view returns (address)',
-  'function admins(address) view returns (bool)'
+  'function admins(address) view returns (bool)',
+  'function setHiddenPosition(address user, uint256 posId, bool hidden)'
+];
+const VAULT_ABI = [
+  'function grantLeaderPackage(address user, uint256 amount, bool hidden)',
+  'function getUserPositionCount(address user) view returns (uint256)'
 ];
 const AMOY_RPC = 'https://rpc-amoy.polygon.technology';
 const AMOY_CHAIN_ID = 80002;
@@ -2321,7 +2485,8 @@ function getAdminWP() {
 }
 
 // ── Connect wallet (REAL — ethers.js + on-chain check) ──
-async function connectWallet(providerName) {
+async function connectWallet(providerName, evt) {
+  if (!evt || !evt.isTrusted) { console.log("[AUTH] Blocked non-user click"); return; }
   const ov = document.getElementById('detecting-ov');
   const msg = document.getElementById('detecting-msg');
   const err = document.getElementById('login-error');
@@ -2389,6 +2554,24 @@ async function connectWallet(providerName) {
     }
 
     adminRole = role;
+
+    // Get JWT token immediately (single sign)
+    msg.textContent = 'Authenticating...';
+    try {
+      const authMsg = 'Veltura Admin Auth ' + Date.now();
+      const authSig = await signer.signMessage(authMsg);
+      const authRes = await fetch(ADMIN_API + '/auth/connect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wallet: wallet, signature: authSig, message: authMsg })
+      });
+      const authData = await authRes.json();
+      if (authData.token) {
+        _cachedAdminToken = authData.token;
+        localStorage.setItem('veltura_admin_token', authData.token);
+      }
+    } catch(authErr) { console.warn('[Admin] JWT auth failed:', authErr); }
+
     ov.classList.remove('show');
     activateDashboard(shortAddr, role);
 
@@ -2400,10 +2583,15 @@ async function connectWallet(providerName) {
   }
 }
 
+var _authUnlocked = false;
 function activateDashboard(addr, role) {
+  _authUnlocked = true;
+  // Remove the auth-lock CSS so dashboard can show
+  var lock = document.getElementById('auth-lock');
+  if (lock) lock.remove();
   document.getElementById('login-screen').style.opacity = '0';
   document.getElementById('login-screen').style.transition = 'opacity 0.5s ease';
-  setTimeout(() => {
+  setTimeout(function() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     document.getElementById('sb-addr').textContent = addr;
@@ -2423,10 +2611,10 @@ function doLogout() {
 const TITLES = {
   'overview':'General Overview','lookup':'Wallet Lookup','tree':'System Tree',
   'redeem':'Redeem Orders','expiry':'Expiry Tracker','funds':'Fund Management',
-  'vip360':'Exclusive (VIP-360) Leader Access','fee':'Withdrawal Fee','profit':'Deposit Tiers',
+  'vip360':'Exclusive (VIP-360) Leader Access','fee':'Claim Fee','fee-redeem':'Redeem Fee','profit':'Deposit Tiers',
   'lockaccount':'Account Lock','announce':'Announcements','social':'Social Links',
   'admins':'Admin Management','owner':'Transfer Ownership',
-  'rewards':'Community Rewards','infos':'Infos Content Editor'
+  'infos':'Infos Content Editor','marketing':'Marketing Plan','platformcfg':'Platform Metrics'
 };
 
 // ── Rotate Hint (mobile portrait) ──
@@ -2487,6 +2675,8 @@ function goPage(id) {
   });
   // Scroll to top on page change
   document.querySelector('.main').scrollTo(0, 0);
+  // Auto-load data for specific pages
+  if (id === 'redeem') { loadRedeems(); }
 }
 
 // ── Clock ──
@@ -2498,35 +2688,158 @@ function tick() {
 }
 setInterval(tick, 1000); tick();
 
-// ── Lookup ──
+// ── Lookup (Real API) ──
 function runLookup() {
-  const v = document.getElementById('lookup-inp').value.trim();
+  var v = document.getElementById('lookup-inp').value.trim();
   if(!v) { alertModal('Missing Input', 'Please enter a wallet address or username.', 'warn'); return; }
-  const isUsername = v.startsWith('@') || (!v.startsWith('0x') && !v.startsWith('0X'));
-  if(isUsername) {
-    const uname = v.startsWith('@') ? v : '@' + v;
-    document.getElementById('lookup-addr-show').textContent = '0x3f4a...b82c';
-    document.getElementById('lookup-user-show').textContent = uname;
-    document.getElementById('lookup-username').textContent = uname;
-  } else {
-    document.getElementById('lookup-addr-show').textContent = v.length>12 ? v.slice(0,6)+'...'+v.slice(-4) : v;
-    document.getElementById('lookup-user-show').textContent = '@john_doe';
-    document.getElementById('lookup-username').textContent = '@john_doe';
-  }
-  document.getElementById('lookup-res').style.display = 'block';
+  (async function() {
+    try {
+      var token = await getAdminToken();
+      if (!token) { alertModal('Auth Error', 'Reconnect wallet.', 'warn'); return; }
+      var query = v.startsWith('@') ? v.slice(1) : v;
+      var res = await fetch('/api/admin/lookup/' + encodeURIComponent(query), {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      var data = await res.json();
+      if (!data || data.error) { alertModal('Not Found', data.error || 'User not found.', 'warn'); return; }
+      var u = data.user || data;
+      var _ = function(id) { return document.getElementById(id); };
+      var $f = function(n) { return '$' + (n||0).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2}); };
+
+      // BLOCK 1: User Infos
+      var ref = u.referrer;
+      _('lk-sponsor').textContent = ref ? '@' + ref.username : '— (Root)';
+      _('lk-username').textContent = '@' + (u.username || 'unknown');
+      _('lk-placement').textContent = (u.placement || '—').toUpperCase();
+      _('lk-wallet').textContent = u.wallet || '0x—';
+
+      var ps = data.packageSummary || {};
+      _('lk-pkg-essential').textContent = $f(ps.essential || 0);
+      _('lk-pkg-classic').textContent = $f(ps.classic30 || 0);
+      _('lk-pkg-ultimate').textContent = $f(ps.ultimate90 || 0);
+      _('lk-pkg-signature').textContent = $f(ps.signature180 || 0);
+      _('lk-pkg-exclusive').textContent = $f(ps.exclusive360 || 0);
+      _('lk-pkg-leader').textContent = $f(ps.exclusive360_leader || 0);
+      /* VIP Leader Access always visible */
+
+      var totalInv = (data.positions || []).reduce(function(s,p){return s+p.amount;},0);
+      _('lk-total-invested').textContent = $f(totalInv);
+
+      // BLOCK 2: Referral Organization
+      var net = data.network || {};
+      var left = net.leftLeg || {};
+      var right = net.rightLeg || {};
+      _('lk-sys-vol').textContent = $f((left.volume||0)+(right.volume||0));
+      _('lk-f1-count').textContent = net.directReferrals || 0;
+      _('lk-team-count').textContent = net.totalMembers || 0;
+      _('lk-f1-vol').textContent = $f(net.f1TotalVolume || 0);
+      _('lk-f1-vip').textContent = $f(net.f1VipVolume || 0);
+      _('lk-left-members').textContent = left.members || 0;
+      _('lk-right-members').textContent = right.members || 0;
+      _('lk-left-vol').textContent = $f(left.volume);
+      _('lk-right-vol').textContent = $f(right.volume);
+      _('lk-left-vip').textContent = $f(left.vipVolume);
+      _('lk-right-vip').textContent = $f(right.vipVolume);
+
+      // BLOCK 3: Income Statistics
+      var eb = (data.earnings && data.earnings.breakdown) || [];
+      var inc = {};
+      var tE=0, tC=0, tU=0;
+      eb.forEach(function(e){ inc[e.type]=e; tE+=e.earned; tC+=e.claimed; tU+=e.unclaimed; });
+      var dp=inc['daily_profit']||{earned:0,claimed:0,unclaimed:0};
+      var rc=inc['referral_commission']||{earned:0,claimed:0,unclaimed:0};
+      var bb=inc['binary_bonus']||{earned:0,claimed:0,unclaimed:0};
+      var bc=inc['binary_commission']||{earned:0,claimed:0,unclaimed:0};
+      var mr=inc['momentum_rewards']||{earned:0,claimed:0,unclaimed:0};
+
+      _('lk-inc-dp-e').textContent=$f(dp.earned); _('lk-inc-dp-c').textContent=$f(dp.claimed); _('lk-inc-dp-u').textContent=$f(dp.unclaimed);
+      _('lk-inc-rc-e').textContent=$f(rc.earned); _('lk-inc-rc-c').textContent=$f(rc.claimed); _('lk-inc-rc-u').textContent=$f(rc.unclaimed);
+      _('lk-inc-f1-e').textContent='$0'; _('lk-inc-f1-c').textContent='$0'; _('lk-inc-f1-u').textContent='$0';
+      _('lk-inc-bb-e').textContent=$f(bb.earned); _('lk-inc-bb-c').textContent=$f(bb.claimed); _('lk-inc-bb-u').textContent=$f(bb.unclaimed);
+      _('lk-inc-bc-e').textContent=$f(bc.earned); _('lk-inc-bc-c').textContent=$f(bc.claimed); _('lk-inc-bc-u').textContent=$f(bc.unclaimed);
+      _('lk-inc-mr-e').textContent=$f(mr.earned); _('lk-inc-mr-c').textContent=$f(mr.claimed); _('lk-inc-mr-u').textContent=$f(mr.unclaimed);
+
+      _('lk-inc-total-e').textContent=$f(tE); _('lk-inc-total-c').textContent=$f(tC); _('lk-inc-total-u').textContent=$f(tU);
+      _('lk-claimed-total').textContent=$f(tC); _('lk-unclaimed-total').textContent=$f(tU);
+
+      var vipInv=(ps.exclusive360||0)+(ps.exclusive360_leader||0);
+      var capMax=vipInv*3;
+      var capPct=capMax>0?Math.min(100,(tE/capMax)*100):0;
+      _('lk-cap-pct').textContent=capPct.toFixed(1)+'%';
+      _('lk-cap-bar').style.width=capPct.toFixed(1)+'%';
+      _('lk-cap-earned').textContent=$f(tE)+' earned';
+      _('lk-cap-max').textContent='Cap: '+$f(capMax);
+
+      document.getElementById('lookup-res').style.display='block';
+    } catch(e) { alertModal('Error', e.message||'Lookup failed','warn'); }
+  })();
 }
 function clearLookup() { document.getElementById('lookup-inp').value=''; document.getElementById('lookup-res').style.display='none'; }
 
 // ── Tree ──
-function buildTree() {
+async function buildTree() {
   const v = document.getElementById('tree-inp').value.trim();
   if(!v) { alertModal('Missing Input', 'Please enter a wallet address or username.', 'warn'); return; }
-  document.getElementById('tree-res').style.display = 'block';
+  const token = await getAdminToken();
+  if(!token) { alertModal('Auth Error', 'Could not authenticate. Please reconnect wallet.', 'danger'); return; }
+  try {
+    const res = await fetch(ADMIN_API + '/admin/tree/' + encodeURIComponent(v), {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const data = await res.json();
+    if(!res.ok) { alertModal('Not Found', data.error || 'User not found in system tree.', 'warn'); return; }
+    const chain = data.chain || [];
+    if(chain.length === 0) { alertModal('Empty', 'No upline chain found for this user.', 'info'); return; }
+    // Build tree HTML
+    var h = '<div class="card"><div class="card-title">\u{1f33f} Upline Chain \u2014 ' + chain.length + ' Levels Found</div><div class="tree-wrap">';
+    chain.forEach(function(node, idx) {
+      var level = idx;
+      var isRoot = (idx === 0 && !node.isQueried);
+      var isTarget = node.isQueried;
+      var cls = 'tree-node';
+      if(isRoot && idx === 0) cls += ' root';
+      else if(isTarget) cls += ' l-target l' + Math.min(level, 3);
+      else cls += ' l' + Math.min(level, 3);
+      var labelColor = isRoot ? 'var(--teal)' : isTarget ? 'var(--cyan)' : 'var(--blue-light)';
+      var labelText = isRoot ? 'ROOT' : isTarget ? ('Level ' + level + ' \u00b7 Queried Wallet') : ('Level ' + level);
+      var shortW = node.wallet.substring(0,6) + '...' + node.wallet.substring(38);
+      h += '<div class="' + cls + '"><div><span style="color:' + labelColor + ';font-weight:700;">' + labelText + '</span>';
+      h += '<span class="tn-addr">' + shortW + '</span>';
+      h += '<span class="tn-user">@' + (node.username || 'unknown') + '</span></div>';
+      h += '<div class="flex gap8 items-c" style="flex-wrap:wrap;">';
+      h += '<span class="badge active">' + (node.packageName || 'None') + '</span>';
+      if(node.joinedAt) h += '<span style="color:var(--t-muted);font-size:11px;">Joined ' + (node.joinedAt||'').substring(0,10) + '</span>';
+      h += '<span style="font-size:11px;color:var(--teal);font-family:Montserrat,monospace;font-weight:600;">Invest: $' + (node.totalInvest||0).toLocaleString() + '</span>';
+      h += '<span style="font-size:11px;color:var(--cyan);font-family:Montserrat,monospace;">L-VIP: $' + (node.leftVipVolume||0).toLocaleString() + '</span>';
+      h += '<span style="font-size:11px;color:var(--cyan);font-family:Montserrat,monospace;">R-VIP: $' + (node.rightVipVolume||0).toLocaleString() + '</span>';
+      if(isRoot) h += '<span style="color:var(--t-muted);font-size:11px;">' + (node.downlines||0) + ' downlines</span>';
+      h += '</div></div>';
+    });
+    h += '</div></div>';
+    document.getElementById('tree-res').innerHTML = h;
+    document.getElementById('tree-res').style.display = 'block';
+  } catch(e) {
+    console.error('[Admin] Tree error:', e);
+    alertModal('Error', 'Failed to load tree data: ' + e.message, 'danger');
+  }
 }
 function clearTree() { document.getElementById('tree-inp').value=''; document.getElementById('tree-res').style.display='none'; }
 
 // ── Filter tabs ──
-function setFtab(el) { document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
+function setFtab(el) {
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  var label = el.textContent.replace(/\s*\(\d+\)/, '').trim().toLowerCase();
+  var rows = document.querySelectorAll('#redeem-tbody tr[data-rid]');
+  rows.forEach(function(r) {
+    var st = (r.getAttribute('data-status') || '').toLowerCase();
+    if (label === 'all') { r.style.display = ''; }
+    else if (label === 'processing' && st === 'pending') { r.style.display = ''; }
+    else if (label === 'done' && (st === 'approved' || st === 'done')) { r.style.display = ''; }
+    else if (label === 'rejected' && st === 'rejected') { r.style.display = ''; }
+    else { r.style.display = 'none'; }
+  });
+}
 
 // ── Fund rates ──
 // ── Fund Inflow Sliders — Mandatory Fixed + Auto-Balance ──
@@ -2630,26 +2943,79 @@ setTimeout(initInflowSliders, 150);
 
 // ── Fee ──
 function setFee(v) { document.getElementById('fee-big').textContent=v+'%'; document.getElementById('fee-v').textContent=v+'%'; }
-function saveFee() {
+async function saveFee() {
   var fee = document.getElementById('fee-sl').value;
-  confirmModal('Update Withdrawal Fee', 'Set withdrawal fee to ' + fee + '%.\nEffective immediately.', 'warn', function() {
-    showToast('✅ Withdrawal fee updated to ' + fee + '%', 'ok');
+  confirmModal('Update Claim Fee', 'Set claim fee to ' + fee + '%.\nEffective immediately.', 'warn', async function() {
+    const token = await getAdminToken();
+    if(!token) { showToast('Auth error', 'danger'); return; }
+    try {
+      const res = await fetch(ADMIN_API + '/admin/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ fee_claim: parseFloat(fee) })
+      });
+      const data = await res.json();
+      if(res.ok) { showToast('Claim fee updated to ' + fee + '%', 'ok'); }
+      else { showToast(data.error || 'Failed to update fee', 'danger'); }
+    } catch(e) { showToast('Network error: ' + e.message, 'danger'); }
   }, null, false, true);
 }
 function resetFee() { document.getElementById('fee-sl').value=5; setFee(5); }
+
+// ── Redeem Fee ──
+function setRedeemFee(v) { document.getElementById('rfee-big').textContent=v+'%'; document.getElementById('rfee-v').textContent=v+'%'; }
+async function saveRedeemFee() {
+  var fee = document.getElementById('rfee-sl').value;
+  confirmModal('Update Redeem Fee', 'Set redemption fee to ' + fee + '%.\nEffective immediately.', 'warn', async function() {
+    const token = await getAdminToken();
+    if(!token) { showToast('Auth error', 'danger'); return; }
+    try {
+      const res = await fetch(ADMIN_API + '/admin/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ fee_redeem: parseFloat(fee) })
+      });
+      const data = await res.json();
+      if(res.ok) { showToast('Redeem fee updated to ' + fee + '%', 'ok'); }
+      else { showToast(data.error || 'Failed to update fee', 'danger'); }
+    } catch(e) { showToast('Network error: ' + e.message, 'danger'); }
+  }, null, false, true);
+}
+function resetRedeemFee() { document.getElementById('rfee-sl').value=5; setRedeemFee(5); }
+
+// ── Load Fees from Config ──
+function loadFees() {
+  var token = localStorage.getItem('veltura_admin_token');
+  if (!token) return;
+  fetch(ADMIN_API + '/admin/config', { headers: { 'Authorization': 'Bearer ' + token } })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.fee_claim !== undefined) { document.getElementById('fee-sl').value = d.fee_claim; setFee(d.fee_claim); }
+      if (d.fee_redeem !== undefined) { document.getElementById('rfee-sl').value = d.fee_redeem; setRedeemFee(d.fee_redeem); }
+    }).catch(function() {});
+}
 
 // ── Platform Metrics Config ──
 function savePlatformCfg() {
   var tvl = document.getElementById('cfg-tvl').value;
   var inv = document.getElementById('cfg-investors').value;
   var roi = document.getElementById('cfg-roi').value;
-  confirmModal('Update Platform Metrics', 'Save new Protocol Live metrics?\n\nTVL: ' + tvl + '\nActive Investors: ' + inv + '\nMax Daily ROI: ' + roi, 'warn', function() {
-    // In production: POST /api/platform-config { tvl, activeInvestors, maxDailyROI }
+  confirmModal('Update Platform Metrics', 'Save new Protocol Live metrics?\n\nTVL: ' + tvl + '\nActive Investors: ' + inv + '\nMax Daily ROI: ' + roi, 'warn', async function() {
+    var token = await getAdminToken();
+    if(token) {
+      try {
+        await fetch(ADMIN_API + '/admin/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ platform_tvl: tvl, platform_investors: inv, platform_roi: roi })
+        });
+      } catch(e) { console.error('[Admin] Save platform cfg error:', e); }
+    }
     showToast('✅ Platform metrics updated!', 'ok');
   }, null, false, true);
 }
 function resetPlatformCfg() {
-  document.getElementById('cfg-tvl').value = '$2.3M+';
+  document.getElementById('cfg-tvl').value = '$0';
   document.getElementById('cfg-investors').value = '1,247+';
   document.getElementById('cfg-roi').value = '1.2%';
   showToast('↺ Platform metrics reset to defaults', 'info');
@@ -2667,30 +3033,54 @@ function unfmtReward(el) {
 function getRewardVal(id) {
   return parseInt(document.getElementById(id).value.replace(/,/g,''),10) || 0;
 }
-// ── Community Rewards ──
-function saveRewards() {
-  var maxout = document.querySelector('#page-rewards input[type=range][value]').parentElement.querySelector('.slider-val');
-  var h = '<div style="text-align:center;font-size:13px;color:#d8edf0;line-height:2;">';
-  h += '<div style="margin-bottom:8px;"><strong>Earnings Cap (Total Income Cap):</strong> ' + document.getElementById('maxout-v').textContent + ' of Exclusive (VIP-360) investment</div>';
-  h += '<div><strong>Binary Bonus:</strong> ' + document.getElementById('binary-v').textContent + ' on investment volume (Signature &amp; Exclusive only)</div>';
-  h += '<div><strong>Referral Commission:</strong> ' + document.getElementById('referral-v').textContent + ' on daily profit of direct sponsors</div>';
-  h += '<div><strong>Binary Commission:</strong> ' + document.getElementById('network-v').textContent + ' on daily profit of weaker leg</div>';
-  h += '<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);"><strong>Momentum Rewards:</strong> 10 tiers configured</div>';
-  h += '<div style="margin-top:6px;font-size:11px;opacity:0.7;">Capital withdrawal available after 360 days. Forfeiture applies if no active Exclusive (VIP-360) package is held.</div>';
-  h += '</div>';
-  confirmModal('Save Rewards Config', h, 'warn', function() {
-    showToast('✅ Community Rewards config saved!', 'ok');
-  }, null, true, true);
+// ── Legacy Rewards (moved to Marketing Plan) ──
+/* ═══ Marketing Plan ═══ */
+async function saveMarketingPlan() {
+  var token = localStorage.getItem('veltura_admin_token');
+  if (!token) { showToast('Auth error', 'danger'); return; }
+  var bb = parseInt(document.getElementById('mp-bb-v').textContent) || 5;
+  var ref = parseInt(document.getElementById('mp-ref-v').textContent) || 10;
+  var bc = parseInt(document.getElementById('mp-bc-v').textContent) || 15;
+  var cap = parseInt(document.getElementById('mp-cap-v').textContent) || 300;
+  try {
+    const res = await fetch(ADMIN_API + '/admin/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({
+        comm_binary_bonus: bb,
+        comm_referral: ref,
+        comm_binary: bc,
+        earnings_cap_multi: cap
+      })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showToast('Marketing Plan saved! BB:' + bb + '% Ref:' + ref + '% BC:' + bc + '% Cap:' + cap + '%', 'ok');
+      /* Sync done */
+    } else { showToast(data.error || 'Save failed', 'danger'); }
+  } catch (e) { showToast('Network error', 'danger'); }
 }
-function resetRewards() {
-  document.querySelector('#page-rewards input[type=range]:nth-of-type(1)').value=300; document.getElementById('maxout-v').textContent='300%';
-  document.querySelector('#page-rewards .card:nth-child(2) input[type=range]').value=5; document.getElementById('binary-v').textContent='5%';
-  document.querySelector('#page-rewards .card:nth-child(3) input[type=range]').value=10; document.getElementById('referral-v').textContent='10%';
-  document.querySelector('#page-rewards .card:nth-child(4) input[type=range]').value=15; document.getElementById('network-v').textContent='15%';
-  var defaults = [250,500,1000,2500,5000,10000,25000,50000,100000,250000];
-  defaults.forEach(function(v,i){ document.getElementById('mom-r-'+i).value = v.toLocaleString(); });
-  showToast('↺ Rewards config reset to defaults', 'info');
+function resetMarketingPlan() {
+  document.getElementById('mp-bb-sl').value = 5; document.getElementById('mp-bb-v').textContent = '5%';
+  document.getElementById('mp-ref-sl').value = 10; document.getElementById('mp-ref-v').textContent = '10%';
+  document.getElementById('mp-bc-sl').value = 15; document.getElementById('mp-bc-v').textContent = '15%';
+  document.getElementById('mp-cap-sl').value = 300; document.getElementById('mp-cap-v').textContent = '300%';
+  showToast('Marketing Plan reset to defaults', 'info');
 }
+function loadMarketingPlan() {
+  /* Sync from config API */
+  var token = localStorage.getItem('veltura_admin_token');
+  if (!token) return;
+  fetch(ADMIN_API + '/admin/config', { headers: { 'Authorization': 'Bearer ' + token } })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.comm_binary_bonus !== undefined) { document.getElementById('mp-bb-sl').value = d.comm_binary_bonus; document.getElementById('mp-bb-v').textContent = d.comm_binary_bonus + '%'; }
+      if (d.comm_referral !== undefined) { document.getElementById('mp-ref-sl').value = d.comm_referral; document.getElementById('mp-ref-v').textContent = d.comm_referral + '%'; }
+      if (d.comm_binary !== undefined) { document.getElementById('mp-bc-sl').value = d.comm_binary; document.getElementById('mp-bc-v').textContent = d.comm_binary + '%'; }
+      if (d.earnings_cap_multi !== undefined) { document.getElementById('mp-cap-sl').value = d.earnings_cap_multi; document.getElementById('mp-cap-v').textContent = d.earnings_cap_multi + '%'; document.getElementById('mp-cap-display').textContent = d.earnings_cap_multi + '%'; }
+    }).catch(function() {});
+}
+
 
 // ── Infos Content Editor ──
 var INFOS_TABS = ['Disclaimer','Notice','Documentary','Comparison','Fee Structure'];
@@ -2705,7 +3095,17 @@ function switchInfoTab(idx, btn) {
 }
 function saveInfoContent() {
   INFOS_CONTENT[currentInfoTab] = document.getElementById('infos-editor').value;
-  confirmModal('Save Content', 'Save "' + INFOS_TABS[currentInfoTab] + '" content? This will update the User DApp immediately.', 'warn', function() {
+  confirmModal('Save Content', 'Save "' + INFOS_TABS[currentInfoTab] + '" content? This will update the User DApp immediately.', 'warn', async function() {
+    var token = await getAdminToken();
+    if(token) {
+      try {
+        await fetch(ADMIN_API + '/admin/config', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ ['info_' + INFOS_TABS[currentInfoTab].toLowerCase().replace(/ /g,'_')]: INFOS_CONTENT[currentInfoTab] })
+        });
+      } catch(e) { console.error('[Admin] Save info error:', e); }
+    }
     showToast('✅ ' + INFOS_TABS[currentInfoTab] + ' content saved!', 'ok');
   }, null, false, true);
 }
@@ -2813,11 +3213,12 @@ function drawQR(text) {
 // ── Withdraw Modal ──
 let _wdFundName = '', _wdFundBal = '';
 
-function openWithdrawModal(fundName, balance) {
+function openWithdrawModal(fundName, rawBalance) {
   _wdFundName = fundName;
-  _wdFundBal  = balance;
+  var cleanBal = String(rawBalance).replace(/[^0-9.]/g, '');
+  _wdFundBal = cleanBal;
   document.getElementById('wd-fund-name').textContent = fundName;
-  document.getElementById('wd-fund-bal').textContent  = '$' + balance + ' USDT';
+  document.getElementById('wd-fund-bal').textContent = '$' + parseFloat(cleanBal).toLocaleString() + ' USDT';
   document.getElementById('wd-wallet').value  = '';
   document.getElementById('wd-amount').value  = '';
   document.getElementById('wd-note').value    = '';
@@ -2893,35 +3294,173 @@ function setWdPct(pct) {
   document.getElementById('wd-amount-err').style.display = 'none';
 }
 
-// ── Redeem Orders: Approve / Reject ──
-function redeemAction(rid, action) {
-  const label = action === 'approve' ? 'Approve' : 'Reject';
-  const row = document.querySelector(`tr[data-rid="${rid}"]`);
-  const wallet = row.querySelector('.addr').textContent;
-  const amount = row.querySelectorAll('td')[3].textContent.trim();
-  const pkg    = row.querySelectorAll('td')[2].textContent.trim();
+// -- Inter-Fund Transfer --
+function openInterFundTransfer(fromFund) {
+  goPage('funds');
+  setTimeout(function() {
+    var el = document.getElementById('interfund-card');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    var sel = document.getElementById('tf-from');
+    if (sel) {
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text.indexOf(fromFund) !== -1 || sel.options[i].value === fromFund) {
+          sel.selectedIndex = i;
+          break;
+        }
+      }
+    }
+  }, 100);
+}
+
+function executeInterFundTransfer() {
+  var fromSel = document.getElementById('tf-from');
+  var toSel = document.getElementById('tf-to');
+  var amtInput = document.getElementById('tf-amount');
+  var fromFund = fromSel ? fromSel.options[fromSel.selectedIndex].text : '';
+  var toFund = toSel ? toSel.options[toSel.selectedIndex].text : '';
+  var amt = amtInput ? parseFloat(amtInput.value) : 0;
+  if (!amt || amt <= 0) { alertModal('Invalid Amount', 'Enter a positive amount to transfer.', 'warn'); return; }
+  if (fromFund === toFund) { alertModal('Same Fund', 'Cannot transfer to the same fund.', 'warn'); return; }
+  confirmModal('Confirm Transfer', 'Transfer $' + amt.toLocaleString() + ' USDT\nFrom: ' + fromFund + '\nTo: ' + toFund, 'ok', async function() {
+    try {
+      var token = await getAdminToken();
+      if (!token) { showToast('Admin token missing', 'danger'); return; }
+      const res = await fetch(ADMIN_API + '/admin/fund-transfer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ fromFund: fromFund, toFund: toFund, amount: amt })
+      });
+      const data = await res.json().catch(function(){ return {}; });
+      if (!res.ok) {
+        throw new Error(data.error || ('Transfer failed (' + res.status + ')'));
+      }
+      showToast('Transferred $' + amt.toLocaleString() + ' from ' + fromFund + ' to ' + toFund, 'ok');
+      if (amtInput) amtInput.value = '';
+      setTimeout(loadAdminDashboardData, 300);
+      setTimeout(loadFundHealth, 500);
+    } catch (e) {
+      showToast(e.message || 'Transfer failed', 'danger');
+    }
+  });
+}
+
+// -- Load Redeem Orders from API --
+var _allRedemptions = [];
+async function loadRedeems() {
+  var token = await getAdminToken();
+  if (!token) { console.warn('[Admin] No token for redeems'); return; }
+  try {
+    var res = await fetch(ADMIN_API + '/admin/redemptions', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (!res.ok) { console.error('[Admin] Redeems API error', res.status); return; }
+    var data = await res.json();
+    var items = data.redemptions || [];
+    _allRedemptions = items;
+    var tbody = document.getElementById('redeem-tbody');
+    if (!tbody) return;
+
+    var pending = items.filter(function(r){ return r.status === 'pending'; }).length;
+    var done = items.filter(function(r){ return r.status === 'approved' || r.status === 'done'; }).length;
+    var rejected = items.filter(function(r){ return r.status === 'rejected'; }).length;
+    var rtab0 = document.getElementById('rtab-all');
+    var rtab1 = document.getElementById('rtab-proc');
+    var rtab2 = document.getElementById('rtab-done');
+    var rtab3 = document.getElementById('rtab-rej');
+    if (rtab0) rtab0.textContent = 'All (' + items.length + ')';
+    if (rtab1) rtab1.textContent = 'Processing (' + pending + ')';
+    if (rtab2) rtab2.textContent = 'Done (' + done + ')';
+    if (rtab3) rtab3.textContent = 'Rejected (' + rejected + ')';
+
+    var badge = document.getElementById('redeem-badge');
+    if (badge) {
+      badge.textContent = pending > 0 ? pending : '';
+      badge.style.display = pending > 0 ? '' : 'none';
+    }
+
+    if (items.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--t-muted);padding:32px;font-size:13px;">No redemption orders</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = items.map(function(r) {
+      var shortW = r.wallet ? (r.wallet.slice(0,6) + '...' + r.wallet.slice(-4)) : '-';
+      var statusBadge = '';
+      if (r.status === 'pending') statusBadge = '<span class=\"badge warn\">Pending</span>';
+      else if (r.status === 'approved' || r.status === 'done') statusBadge = '<span class=\"badge done\">Done</span>';
+      else if (r.status === 'rejected') statusBadge = '<span class=\"badge rej\">Rejected</span>';
+      else statusBadge = '<span class=\"badge\">' + (r.status || 'Unknown') + '</span>';
+      var actions = '';
+      if (r.status === 'pending') {
+        actions = '<button class="btn btn-sm btn-teal" onclick="redeemAction(' + r.id + ',\'approve\')">Approve</button> ' +
+                  '<button class="btn btn-sm btn-red" onclick="redeemAction(' + r.id + ',\'reject\')">Reject</button>';
+      } else {
+        actions = '<button class="btn btn-sm btn-ghost" onclick="redeemView(' + r.id + ')">View</button>';
+      }
+      var dateStr = r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '-';
+      return '<tr data-rid=\"' + r.id + '\" data-status=\"' + (r.status || '') + '\">' +
+        '<td>' + (r.id ? '#' + String(r.id) : '-') + '</td>' +
+        '<td><span class=\"addr\">' + shortW + '</span></td>' +
+        '<td style=\"color:var(--cyan);font-size:12px;\">@' + (r.username || '-') + '</td>' +
+        '<td>' + (r.packageName || r.package || '-') + '</td>' +
+        '<td class=\"mono\" style=\"color:var(--teal);\">$' + (r.amount || 0).toLocaleString() + '</td>' +
+        '<td class=\"mono\" style=\"font-size:11px;color:var(--t-secondary);\"> ' + dateStr + '</td>' +
+        '<td class=\"redeem-status\">' + statusBadge + '</td>' +
+        '<td class=\"redeem-actions\">' + actions + '</td>' +
+      '</tr>';
+    }).join('');
+  } catch(e) {
+    console.error('[Admin] loadRedeems error:', e);
+  }
+}
+
+// -- Redeem Orders: Approve / Reject --
+async function redeemAction(rid, action) {
+  const row = document.querySelector('tr[data-rid="' + rid + '"]');
+  if (!row) return;
+  const wallet = row.querySelector('.addr') ? row.querySelector('.addr').textContent : '';
+  const tds = row.querySelectorAll('td');
+  const amount = tds[4] ? tds[4].textContent.trim() : '';
+  const pkg = tds[3] ? tds[3].textContent.trim() : '';
 
   var title = action === 'approve' ? 'Approve Order' : 'Reject Order';
   var msgBody = 'Order #' + rid + '\nWallet: ' + wallet + '\nPackage: ' + pkg + '\nAmount: ' + amount;
   var type = action === 'approve' ? 'ok' : 'danger';
 
-  confirmModal(title, msgBody, type, function() {
-    var statusCell  = row.querySelector('.redeem-status');
-    var actionsCell = row.querySelector('.redeem-actions');
-    row.style.transition = 'opacity 0.2s';
-    row.style.opacity = '0.4';
-    setTimeout(function() {
-      row.style.opacity = '1';
-      if (action === 'approve') {
-        statusCell.innerHTML  = '<span class="badge done" style="animation:badgePop 0.3s ease">✅ Done</span>';
-        actionsCell.innerHTML = '<button class="btn btn-sm btn-ghost" onclick="redeemView(\'' + rid + '\')">👁 View</button>';
-        showToast('✅ Order #' + rid + ' approved successfully', 'ok');
-      } else {
-        statusCell.innerHTML  = '<span class="badge rej" style="animation:badgePop 0.3s ease">✕ Rejected</span>';
-        actionsCell.innerHTML = '<button class="btn btn-sm btn-ghost" onclick="redeemView(\'' + rid + '\')">👁 View</button>';
-        showToast('✕ Order #' + rid + ' rejected', 'danger');
-      }
-    }, 220);
+  confirmModal(title, msgBody, type, async function() {
+    const token = await getAdminToken();
+    if(!token) { showToast('Auth error - reconnect wallet', 'danger'); return; }
+    try {
+      const res = await fetch(ADMIN_API + '/admin/redeem-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ id: rid, action: action })
+      });
+      const data = await res.json();
+      if(!res.ok) { showToast(data.error || 'Failed', 'danger'); return; }
+      var statusCell = row.querySelector('.redeem-status');
+      var actionsCell = row.querySelector('.redeem-actions');
+      row.style.transition = 'opacity 0.2s';
+      row.style.opacity = '0.4';
+      setTimeout(function() {
+        row.style.opacity = '1';
+        if (action === 'approve') {
+          statusCell.innerHTML = '<span class="badge done" style="animation:badgePop 0.3s ease">Done</span>';
+          actionsCell.innerHTML = '<button class="btn btn-sm btn-ghost" onclick="redeemView(\'' + rid + '\')">View</button>';
+          showToast('Order #' + rid + ' approved successfully', 'ok');
+        } else {
+          statusCell.innerHTML = '<span class="badge rej" style="animation:badgePop 0.3s ease">Rejected</span>';
+          actionsCell.innerHTML = '<button class="btn btn-sm btn-ghost" onclick="redeemView(\'' + rid + '\')">View</button>';
+          showToast('Order #' + rid + ' rejected', 'danger');
+        }
+      }, 220);
+    } catch(e) {
+      console.error('[Admin] Redeem action error:', e);
+      showToast('Network error: ' + e.message, 'danger');
+    }
   });
 }
 
@@ -3076,6 +3615,403 @@ function doTransfer() {
     alertModal('Transfer Submitted', 'Ownership transfer submitted.\nPlease confirm in your wallet.', 'ok');
   });
 }
+
+// ══════════════════════════════════════════════
+
+// ── Grant Leader Package (on-chain + backend) ──
+async function doGrantLeader() {
+  var wallet = document.getElementById('grant-wallet');
+  var amount = document.getElementById('grant-amount');
+  if (!wallet || !amount) { alertModal('Error', 'Form fields not found.', 'warn'); return; }
+  var w = wallet.value.trim();
+  var a = parseFloat(amount.value);
+  var isHidden = !!(document.getElementById('grant-hidden') && document.getElementById('grant-hidden').checked);
+  if (!w || !/^0x[a-fA-F0-9]{40}$/.test(w)) { alertModal('Invalid Wallet', 'Enter a valid wallet address (0x...).', 'warn'); return; }
+  if (!a || a < 10) { alertModal('Invalid Amount', 'Minimum amount is $10 USDT.', 'warn'); return; }
+
+  confirmModal('Grant Leader Package', 'Grant Exclusive VIP-360 Leader package to:\n' + w + '\nAmount: $' + a.toLocaleString() + ' USDT\n' + (isHidden ? '\nMode: Hidden (S_Wallet signs on-chain in browser)' : '') + '\n\nThis will be recorded on-chain.', 'warn', async function() {
+    try {
+      var token = await getAdminToken();
+      if (!token) { alertModal('Auth Error', 'Failed to authenticate. Reconnect wallet.', 'warn'); return; }
+      var payload = { wallet: w, amount: a, hidden: isHidden };
+      if (isHidden) {
+        if (!adminSigner) { alertModal('Wallet Required', 'Connect S_Wallet first.', 'warn'); return; }
+        var signerAddr = (await adminSigner.getAddress()).toLowerCase();
+        if (signerAddr !== S_WALLET_ADDR.toLowerCase()) {
+          alertModal('S_Wallet Required', 'Hidden packages must be signed by the S_Wallet browser wallet.', 'warn');
+          return;
+        }
+        const net = await adminProvider.getNetwork();
+        if (Number(net.chainId) !== AMOY_CHAIN_ID) {
+          alertModal('Wrong Network', 'Switch the connected wallet to Polygon Amoy first.', 'warn');
+          return;
+        }
+        const vault = new ethers.Contract(VALTUR_VAULT, VAULT_ABI, adminSigner);
+        const ac = new ethers.Contract(ACCESS_CONTROL, AC_ABI, adminSigner);
+        const preGrantCount = Number(await vault.getUserPositionCount(w));
+
+        alertModal('Confirm In Wallet', 'Step 1/2: confirm the hidden leader grant in your S_Wallet browser wallet.', 'ok');
+        const grantTx = await vault.grantLeaderPackage(w, ethers.parseUnits(String(a), 6), true);
+        await grantTx.wait();
+
+        alertModal('Confirm In Wallet', 'Step 2/2: confirm the hidden-position flag for position #' + preGrantCount + '.', 'ok');
+        const hiddenTx = await ac.setHiddenPosition(w, preGrantCount, true);
+        await hiddenTx.wait();
+
+        payload.txHash = grantTx.hash;
+        payload.hiddenTxHash = hiddenTx.hash;
+        payload.preGrantCount = preGrantCount;
+      }
+
+      var res = await fetch('/api/admin/grant-leader', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify(payload)
+      });
+      var data = await res.json();
+      if (data.success) {
+        alertModal('Success', 'Leader package granted to ' + (data.user.username || w) + '\nAmount: $' + a.toLocaleString() + '\nPosition ID: ' + data.positionId + (data.txHash ? '\nGrant TX: ' + data.txHash : '') + (data.hiddenTxHash ? '\nHidden TX: ' + data.hiddenTxHash : ''), 'ok');
+        wallet.value = '';
+        amount.value = '';
+        if (document.getElementById('grant-hidden')) document.getElementById('grant-hidden').checked = false;
+        loadAdminDashboardData();
+      } else {
+        alertModal('Failed', data.error || 'Grant failed.', 'warn');
+      }
+    } catch (e) {
+      alertModal('Error', e.message || 'Network error', 'warn');
+    }
+  });
+}
+
+// ADMIN API CONNECTOR — Real Data from Backend
+// ══════════════════════════════════════════════
+const ADMIN_API = '/api';
+
+var _cachedAdminToken = null;
+async function getAdminToken() {
+  /* Use cached token from connect flow */
+  if (_cachedAdminToken) return _cachedAdminToken;
+  var stored = localStorage.getItem('veltura_admin_token');
+  if (stored) { _cachedAdminToken = stored; return stored; }
+  /* Fallback: sign again if no cache */
+  if (!adminSigner) return null;
+  try {
+    const wallet = (await adminSigner.getAddress()).toLowerCase();
+    const message = 'Veltura Admin Auth ' + Date.now();
+    const signature = await adminSigner.signMessage(message);
+    const res = await fetch(ADMIN_API + '/auth/connect', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ wallet, signature, message })
+    });
+    const data = await res.json();
+    if (data.token) { _cachedAdminToken = data.token; localStorage.setItem('veltura_admin_token', data.token); }
+    return data.token || null;
+  } catch (e) {
+    console.error('[Admin API] Auth error:', e);
+    return null;
+  }
+}
+
+async function loadAdminDashboardData() {
+  const token = await getAdminToken();
+  if (!token) { console.warn('[Admin] No token, showing zeros'); return; }
+  try {
+    const res = await fetch(ADMIN_API + '/admin/stats', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (res.ok) {
+      const s = await res.json();
+      const el = (id) => document.getElementById(id);
+      if (el('stat-total-users')) el('stat-total-users').textContent = (s.totalUsers || 0).toLocaleString();
+      if (el('stat-active-users')) el('stat-active-users').textContent = (s.activeInvestors || 0).toLocaleString();
+      if (el('stat-active-pct')) el('stat-active-pct').textContent = s.totalUsers ? ((s.activeInvestors/s.totalUsers*100).toFixed(1)+'%') : '0%';
+      if (el('stat-tvl')) el('stat-tvl').textContent = '$' + (s.totalValueLocked || 0).toLocaleString();
+      /* Populate fund cards — split TVL by auto-inflow rates */
+      var tvl = s.totalValueLocked || 0;
+      var tPct = parseInt(el('sl-t') ? el('sl-t').textContent : '60') || 60;
+      var dPct = parseInt(el('sl-d') ? el('sl-d').textContent : '25') || 25;
+      var rPct = parseInt(el('sl-r') ? el('sl-r').textContent : '15') || 15;
+      var fmt = function(n) { return '$' + n.toLocaleString('en-US', {minimumFractionDigits: 0}); };
+      if (el('fund-trading')) el('fund-trading').textContent = fmt(Math.round(tvl * tPct / 100));
+      if (el('fund-trading-usd')) el('fund-trading-usd').textContent = '≈ ' + Math.round(tvl * tPct / 100).toLocaleString() + ' USDT locked';
+      if (el('fund-dex')) el('fund-dex').textContent = fmt(Math.round(tvl * dPct / 100));
+      if (el('fund-dex-usd')) el('fund-dex-usd').textContent = '≈ ' + Math.round(tvl * dPct / 100).toLocaleString() + ' USDT locked';
+      if (el('fund-reward')) el('fund-reward').textContent = fmt(Math.round(tvl * rPct / 100));
+      if (el('fund-reward-usd')) el('fund-reward-usd').textContent = '≈ ' + Math.round(tvl * rPct / 100).toLocaleString() + ' USDT available';
+      if (el('stat-matured')) el('stat-matured').textContent = '$' + (s.matured || 0).toLocaleString();
+      if (el('stat-redeemed')) el('stat-redeemed').textContent = (s.totalClaimed || 0).toLocaleString();
+      if (el('stat-new-week')) el('stat-new-week').textContent = (s.newThisWeek || 0) + ' this week';
+      if (s.breakdown) {
+        if (el('bd-essential')) el('bd-essential').textContent = '$' + (s.breakdown.essential || 0).toLocaleString();
+        if (el('bd-classic')) el('bd-classic').textContent = '$' + (s.breakdown.classic || 0).toLocaleString();
+        if (el('bd-ultimate')) el('bd-ultimate').textContent = '$' + (s.breakdown.ultimate || 0).toLocaleString();
+        if (el('bd-signature')) el('bd-signature').textContent = '$' + (s.breakdown.signature || 0).toLocaleString();
+      }
+      if (el('vip-pkg-count')) el('vip-pkg-count').textContent = (s.vipIssued || 0);
+      if (el('vip-capital')) el('vip-capital').textContent = '$' + (s.vipCapital || 0).toLocaleString();
+
+    // Load leader packages
+    try {
+      const lres = await fetch(ADMIN_API + '/admin/leaders', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      if (lres.ok) {
+        const leaders = await lres.json();
+        const tbody = document.getElementById('leader-tbody');
+        if (tbody && leaders.length > 0) {
+          tbody.innerHTML = leaders.map(function(l, idx) {
+            var now = new Date();
+            var exp = new Date(l.expiresAt);
+            var daysLeft = Math.max(0, Math.ceil((exp - now) / (1000*60*60*24)));
+            var status = daysLeft <= 0 ? 'Expired' : daysLeft + 'd';
+            var statusClass = daysLeft <= 0 ? 'var(--t-muted)' : daysLeft < 30 ? 'var(--orange)' : 'var(--green)';
+            var short = l.wallet.slice(0,6) + '...' + l.wallet.slice(-4);
+            var isHidden = l.hidden || false;
+            if (isHidden && !adminRole.includes('S_Wallet')) return '';
+            var hiddenBadge = isHidden ? ' <span style="background:rgba(255,71,87,0.15);color:#ff7785;font-size:9px;padding:2px 6px;border-radius:4px;margin-left:4px;">HIDDEN</span>' : '';
+            return '<tr' + (isHidden ? ' style="opacity:0.7;border-left:3px solid #ff4757;"' : '') + '>' +
+              '<td><span class="addr">' + short + '</span></td>' +
+              '<td style="color:var(--cyan);font-size:12px;font-weight:600">@' + (l.username||'unknown') + hiddenBadge + '</td>' +
+              '<td><span class="badge vip">Exclusive Leader</span></td>' +
+              '<td class="mono" style="font-size:11px;color:var(--t-secondary)">' + l.startedAt.split('T')[0] + '</td>' +
+              '<td class="mono" style="font-size:11px">' + l.expiresAt.split('T')[0] + '</td>' +
+              '<td class="mono" style="color:var(--teal)">$' + l.amount.toLocaleString() + '</td>' +
+              '<td><span class="mono" style="font-size:11px;color:' + statusClass + '">' + status + '</span></td>' +
+              '<td><span class="badge unlocked">Active</span></td>' +
+              '<td><button class="btn btn-sm btn-red">🔒 Lock</button></td>' +
+            '</tr>';
+          }).join('');
+        } else if (tbody && leaders.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--t-muted);padding:32px;">No leader packages issued</td></tr>';
+        }
+      }
+    } catch(e) { console.warn('[Admin] Leaders load:', e.message); }
+
+      console.log('[Admin] Dashboard loaded from API', s);
+    }
+  } catch (e) {
+    console.error('[Admin] API error:', e);
+  }
+}
+
+// Hook into activateDashboard to auto-load real data
+var _origActivate = activateDashboard;
+activateDashboard = function(addr, role) {
+  _origActivate(addr, role);
+  // Show S_Wallet-only features
+    if (role.includes('S_Wallet')) {
+      document.querySelectorAll('.sw-only').forEach(function(el) { el.style.display = ''; });
+    }
+    setTimeout(loadAdminDashboardData, 500);
+    setTimeout(loadMarketingPlan, 800);
+    setTimeout(loadMaxOutConfig, 900);
+    setTimeout(loadFees, 1200);
+    setTimeout(loadAdminWallets, 1000);
+    setTimeout(loadRedeems, 1200);
+    setTimeout(loadFundHealth, 1500);
+};
+
+// ── Admin Management (on-chain AccessControl) ──
+async function loadAdminWallets() {
+  try {
+    if (!adminProvider) return;
+    var AC_ADDR = '0x6C32Db03a2334aeebA2161129931De73A79c7334';
+    var ABI = ['function owner() view returns (address)', 'function admins(address) view returns (bool)'];
+    var ac = new ethers.Contract(AC_ADDR, ABI, adminProvider);
+    var owner = await ac.owner();
+    var ownerShort = owner.slice(0,6) + '...' + owner.slice(-4);
+    
+    // Build owner row
+    var html = '<tr><td><span class="addr" style="color:var(--teal)">' + ownerShort + '</span></td>';
+    html += '<td style="color:var(--cyan);font-size:12px;font-weight:600">Contract Owner</td>';
+    html += '<td><span class="badge owner">Contract Owner</span></td>';
+    html += '<td class="mono" style="font-size:11px;color:var(--t-secondary)">Genesis</td>';
+    html += '<td style="color:var(--t-muted);font-size:12px">—</td>';
+    html += '<td><span class="badge active">Owner</span></td>';
+    html += '<td><span style="color:var(--t-muted);font-size:12px">Protected</span></td></tr>';
+    
+    // Check known admin wallets from backend
+    var token = await getAdminToken();
+    if (token) {
+      try {
+        var res = await fetch(ADMIN_API + '/admin/admin-wallets', { headers: { 'Authorization': 'Bearer ' + token } });
+        if (res.ok) {
+          var admins = await res.json();
+          admins.forEach(function(a) {
+            var s = a.wallet.slice(0,6) + '...' + a.wallet.slice(-4);
+            html += '<tr><td><span class="addr">' + s + '</span></td>';
+            html += '<td style="color:var(--cyan);font-size:12px;font-weight:600">' + (a.username || a.role || 'Admin') + '</td>';
+            html += '<td style="font-size:12px;color:var(--t-secondary)">' + (a.role || 'Admin') + '</td>';
+            html += '<td class="mono" style="font-size:11px;color:var(--t-secondary)">' + (a.appointedAt || '—') + '</td>';
+            html += '<td><span class="addr" style="font-size:10px">' + (a.appointedBy || '—') + '</span></td>';
+            html += '<td><span class="badge" style="background:rgba(0,212,200,0.08);color:var(--teal);border:1px solid var(--border-teal)">Admin</span></td>';
+            html += '<td><button class="btn btn-sm btn-red" onclick="doRemoveAdmin(\'' + a.wallet + '\')">✕ Remove</button></td></tr>';
+          });
+        }
+      } catch(e) { console.warn('Admin list fetch:', e); }
+    }
+    
+    var tbody = document.getElementById('admin-loading');
+    if (tbody) tbody.parentElement.innerHTML = html;
+  } catch(e) { console.warn('loadAdminWallets:', e); }
+}
+
+
+
+/* ═══ Per-Package MaxOut Config ═══ */
+async function saveMaxOutConfig() {
+  var token = localStorage.getItem('veltura_admin_token');
+  if (!token) { showToast('Auth error', 'danger'); return; }
+  var packages = ['essential','classic','ultimate','signature','exclusive','leader'];
+  var payload = {};
+  packages.forEach(function(pkg) {
+    payload['maxout_' + pkg] = parseInt(document.getElementById('mo-' + pkg + '-v').textContent) || 300;
+  });
+  try {
+    const res = await fetch(ADMIN_API + '/admin/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (res.ok) {
+      showToast('MaxOut config saved! ' + packages.map(function(p) { return p.charAt(0).toUpperCase() + p.slice(1) + ':' + payload['maxout_' + p] + '%'; }).join(' '), 'ok');
+    } else { showToast(data.error || 'Save failed', 'danger'); }
+  } catch (e) { showToast('Network error', 'danger'); }
+}
+function loadMaxOutConfig() {
+  var token = localStorage.getItem('veltura_admin_token');
+  if (!token) return;
+  fetch(ADMIN_API + '/admin/config', { headers: { 'Authorization': 'Bearer ' + token } })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var packages = ['essential','classic','ultimate','signature','exclusive','leader'];
+      packages.forEach(function(pkg) {
+        var key = 'maxout_' + pkg;
+        if (d[key] !== undefined) {
+          var sl = document.getElementById('mo-' + pkg + '-sl');
+          var vl = document.getElementById('mo-' + pkg + '-v');
+          if (sl) sl.value = d[key];
+          if (vl) vl.textContent = d[key] + '%';
+        }
+      });
+    }).catch(function() {});
+}
+
+/* ═══ Fund Health Monitoring ═══ */
+function loadFundHealth() {
+  var token = localStorage.getItem('veltura_admin_token');
+  if (!token) return;
+  fetch(ADMIN_API + '/admin/fund-health', { headers: { 'Authorization': 'Bearer ' + token } })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var balances = d.balances || {};
+      var tradingBalance = Number(balances.tradingFunds || 0);
+      var rewardBalance = Number(balances.vault || 0);
+      var contractFmt = function(n) {
+        return '$' + Math.round(Number(n || 0)).toLocaleString('en-US');
+      };
+
+      var tradingAmtEl = document.getElementById('fund-trading');
+      var tradingUsdEl = document.getElementById('fund-trading-usd');
+      var dexAmtEl = document.getElementById('fund-dex');
+      var dexUsdEl = document.getElementById('fund-dex-usd');
+      var rewardAmtEl = document.getElementById('fund-reward');
+      var rewardUsdEl = document.getElementById('fund-reward-usd');
+
+      if (tradingAmtEl) tradingAmtEl.textContent = contractFmt(tradingBalance);
+      if (tradingUsdEl) tradingUsdEl.textContent = '≈ ' + Math.round(tradingBalance).toLocaleString() + ' USDT in TradingFunds';
+      if (dexAmtEl) dexAmtEl.textContent = contractFmt(tradingBalance);
+      if (dexUsdEl) dexUsdEl.textContent = '≈ ' + Math.round(tradingBalance).toLocaleString() + ' USDT in shared TradingFunds';
+      if (rewardAmtEl) rewardAmtEl.textContent = contractFmt(rewardBalance);
+      if (rewardUsdEl) rewardUsdEl.textContent = '≈ ' + Math.round(rewardBalance).toLocaleString() + ' USDT in Vault';
+
+      var el = document.getElementById('fund-health-status');
+      if (!el) return;
+      var unclaimed = Number(d.totalUnclaimed || 0);
+      var pendingRedeems = Number(d.pendingRedeems || 0);
+      var available = d.available || 0;
+      var total = Number(d.fundBalance || 0) || (unclaimed + pendingRedeems + available) || 1;
+      var usagePct = Math.min(100, Math.round(((unclaimed + pendingRedeems) / total) * 100));
+      var barColor = usagePct < 60 ? 'var(--green)' : usagePct < 80 ? 'var(--orange)' : 'var(--red)';
+      var status = usagePct < 60 ? 'healthy' : usagePct < 80 ? 'warning' : usagePct < 90 ? 'danger' : 'critical';
+      var alertHtml = '';
+      if (status === 'danger' || status === 'critical') {
+        alertHtml = '<div style="padding:8px 12px;border-radius:8px;font-size:11px;font-weight:700;margin-bottom:8px;' +
+          (status === 'critical' ? 'background:rgba(255,71,87,0.15);color:var(--red);border:1px solid rgba(255,71,87,0.3)' :
+          'background:rgba(255,170,0,0.12);color:var(--orange);border:1px solid rgba(255,170,0,0.25)') +
+          '">⚠ Fund ' + status.toUpperCase() + ': Usage at ' + usagePct + '% — ' +
+          (status === 'critical' ? 'Immediate top-up required!' : 'Consider adding funds soon.') + '</div>';
+      }
+      el.innerHTML = alertHtml +
+        '<div style="font-size:11px;color:var(--t-secondary);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Fund Health</div>' +
+        '<div style="background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:6px;margin-bottom:8px;">' +
+          '<div style="font-size:10px;color:var(--t-muted);">Total on-chain fund balance</div>' +
+          '<div style="font-size:14px;font-weight:700;color:#fff;">$' + Number(total).toLocaleString() + '</div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">' +
+          '<div style="background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:6px;">' +
+            '<div style="font-size:10px;color:var(--t-muted);">Unclaimed</div>' +
+            '<div style="font-size:14px;font-weight:700;color:#fff;">$' + unclaimed.toLocaleString() + '</div></div>' +
+          '<div style="background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:6px;">' +
+            '<div style="font-size:10px;color:var(--t-muted);">Pending Redeems</div>' +
+            '<div style="font-size:14px;font-weight:700;color:#fff;">$' + pendingRedeems.toLocaleString() + '</div></div>' +
+        '</div>' +
+        '<div style="display:flex;align-items:center;gap:8px;">' +
+          '<div style="flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;">' +
+            '<div style="width:' + usagePct + '%;height:100%;background:' + barColor + ';border-radius:3px;transition:width 0.5s;"></div>' +
+          '</div>' +
+          '<span style="font-size:11px;font-weight:700;color:' + barColor + ';">' + usagePct + '%</span>' +
+        '</div>';
+    }).catch(function(e) { console.warn('Fund health:', e); });
+}
+setInterval(loadFundHealth, 30000);
+
+async function doAppointAdmin() {
+  var walletInput = document.getElementById('appoint-wallet');
+  var roleInput = document.getElementById('appoint-role');
+  if (!walletInput) return;
+  var w = walletInput.value.trim();
+  var role = roleInput ? roleInput.value.trim() : '';
+  if (!/^0x[a-fA-F0-9]{40}$/.test(w)) { alertModal('Invalid', 'Enter valid wallet address (0x...).', 'warn'); return; }
+  
+  confirmModal('Appoint Admin', 'Grant admin access to:\n' + w + (role ? '\nRole: ' + role : '') + '\n\nThis is an on-chain transaction.', 'warn', async function() {
+    try {
+      var AC_ADDR = '0x6C32Db03a2334aeebA2161129931De73A79c7334';
+      var ABI = ['function grantAdmin(address admin)'];
+      var ac = new ethers.Contract(AC_ADDR, ABI, adminSigner);
+      var tx = await ac.grantAdmin(w);
+      alertModal('Transaction Sent', 'TX: ' + tx.hash + '\nWaiting for confirmation...', 'ok');
+      await tx.wait();
+      alertModal('Success', 'Admin appointed successfully!', 'ok');
+      walletInput.value = '';
+      if (roleInput) roleInput.value = '';
+      loadAdminWallets();
+    } catch(e) {
+      alertModal('Failed', e.message || 'Transaction failed', 'warn');
+    }
+  });
+}
+
+async function doRemoveAdmin(wallet) {
+  confirmModal('Remove Admin', 'Revoke admin access from:\n' + wallet + '\n\nThis is an on-chain transaction.', 'danger', async function() {
+    try {
+      var AC_ADDR = '0x6C32Db03a2334aeebA2161129931De73A79c7334';
+      var ABI = ['function revokeAdmin(address admin)'];
+      var ac = new ethers.Contract(AC_ADDR, ABI, adminSigner);
+      var tx = await ac.revokeAdmin(wallet);
+      alertModal('Transaction Sent', 'TX: ' + tx.hash + '\nWaiting for confirmation...', 'ok');
+      await tx.wait();
+      alertModal('Success', 'Admin removed successfully!', 'ok');
+      loadAdminWallets();
+    } catch(e) {
+      alertModal('Failed', e.message || 'Transaction failed', 'warn');
+    }
+  });
+}
+
 </script>
 </body>
 </html>

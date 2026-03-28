@@ -5,8 +5,22 @@
 const db = require('../config/db');
 const config = require('../config');
 
+// ── Package ID to maxout config key mapping ──
+function getMaxoutKey(packageId) {
+  const map = {
+    'essential': 'maxout_essential',
+    'classic30': 'maxout_classic',
+    'ultimate90': 'maxout_ultimate',
+    'signature180': 'maxout_signature',
+    'exclusive360': 'maxout_exclusive',
+    'exclusive360_leader': 'maxout_leader',
+  };
+  return map[packageId] || 'maxout_essential';
+}
+
 /**
  * Calculate daily ROI for all active positions.
+ * Uses per-package maxout caps.
  */
 function calculateDailyROI() {
   const activePositions = db.store.positions.filter((p) => p.status === 'active');
@@ -16,17 +30,53 @@ function calculateDailyROI() {
     const user = db.findUser((u) => u.id === pos.user_id);
     if (!user) continue;
 
-    const dailyRate = pos.daily_rate;
-    const amount = pos.amount;
+    const dailyRate = Number(pos.daily_rate);
+    const amount = Number(pos.amount);
+    if (!Number.isFinite(dailyRate) || dailyRate <= 0) continue;
+    if (!Number.isFinite(amount) || amount <= 0) continue;
+
     const dailyROI = (amount * dailyRate) / 100;
-    if (dailyROI <= 0) continue;
+    if (!Number.isFinite(dailyROI) || dailyROI <= 0) continue;
 
-    // Check Earnings Cap
+    // Per-package maxout check
+    const maxoutKey = getMaxoutKey(pos.package_id);
+    const maxoutPct = parseFloat(db.getConfigValue(maxoutKey)) || 300;
+    const posMaxout = pos.amount * maxoutPct / 100;
+    const posEarned = db.store.earnings
+      .filter(e => e.user_id === pos.user_id && e.position_id === pos.id)
+      .reduce((s, e) => s + e.total_earned, 0);
+    const posRemaining = Math.max(0, posMaxout - posEarned);
+
+    if (posRemaining <= 0) {
+      // Record lost income
+      if (!db.store.earnings_lost) db.store.earnings_lost = [];
+      db.store.earnings_lost.push({
+        user_id: pos.user_id,
+        position_id: pos.id,
+        income_type: 'daily_profit',
+        amount: dailyROI,
+        created_at: new Date().toISOString(),
+      });
+      continue;
+    }
+
+    let finalAmount = Math.min(dailyROI, posRemaining);
+
+    // Also check global Exclusive cap (VIP users)
     const capStatus = getEarningsCapStatus(pos.user_id);
-    if (capStatus.hasExclusive && capStatus.remaining <= 0) continue;
+    if (capStatus.hasExclusive && capStatus.remaining <= 0) {
+      if (!db.store.earnings_lost) db.store.earnings_lost = [];
+      db.store.earnings_lost.push({
+        user_id: pos.user_id,
+        position_id: pos.id,
+        income_type: 'daily_profit',
+        amount: finalAmount,
+        created_at: new Date().toISOString(),
+      });
+      continue;
+    }
 
-    let finalAmount = dailyROI;
-    if (capStatus.hasExclusive && capStatus.remaining < dailyROI) {
+    if (capStatus.hasExclusive && capStatus.remaining < finalAmount) {
       finalAmount = capStatus.remaining;
     }
 
@@ -42,7 +92,7 @@ function calculateDailyROI() {
 }
 
 /**
- * Get Earnings Cap status for a user.
+ * Get Earnings Cap status for a user (VIP/Exclusive combined cap).
  */
 function getEarningsCapStatus(userId) {
   const vipPositions = db.store.positions.filter(
@@ -58,7 +108,7 @@ function getEarningsCapStatus(userId) {
     return { hasExclusive: false, capLimit: 0, totalEarned: 0, remaining: Infinity };
   }
 
-  const multiplier = parseFloat(db.getConfigValue('earnings_cap_multi')) || 300;
+  const multiplier = parseFloat(db.getConfigValue('maxout_exclusive')) || 300;
   const capLimit = (vipTotal * multiplier) / 100;
 
   const totalEarned = db.store.earnings
@@ -129,4 +179,5 @@ module.exports = {
   getEarningsCapStatus,
   hasActiveExclusive,
   recordROI,
+  getMaxoutKey,
 };

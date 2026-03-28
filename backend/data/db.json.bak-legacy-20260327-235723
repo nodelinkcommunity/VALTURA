@@ -1,0 +1,179 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "wallet": "0xE669D94fFeC2341CDBECa855f2DedDd7e1A59Cc0",
+      "username": "veltura",
+      "referrer_id": null,
+      "parent_id": null,
+      "leg": null,
+      "placement": null,
+      "created_at": "2026-03-27T15:56:26.948Z"
+    }
+  ],
+  "positions": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "package_id": "exclusive360",
+      "amount": 10000,
+      "tier": 3,
+      "daily_rate": 1.2,
+      "lock_days": 360,
+      "status": "active",
+      "started_at": "2026-03-27T16:33:20.415Z",
+      "expires_at": "2027-03-22T16:33:20.415Z",
+      "tx_hash": "0xf83aa3c25b8ad4dd064f1c0b8def8ea47d00b60208121264e536985d56cd8622",
+      "on_chain_index": 0
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "package_id": "essential",
+      "amount": 1000,
+      "tier": 1,
+      "daily_rate": 0.2,
+      "lock_days": 0,
+      "status": "active",
+      "started_at": "2026-03-27T16:50:45.228Z",
+      "expires_at": null,
+      "tx_hash": "0x07d10f936a42df6bc099540c0def1db6df28b2932d7d84cdf7971152d4c662d4",
+      "on_chain_index": 0
+    }
+  ],
+  "earnings": [],
+  "claims": [],
+  "redemptions": [],
+  "commissions": [],
+  "transactions": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "type": "deposit",
+      "amount": 10000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 10000,
+      "status": "confirmed",
+      "tx_hash": "0xf83aa3c25b8ad4dd064f1c0b8def8ea47d00b60208121264e536985d56cd8622",
+      "created_at": "2026-03-27T16:33:20.415Z"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "type": "deposit",
+      "amount": 1000,
+      "fee_pct": 0,
+      "fee_amount": 0,
+      "net_amount": 1000,
+      "status": "confirmed",
+      "tx_hash": "0x07d10f936a42df6bc099540c0def1db6df28b2932d7d84cdf7971152d4c662d4",
+      "created_at": "2026-03-27T16:50:45.228Z"
+    }
+  ],
+  "earnings_lost": [],
+  "tree": [
+    {
+      "user_id": 1,
+      "parent_id": null,
+      "side": null,
+      "left_child_id": null,
+      "right_child_id": null,
+      "left_volume": 0,
+      "right_volume": 0,
+      "left_vip_volume": 0,
+      "right_vip_volume": 0,
+      "left_vip_count": 0,
+      "right_vip_count": 0,
+      "left_roi": 0,
+      "right_roi": 0,
+      "carry_forward": 0,
+      "vip_sales_remaining": 0
+    }
+  ],
+  "config": [
+    {
+      "key": "earnings_cap_multi",
+      "value": "300",
+      "description": "Earnings Cap multiplier (%)"
+    },
+    {
+      "key": "comm_binary_bonus",
+      "value": "5",
+      "description": "Binary bonus rate (%)"
+    },
+    {
+      "key": "comm_referral",
+      "value": "10",
+      "description": "Referral commission rate (%)"
+    },
+    {
+      "key": "comm_binary",
+      "value": "15",
+      "description": "Binary commission rate (%)"
+    },
+    {
+      "key": "comm_momentum",
+      "value": "10",
+      "description": "Momentum rewards rate (%)"
+    },
+    {
+      "key": "fee_claim",
+      "value": "2.5",
+      "description": "Claim fee (%)"
+    },
+    {
+      "key": "fee_redeem",
+      "value": "5",
+      "description": "Redemption fee (%)"
+    },
+    {
+      "key": "fund_trading_pct",
+      "value": "85",
+      "description": "Trading fund allocation (%)"
+    },
+    {
+      "key": "fund_reward_pct",
+      "value": "15",
+      "description": "Reward fund allocation (%)"
+    },
+    {
+      "key": "maxout_essential",
+      "value": "300",
+      "description": "Essential maxout (%)"
+    },
+    {
+      "key": "maxout_classic",
+      "value": "300",
+      "description": "Classic maxout (%)"
+    },
+    {
+      "key": "maxout_ultimate",
+      "value": "300",
+      "description": "Ultimate maxout (%)"
+    },
+    {
+      "key": "maxout_signature",
+      "value": "300",
+      "description": "Signature maxout (%)"
+    },
+    {
+      "key": "maxout_exclusive",
+      "value": "300",
+      "description": "Exclusive maxout (%)"
+    },
+    {
+      "key": "maxout_leader",
+      "value": "300",
+      "description": "Leader maxout (%)"
+    }
+  ],
+  "_counters": {
+    "userId": 2,
+    "positionId": 3,
+    "claimId": 1,
+    "redeemId": 1,
+    "commissionId": 1,
+    "transactionId": 3
+  }
+}
